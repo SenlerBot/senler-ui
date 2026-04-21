@@ -1,6 +1,6 @@
 {
   "name": "@senler/ui",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": false,
   "type": "module",
   "description": "Senler shared React UI components",
@@ -46,7 +46,7 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && vite build && tsc -p tsconfig.build.json",
     "type-check": "tsc -p tsconfig.json --noEmit",
-    "prepare": "npm run build"
+    "prepack": "npm run build"
   },
   "peerDependencies": {
     "lucide-react": "^0.555.0 || ^1.7.0",

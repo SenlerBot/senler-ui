@@ -5,7 +5,7 @@ Shared Senler React UI components.
 ## Install
 
 ```bash
-npm install git+https://github.com/SenlerBot/senler-ui.git#v0.3.2
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.3.3.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -48,3 +48,7 @@ npm run ui:sync
 ```
 
 `src/shared/ui` in cabinet is kept as a compatibility layer for application code and cabinet-only components.
+
+## License
+
+UNLICENSED. Public access is provided for installation, but reuse is not granted without permission from Senler.
