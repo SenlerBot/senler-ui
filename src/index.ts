@@ -1,5 +1,3 @@
-import './styles.css';
-
 export * from './shared/ui/atoms/accordion';
 export * from './shared/ui/atoms/alert';
 export * from './shared/ui/atoms/alert-dialog';

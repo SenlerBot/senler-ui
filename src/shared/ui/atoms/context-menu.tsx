@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 function ContextMenu({
   ...props
@@ -16,7 +16,7 @@ function ContextMenuTrigger({
   return (
     <ContextMenuPrimitive.Trigger
       data-slot='context-menu-trigger'
-      className={cn('data-[state=open]:bg-hover-paper', className)}
+      className={cn('data-[state=open]:bg-accent', className)}
       {...props}
     />
   );
@@ -69,8 +69,8 @@ function ContextMenuSubTrigger({
       data-inset={inset}
       className={cn(
         'relative flex items-center h-8 px-2 py-1 m-1 rounded-sm text-sm',
-        'text-contrast-black font-normal leading-none select-none outline-none',
-        'data-[highlighted]:bg-hover-alpha-paper data-[highlighted]:svg:text-icon-primary',
+        'text-foreground font-normal leading-none select-none outline-none',
+        'data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary',
         'data-[disabled]:pointer-events-none',
         className
       )}
@@ -90,8 +90,8 @@ function ContextMenuSubContent({
     <ContextMenuPrimitive.SubContent
       data-slot='context-menu-sub-content'
       className={cn(
-        'min-w-[180px] bg-alpha backdrop-blur-md',
-        'rounded-md border-stroke border p-1 z-[102] overflow-hidden',
+        'min-w-[180px] bg-popover/95 backdrop-blur-md',
+        'rounded-md border-border border p-1 z-[102] overflow-hidden',
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -113,8 +113,8 @@ function ContextMenuContent({
       <ContextMenuPrimitive.Content
         data-slot='context-menu-content'
         className={cn(
-          'bg-alpha backdrop-blur-md backdrop-saturate-190 backdrop-brightness-130',
-          'rounded-md border-stroke border p-1 z-[102] overflow-hidden',
+          'bg-popover/95 backdrop-blur-md backdrop-saturate-[190%] backdrop-brightness-[130%]',
+          'rounded-md border-border border p-1 z-[102] overflow-hidden',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
           'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -144,8 +144,8 @@ function ContextMenuItem({
       data-variant={variant}
       className={cn(
         'relative flex items-center h-8 px-2 py-1 m-1 rounded-sm text-sm',
-        'text-contrast-black font-normal leading-none select-none outline-none',
-        'data-[highlighted]:bg-hover-alpha-paper data-[highlighted]:svg:text-icon-primary',
+        'text-foreground font-normal leading-none select-none outline-none',
+        'data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary',
         'data-[disabled]:pointer-events-none',
         className
       )}

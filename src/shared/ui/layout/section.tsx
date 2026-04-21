@@ -1,10 +1,10 @@
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const sectionVariants = cva('', {
   variants: {
     border: {
-      true: 'border border-stroke rounded-lg',
+      true: 'border border-border rounded-lg',
       false: '',
     },
   },

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 function TooltipProvider({
   delayDuration = 350,
@@ -44,7 +44,7 @@ function TooltipContent({
         sideOffset={sideOffset}
         className={cn(
           'max-w-[320px] rounded-lg px-2 py-1 leading-6 text-xs',
-          'bg-card border border-stroke',
+          'bg-card border border-border',
           'shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]',
           'duration-100 ease-[cubic-bezier(0.16,1,0.3,1)]',
           'will-change-transform,opacity z-[9999]',

@@ -1,5 +1,5 @@
 import { Root } from '@radix-ui/react-form';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 import * as React from 'react';
 
 interface FormProps extends React.ComponentProps<typeof Root> {

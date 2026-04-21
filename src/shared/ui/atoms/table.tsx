@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
@@ -26,7 +26,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
       className={cn(
-        'table-cell align-inherit text-left py-1.5 font-normal border-b border-stroke',
+        'table-cell align-inherit text-left py-1.5 font-normal border-b border-border',
         className
       )}
       {...props}
@@ -46,7 +46,7 @@ function TableHeadCell({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'table-cell align-inherit text-left py-1.5 font-normal border-b border-stroke',
+        'table-cell align-inherit text-left py-1.5 font-normal border-b border-border',
         className
       )}
       {...props}

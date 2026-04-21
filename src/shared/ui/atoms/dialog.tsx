@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
 
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 export const dialogContentDefaults = {
   showCloseButton: true,
@@ -133,7 +133,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot='dialog-title'
-      className={cn('text-lg leading-none font-500', className)}
+      className={cn('text-lg leading-none font-medium', className)}
       {...props}
     />
   );

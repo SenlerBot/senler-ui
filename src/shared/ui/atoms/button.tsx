@@ -3,8 +3,8 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2Icon } from 'lucide-react';
 
-import { literalKeys } from '@/shared/lib/literal-keys';
-import { cn } from '@/shared/lib/utils';
+import { literalKeys } from '../../lib/literal-keys';
+import { cn } from '../../lib/utils';
 
 export const buttonVariantClasses = {
   default: 'bg-primary text-primary-foreground hover:bg-primary/90',

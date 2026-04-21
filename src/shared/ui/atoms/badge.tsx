@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { literalKeys } from '@/shared/lib/literal-keys';
-import { cn } from '@/shared/lib/utils';
+import { literalKeys } from '../../lib/literal-keys';
+import { cn } from '../../lib/utils';
 
 export const badgeVariantClasses = {
   default:

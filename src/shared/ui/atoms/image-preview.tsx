@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/shared/lib/utils';
-import { Img } from '@/shared/ui/atoms/image';
+import { cn } from '../../lib/utils';
+import { Img } from './image';
 import { ImageIcon } from 'lucide-react';
 
 const imagePreviewVariants = cva(
-  'flex justify-center items-center overflow-hidden bg-paper-secondary border border-stroke rounded-md',
+  'flex justify-center items-center overflow-hidden bg-muted border border-border rounded-md',
   {
     variants: {
       variant: {

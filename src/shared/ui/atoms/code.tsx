@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Highlight, type PrismTheme } from 'prism-react-renderer';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 interface CodeBlockProps
   extends Partial<React.ComponentProps<typeof Highlight>> {

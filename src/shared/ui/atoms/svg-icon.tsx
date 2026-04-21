@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 const svgVariants = cva(
   'select-none inline-flex flex-shrink-0 align-middle w-full h-full',
@@ -8,9 +8,9 @@ const svgVariants = cva(
     variants: {
       color: {
         none: 'text-inherit [&>svg]:text-inherit',
-        primary: 'text-icon-primary [&>svg]:text-icon-primary',
-        secondary: 'text-icon-secondary [&>svg]:text-icon-secondary',
-        tertiary: 'text-icon-tertiary [&>svg]:text-icon-tertiary',
+        primary: 'text-primary [&>svg]:text-primary',
+        secondary: 'text-muted-foreground [&>svg]:text-muted-foreground',
+        tertiary: 'text-muted-foreground [&>svg]:text-muted-foreground',
       },
       size: {
         xs: 'w-3 h-3',

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { literalKeys } from '@/shared/lib/literal-keys';
+import { literalKeys } from '../../lib/literal-keys';
 
 export const tabsListVariantClasses = {
   default: 'p-[2px] gap-[2px] rounded-[6px] bg-muted',

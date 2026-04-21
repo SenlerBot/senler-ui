@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { literalKeys } from '@/shared/lib/literal-keys';
-import { cn } from '@/shared/lib/utils';
+import { literalKeys } from '../../lib/literal-keys';
+import { cn } from '../../lib/utils';
 
 export const switchSizeClasses = {
   xs: 'h-3.5 w-5.5 p-0.5',

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 const linkVariants = cva(
-  'flex items-center gap-1.5 leading-normal cursor-default text-main text-sm transition-colors',
+  'flex items-center gap-1.5 leading-normal cursor-default text-primary text-sm transition-colors',
   {
     variants: {
       hover: {
@@ -12,13 +12,13 @@ const linkVariants = cva(
         none: '',
       },
       disabled: {
-        true: 'text-text-secondary pointer-events-none opacity-70 [&_svg]:text-text-secondary',
+        true: 'text-muted-foreground pointer-events-none opacity-70 [&_svg]:text-muted-foreground',
       },
       underline: {
         true: 'underline',
       },
       color: {
-        main: 'text-main [&_svg]:text-main',
+        main: 'text-primary [&_svg]:text-primary',
         none: 'text-inherit',
       },
     },

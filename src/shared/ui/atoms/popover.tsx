@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 function Popover({
   ...props
@@ -29,7 +29,7 @@ function PopoverContent({
         className={cn(
           'outline-none rounded-md',
           'shadow-[0px_3px_12px_rgba(0,0,0,0.09)]',
-          'border-[0.5px] border-stroke',
+          'border-[0.5px] border-border',
           'backdrop-blur-[6px] backdrop-saturate-[190%] backdrop-contrast-[50%] backdrop-brightness-[130%]',
           'bg-popover/50',
           'z-[99]',

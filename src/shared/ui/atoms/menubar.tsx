@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 function Menubar({
   ...props
@@ -65,7 +65,7 @@ function MenubarContent({
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          'bg-card rounded-[6px] shadow-[0px_16px_16px_rgba(0,0,0,0.16)] overflow-hidden py-1 border border-stroke will-change-transform will-change-opacity z-9999',
+          'bg-card rounded-[6px] shadow-[0px_16px_16px_rgba(0,0,0,0.16)] overflow-hidden py-1 border border-border will-change-transform will-change-opacity z-9999',
           className
         )}
         {...props}
@@ -82,7 +82,7 @@ function MenubarItem({
     <MenubarPrimitive.Item
       data-slot='menubar-item'
       className={cn(
-        'text-[13px] leading-none text-contrast-black rounded-[3px] flex items-center justify-between h-8 px-1.5 mx-1 relative select-none outline-none data-[highlighted]:bg-hover-alpha-paper data-[highlighted]:[&_svg]:text-icon-primary data-[disabled]:pointer-events-none',
+        'text-[13px] leading-none text-foreground rounded-[3px] flex items-center justify-between h-8 px-1.5 mx-1 relative select-none outline-none data-[highlighted]:bg-accent data-[highlighted]:[&_svg]:text-primary data-[disabled]:pointer-events-none',
         className
       )}
       {...props}

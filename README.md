@@ -8,6 +8,12 @@ Shared Senler React UI components.
 npm install git+ssh://git@gitlab.collabox.dev/aibot/senler-ui.git
 ```
 
+Requires React 19:
+
+```bash
+npm install react@^19 react-dom@^19
+```
+
 ## Usage
 
 ```tsx
@@ -28,9 +34,11 @@ export function Example() {
 
 ## Source Of Truth
 
-This repository is updated from `aibot-cabinet/packages/senler-ui`.
-Make component changes in cabinet, then run:
+The source package lives in `aibot-cabinet/packages/senler-ui`.
+Make reusable UI changes there, verify them in cabinet or Storybook, then run:
 
 ```bash
 npm run ui:sync
 ```
+
+`src/shared/ui` in cabinet is kept as a compatibility layer for application code and cabinet-only components.

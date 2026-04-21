@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactAnnounce from '@radix-ui/react-announce';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 const announceVariants = cva('rounded-md text-sm/4 font-medium', {
   variants: {
     color: {
       grey: 'bg-secondary',
-      error: 'border text-destructive border-stroke',
+      error: 'border text-destructive border-border',
     },
     size: {
       small: 'px-2 py-2',

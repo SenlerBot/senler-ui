@@ -5,6 +5,8 @@ import { defineConfig } from 'vite';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+const packageEntry = path.resolve(dirname, 'src/index.ts');
+const stylesEntry = path.resolve(dirname, 'src/styles.css');
 
 const externalPackages = [
   'react',
@@ -27,16 +29,14 @@ function isExternal(id: string) {
 
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(dirname, './src'),
-    },
-  },
   build: {
     copyPublicDir: false,
     cssCodeSplit: true,
     lib: {
-      entry: path.resolve(dirname, 'src/index.ts'),
+      entry: {
+        index: packageEntry,
+        styles: stylesEntry,
+      },
       formats: ['es'],
       cssFileName: 'styles',
     },
@@ -50,6 +50,6 @@ export default defineConfig({
         assetFileNames: '[name][extname]',
       },
     },
-    sourcemap: true,
+    sourcemap: false,
   },
 });

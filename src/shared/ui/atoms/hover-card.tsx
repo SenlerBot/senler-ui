@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../../lib/utils';
 
 function HoverCardRoot({
   ...props
@@ -28,7 +28,7 @@ function HoverCardContent({
         sideOffset={sideOffset}
         className={cn(
           'z-[10000] w-64 origin-[--radix-hover-card-content-transform-origin]',
-          'rounded-lg p-2 border border-stroke bg-contrast-white',
+          'rounded-lg p-2 border border-border bg-popover',
           'shadow-md outline-hidden',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
