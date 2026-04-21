@@ -7,12 +7,12 @@ interface CodeBlockProps
   formatData?: (value: string) => void;
 }
 
-const CodeBlock: React.FC<CodeBlockProps> = ({
+function CodeBlock({
   theme = defaultTheme,
   language = 'json',
   code = '',
   ...props
-}) => {
+}: CodeBlockProps) {
   return (
     <Highlight code={code} language={language} theme={theme} {...props}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -35,9 +35,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       )}
     </Highlight>
   );
-};
+}
 
-const defaultTheme: PrismTheme = {
+const defaultTheme = {
   plain: {
     color: 'hsl(var(--foreground))',
     backgroundColor: 'inherit',
@@ -99,6 +99,6 @@ const defaultTheme: PrismTheme = {
       },
     },
   ],
-};
+} satisfies PrismTheme;
 
 export { CodeBlock };
