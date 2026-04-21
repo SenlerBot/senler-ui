@@ -6,6 +6,7 @@ import { defineConfig } from 'vite';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const packageEntry = path.resolve(dirname, 'src/index.ts');
+const appShellEntry = path.resolve(dirname, 'src/app-shell.ts');
 const codeEntry = path.resolve(dirname, 'src/code.ts');
 const stylesEntry = path.resolve(dirname, 'src/styles.css');
 
@@ -36,6 +37,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: packageEntry,
+        'app-shell': appShellEntry,
         code: codeEntry,
         styles: stylesEntry,
       },

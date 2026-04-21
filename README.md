@@ -13,12 +13,13 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 - Overlays and menus: `Dialog`, `AlertDialog`, `Sheet`, `Popover`, `Tooltip`, `HoverCard`, `DropdownMenu`, `ContextMenu`, `Menubar`.
 - Navigation and disclosure primitives: `Tabs`, `Accordion`, `Collapsible`, `Link`.
 - Layout helpers: `LayoutContainer`, `LayoutSection`, `LayoutField`.
+- Application shell: `AppShell`, `AppSidebar`, `AppHeader` from `@senler/ui/app-shell`.
 - Optional code highlighting: `CodeBlock` from `@senler/ui/code`.
 
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.3.5.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.4.0.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -57,6 +58,51 @@ Subpath imports are also available when a project wants narrower imports:
 ```tsx
 import { Button } from '@senler/ui/atoms/button';
 import { LayoutContainer } from '@senler/ui/layout/container';
+```
+
+## App Shell
+
+Use `AppShell` when a product needs the standard Senler sidebar and header behavior. The component owns the layout, desktop sidebar, mobile drawer, active menu state, collapsed sidebar, header actions, and breadcrumbs. The application provides only navigation data and a router-specific link renderer.
+
+```tsx
+import { AppShell } from '@senler/ui/app-shell';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { BotIcon, HomeIcon, SettingsIcon } from 'lucide-react';
+
+const navigation = [
+  {
+    id: 'main',
+    items: [
+      { id: 'home', label: 'Home', href: '/', icon: HomeIcon, exact: true },
+      { id: 'agents', label: 'Agents', href: '/agents', icon: BotIcon },
+      { id: 'settings', label: 'Settings', href: '/settings', icon: SettingsIcon },
+    ],
+  },
+];
+
+export function Layout() {
+  const location = useLocation();
+
+  return (
+    <AppShell
+      brand={<span className="text-sm font-semibold">Senler</span>}
+      navigation={navigation}
+      currentPath={location.pathname}
+      headerTitle="Agents"
+      headerBreadcrumbs={[
+        { id: 'home', label: 'Home', href: '/' },
+        { id: 'agents', label: 'Agents' },
+      ]}
+      renderLink={({ href, className, children, item: _item, breadcrumb: _breadcrumb, ...props }) => (
+        <NavLink to={href} className={className} {...props}>
+          {children}
+        </NavLink>
+      )}
+    >
+      <Outlet />
+    </AppShell>
+  );
+}
 ```
 
 Code highlighting is available from a separate entrypoint:

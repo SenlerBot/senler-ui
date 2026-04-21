@@ -8,7 +8,7 @@ export declare const buttonVariantClasses: {
     readonly ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50";
     readonly link: "text-primary underline-offset-4 hover:underline";
 };
-export declare const buttonVariantOptions: ("link" | "default" | "destructive" | "outline" | "secondary" | "ghost")[];
+export declare const buttonVariantOptions: ("link" | "default" | "secondary" | "destructive" | "outline" | "ghost")[];
 export type ButtonVariant = (typeof buttonVariantOptions)[number];
 export declare const buttonSizeClasses: {
     readonly default: "h-7 px-2 py-2 gap-1";
@@ -18,7 +18,7 @@ export declare const buttonSizeClasses: {
     readonly icon_sm: "size-6";
     readonly none: "p-0 h-auto";
 };
-export declare const buttonSizeOptions: ("none" | "default" | "sm" | "lg" | "icon" | "icon_sm")[];
+export declare const buttonSizeOptions: ("default" | "none" | "sm" | "lg" | "icon" | "icon_sm")[];
 export type ButtonSize = (typeof buttonSizeOptions)[number];
 export declare const buttonTypeOptions: readonly ["button", "submit", "reset"];
 export type ButtonType = (typeof buttonTypeOptions)[number];
@@ -31,8 +31,8 @@ export declare const buttonDefaults: {
     readonly disabled: false;
 };
 declare const buttonVariants: (props?: ({
-    variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
-    size?: "none" | "default" | "sm" | "lg" | "icon" | "icon_sm" | null | undefined;
+    variant?: "link" | "default" | "secondary" | "destructive" | "outline" | "ghost" | null | undefined;
+    size?: "default" | "none" | "sm" | "lg" | "icon" | "icon_sm" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 export interface ButtonProps extends ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
     variant?: ButtonVariant;

@@ -17,13 +17,13 @@ export declare const badgeVariantClasses: {
     readonly violet: "border-transparent bg-violet-500/15 text-violet-700 dark:text-violet-400 hover:bg-violet-500/25";
     readonly pink: "border-transparent bg-pink-500/15 text-pink-700 dark:text-pink-400 hover:bg-pink-500/25";
 };
-export declare const badgeVariantOptions: ("default" | "destructive" | "outline" | "secondary" | "error" | "success" | "warning" | "info" | "purple" | "cyan" | "teal" | "orange" | "indigo" | "violet" | "pink")[];
+export declare const badgeVariantOptions: ("default" | "secondary" | "destructive" | "outline" | "success" | "warning" | "error" | "info" | "purple" | "cyan" | "teal" | "orange" | "indigo" | "violet" | "pink")[];
 export type BadgeVariant = (typeof badgeVariantOptions)[number];
 export declare const badgeDefaults: {
     readonly variant: "default";
 };
 declare const badgeVariants: (props?: ({
-    variant?: "default" | "destructive" | "outline" | "secondary" | "error" | "success" | "warning" | "info" | "purple" | "cyan" | "teal" | "orange" | "indigo" | "violet" | "pink" | null | undefined;
+    variant?: "default" | "secondary" | "destructive" | "outline" | "success" | "warning" | "error" | "info" | "purple" | "cyan" | "teal" | "orange" | "indigo" | "violet" | "pink" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
     variant?: BadgeVariant;
