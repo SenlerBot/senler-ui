@@ -1,6 +1,6 @@
 # @senler/ui
 
-Senler UI is a shared React 19 component library for Senler frontends. It contains the reusable UI core that can be developed inside the cabinet and then shipped as a standalone package for other projects.
+Senler UI is a React 19 component library for building Senler-compatible interfaces. It provides shared styles, design tokens, layout helpers, and accessible UI primitives for product screens, forms, dialogs, menus, and content blocks.
 
 Documentation: [ui.senler.io](https://ui.senler.io)
 
@@ -18,7 +18,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.3.4.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.3.5.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -59,23 +59,12 @@ import { Button } from '@senler/ui/atoms/button';
 import { LayoutContainer } from '@senler/ui/layout/container';
 ```
 
-Optional code highlighting is exported separately so the core entrypoint does not pull `prism-react-renderer` into apps that do not use it:
+Code highlighting is available from a separate entrypoint:
 
 ```tsx
 import { CodeBlock } from '@senler/ui/code';
 ```
 
-## Source Of Truth
-
-The source package lives in `aibot-cabinet/packages/senler-ui`.
-Make reusable UI changes there, verify them in cabinet or Storybook, then run:
-
-```bash
-npm run ui:sync
-```
-
-`src/shared/ui` in cabinet is kept as a compatibility layer for application code and cabinet-only components.
-
 ## License
 
-UNLICENSED. Public access is provided for installation, but reuse is not granted without permission from Senler.
+Use of this package is permitted only under an agreement with Senler.
