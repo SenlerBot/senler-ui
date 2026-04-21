@@ -1,187 +1,158 @@
 import { cn as e } from "../lib/utils/cn.js";
 import { Button as t } from "../atoms/button.js";
 import { Badge as n } from "../atoms/badge.js";
-import { Separator as r } from "../atoms/separator.js";
-import { ScrollArea as i } from "../atoms/scroll-area.js";
-import { Sheet as a, SheetContent as o, SheetTitle as s } from "../atoms/sheet.js";
-import { Tooltip as c, TooltipContent as l, TooltipTrigger as u } from "../atoms/tooltip.js";
-import { VisuallyHidden as d } from "../atoms/visually-hidden.js";
-import * as f from "react";
-import { ChevronRightIcon as p, ChevronsLeftIcon as m, ChevronsRightIcon as h, MenuIcon as g } from "lucide-react";
-import { Fragment as _, jsx as v, jsxs as y } from "react/jsx-runtime";
+import { ScrollArea as r } from "../atoms/scroll-area.js";
+import { Sheet as i, SheetContent as a, SheetTitle as o } from "../atoms/sheet.js";
+import { VisuallyHidden as s } from "../atoms/visually-hidden.js";
+import * as c from "react";
+import { ChevronRightIcon as l, MenuIcon as u } from "lucide-react";
+import { Fragment as d, jsx as f, jsxs as p } from "react/jsx-runtime";
 //#region src/layout/app-shell.tsx
-var b = {
+var m = {
 	navigation: "Navigation",
-	openSidebar: "Open navigation",
-	closeSidebar: "Close navigation",
-	collapseSidebar: "Collapse navigation",
-	expandSidebar: "Expand navigation"
+	openSidebar: "Open navigation"
 };
-function x(e) {
+function h(e) {
 	return {
-		...b,
+		...m,
 		...e
 	};
 }
-function S(e, t) {
-	return typeof e.active == "boolean" ? e.active : typeof e.match == "function" ? e.match(t) : (Array.isArray(e.match) ? e.match : e.match ? [e.match] : []).some((e) => t === e || t.startsWith(`${e}/`) || t.includes(e)) ? !0 : e.href ? e.exact ? t === e.href : t === e.href || t.startsWith(`${e.href}/`) : e.items?.some((e) => S(e, t)) ?? !1;
+function g(e, t) {
+	return typeof e.active == "boolean" ? e.active : typeof e.match == "function" ? e.match(t) : (Array.isArray(e.match) ? e.match : e.match ? [e.match] : []).some((e) => t === e || t.startsWith(`${e}/`) || t.includes(e)) ? !0 : e.href ? e.exact ? t === e.href : t === e.href || t.startsWith(`${e.href}/`) : e.items?.some((e) => g(e, t)) ?? !1;
 }
-function C(e) {
+function _(e) {
 	return e.title ? e.title : typeof e.label == "string" ? e.label : e.id;
 }
-function w(e, t) {
+function v(e, t) {
 	e.onSelect?.(), t?.();
 }
-function T({ item: t, currentPath: r, collapsed: i, renderLink: a, onNavigate: o, depth: s = 0 }) {
-	let d = S(t, r), f = C(t), p = t.icon, m = !!t.items?.length, h = !i && m && (d || t.defaultOpen), g = e("group/app-shell-nav-item flex h-8 w-full items-center gap-2 rounded-md text-sm outline-none transition-colors", "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", "focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50", "aria-disabled:pointer-events-none aria-disabled:opacity-50", d && "bg-muted font-medium text-foreground", i ? "justify-center px-2" : "px-2", s > 0 && !i && "h-7 text-[13px] text-sidebar-foreground/80"), b = /* @__PURE__ */ y(_, { children: [p ? /* @__PURE__ */ v(p, { className: "size-4 shrink-0 text-muted-foreground group-hover/app-shell-nav-item:text-inherit" }) : null, i ? null : /* @__PURE__ */ y(_, { children: [/* @__PURE__ */ v("span", {
-		className: "min-w-0 flex-1 truncate",
-		children: t.label
-	}), t.badge === void 0 ? null : /* @__PURE__ */ v(n, {
-		variant: "secondary",
-		className: "ml-auto max-w-16 rounded-full px-1.5 py-0 text-[11px]",
-		children: t.badge
-	})] })] }), x = t.href && !t.disabled ? a({
-		item: t,
-		href: t.href,
-		className: g,
-		children: b,
-		title: f,
-		onClick: (e) => {
-			if (t.disabled) {
-				e.preventDefault();
-				return;
-			}
-			w(t, o);
-		},
-		"aria-current": d ? "page" : void 0
-	}) : /* @__PURE__ */ v("button", {
-		type: "button",
-		className: g,
-		disabled: t.disabled,
-		"aria-current": d ? "page" : void 0,
-		"aria-disabled": t.disabled || void 0,
-		title: f,
-		onClick: () => {
-			t.disabled || w(t, o);
-		},
-		children: b
-	});
-	return /* @__PURE__ */ y("li", {
+function y({ item: t, currentPath: r, renderLink: i, onNavigate: a, depth: o = 0 }) {
+	let s = g(t, r), c = _(t), l = t.icon, u = !!t.items?.length && (s || t.defaultOpen), m = e("group/app-shell-nav-item flex h-8 w-full items-center gap-2 rounded-md text-sm outline-none transition-colors", "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", "focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50", "aria-disabled:pointer-events-none aria-disabled:opacity-50", s && "bg-muted font-medium text-foreground", "px-2", o > 0 && "h-7 text-[13px] text-sidebar-foreground/80"), h = /* @__PURE__ */ p(d, { children: [
+		l ? /* @__PURE__ */ f(l, { className: "size-4 shrink-0 text-muted-foreground group-hover/app-shell-nav-item:text-inherit" }) : null,
+		/* @__PURE__ */ f("span", {
+			className: "min-w-0 flex-1 truncate",
+			children: t.label
+		}),
+		t.badge === void 0 ? null : /* @__PURE__ */ f(n, {
+			variant: "secondary",
+			className: "ml-auto max-w-16 rounded-full px-1.5 py-0 text-[11px]",
+			children: t.badge
+		})
+	] });
+	return /* @__PURE__ */ p("li", {
 		className: "min-w-0",
-		children: [i ? /* @__PURE__ */ y(c, { children: [/* @__PURE__ */ v(u, {
-			asChild: !0,
-			children: x
-		}), /* @__PURE__ */ v(l, {
-			side: "right",
-			align: "center",
-			children: f
-		})] }) : x, h ? /* @__PURE__ */ v("ul", {
+		children: [t.href && !t.disabled ? i({
+			item: t,
+			href: t.href,
+			className: m,
+			children: h,
+			title: c,
+			onClick: (e) => {
+				if (t.disabled) {
+					e.preventDefault();
+					return;
+				}
+				v(t, a);
+			},
+			"aria-current": s ? "page" : void 0
+		}) : /* @__PURE__ */ f("button", {
+			type: "button",
+			className: m,
+			disabled: t.disabled,
+			"aria-current": s ? "page" : void 0,
+			"aria-disabled": t.disabled || void 0,
+			title: c,
+			onClick: () => {
+				t.disabled || v(t, a);
+			},
+			children: h
+		}), u ? /* @__PURE__ */ f("ul", {
 			className: "mt-1 grid gap-1 border-l border-sidebar-border pl-3",
-			children: t.items?.map((e) => /* @__PURE__ */ v(T, {
+			children: t.items?.map((e) => /* @__PURE__ */ f(y, {
 				item: e,
 				currentPath: r,
-				collapsed: i,
-				renderLink: a,
-				onNavigate: o,
-				depth: s + 1
+				renderLink: i,
+				onNavigate: a,
+				depth: o + 1
 			}, e.id))
 		}) : null]
 	});
 }
-function E({ navigation: n, currentPath: a, renderLink: o, brand: s, brandIcon: c, top: l, footer: u, collapsed: d = !1, mobile: f = !1, labels: p, onNavigate: g, onCollapsedChange: _ }) {
-	let b = x(p);
-	return /* @__PURE__ */ y("div", {
+function b({ navigation: e, currentPath: t, renderLink: n, brand: i, headerActions: a, top: o, footer: s, labels: c, onNavigate: l }) {
+	let u = h(c);
+	return /* @__PURE__ */ p("div", {
 		className: "flex h-full min-h-0 w-full flex-col",
 		children: [
-			/* @__PURE__ */ y("div", {
-				className: e("flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3", d && !f && "justify-center px-2"),
-				children: [/* @__PURE__ */ v("div", {
+			/* @__PURE__ */ p("div", {
+				className: "flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3",
+				children: [/* @__PURE__ */ f("div", {
 					className: "min-w-0 flex-1 overflow-hidden",
-					children: d && !f ? /* @__PURE__ */ v("div", {
-						className: "flex size-8 items-center justify-center overflow-hidden rounded-md",
-						children: c ?? s
-					}) : s
-				}), !f && _ ? /* @__PURE__ */ v(t, {
-					type: "button",
-					variant: "ghost",
-					size: "icon_sm",
-					"aria-label": d ? b.expandSidebar : b.collapseSidebar,
-					title: d ? b.expandSidebar : b.collapseSidebar,
-					onClick: () => _(!d),
-					children: v(d ? h : m, {})
+					children: i
+				}), a ? /* @__PURE__ */ f("div", {
+					className: "flex shrink-0 items-center gap-0.5",
+					children: a
 				}) : null]
 			}),
-			l && (!d || f) ? /* @__PURE__ */ v("div", {
-				className: "shrink-0 border-b border-sidebar-border p-2",
-				children: l
+			o ? /* @__PURE__ */ f("div", {
+				className: "shrink-0 p-2",
+				children: o
 			}) : null,
-			/* @__PURE__ */ v(i, {
+			/* @__PURE__ */ f(r, {
 				className: "min-h-0 flex-1",
-				children: /* @__PURE__ */ v("nav", {
-					"aria-label": b.navigation,
+				children: /* @__PURE__ */ f("nav", {
+					"aria-label": u.navigation,
 					className: "grid gap-3 p-2",
-					children: n.map((e, t) => /* @__PURE__ */ y("div", {
+					children: e.map((e) => /* @__PURE__ */ p("div", {
 						className: "grid gap-1",
-						children: [
-							t > 0 && !d ? /* @__PURE__ */ v(r, { className: "my-1 bg-sidebar-border" }) : null,
-							e.label && !d ? /* @__PURE__ */ v("div", {
-								className: "px-2 py-1 text-xs font-medium text-sidebar-foreground/70",
-								children: e.label
-							}) : null,
-							/* @__PURE__ */ v("ul", {
-								className: "grid gap-1",
-								children: e.items.map((e) => /* @__PURE__ */ v(T, {
-									item: e,
-									currentPath: a,
-									collapsed: d && !f,
-									renderLink: o,
-									onNavigate: g
-								}, e.id))
-							})
-						]
+						children: [e.label ? /* @__PURE__ */ f("div", {
+							className: "px-2 py-1 text-xs font-medium text-sidebar-foreground/70",
+							children: e.label
+						}) : null, /* @__PURE__ */ f("ul", {
+							className: "grid gap-1",
+							children: e.items.map((e) => /* @__PURE__ */ f(y, {
+								item: e,
+								currentPath: t,
+								renderLink: n,
+								onNavigate: l
+							}, e.id))
+						})]
 					}, e.id))
 				})
 			}),
-			u && (!d || f) ? /* @__PURE__ */ v("div", {
-				className: "shrink-0 border-t border-sidebar-border p-2",
-				children: u
+			s ? /* @__PURE__ */ f("div", {
+				className: "shrink-0 p-2",
+				children: s
 			}) : null
 		]
 	});
 }
-function D({ className: t, collapsed: n = !1, mobile: r = !1, ...i }) {
-	return r ? /* @__PURE__ */ v("div", {
+function x({ className: t, mobile: n = !1, ...r }) {
+	return n ? /* @__PURE__ */ f("div", {
 		"data-slot": "app-sidebar",
 		"data-mobile": "true",
 		className: e("flex h-full bg-sidebar text-sidebar-foreground", t),
-		children: /* @__PURE__ */ v(E, {
-			collapsed: !1,
-			mobile: !0,
-			...i
-		})
-	}) : /* @__PURE__ */ v("aside", {
+		children: /* @__PURE__ */ f(b, { ...r })
+	}) : /* @__PURE__ */ f("aside", {
 		"data-slot": "app-sidebar",
-		"data-state": n ? "collapsed" : "expanded",
-		className: e("hidden h-dvh shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear md:flex", n ? "w-12" : "w-64", t),
-		children: /* @__PURE__ */ v(E, {
-			collapsed: n,
-			...i
-		})
+		"data-state": "expanded",
+		className: e("hidden h-dvh w-64 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex", t),
+		children: /* @__PURE__ */ f(b, { ...r })
 	});
 }
-function O({ breadcrumbs: t, renderLink: n }) {
-	return /* @__PURE__ */ v("div", {
+function S({ breadcrumbs: t, renderLink: n }) {
+	return /* @__PURE__ */ f("div", {
 		className: "flex min-w-0 flex-1 items-center gap-1 overflow-hidden",
 		children: t.map((r, i) => {
 			let a = i !== t.length - 1 && !!r.href && !!n, o = e("text-[13px] font-medium leading-4 whitespace-nowrap text-foreground transition-colors", a && "hover:text-primary");
-			return /* @__PURE__ */ y(f.Fragment, { children: [i > 0 ? /* @__PURE__ */ v(p, { className: "size-4 shrink-0 text-muted-foreground" }) : null, a && r.href ? n({
+			return /* @__PURE__ */ p(c.Fragment, { children: [i > 0 ? /* @__PURE__ */ f(l, { className: "size-4 shrink-0 text-muted-foreground" }) : null, a && r.href ? n({
 				breadcrumb: r,
 				href: r.href,
 				className: o,
 				children: r.label,
 				title: r.title,
 				onClick: () => r.onSelect?.()
-			}) : /* @__PURE__ */ v("p", {
+			}) : /* @__PURE__ */ f("p", {
 				className: o,
 				title: r.title,
 				children: r.label
@@ -189,113 +160,101 @@ function O({ breadcrumbs: t, renderLink: n }) {
 		})
 	});
 }
-function k({ title: n, breadcrumbs: r, actions: i, renderLink: a, labels: o, onSidebarOpen: s, className: c, ...l }) {
-	let u = x(o);
-	return /* @__PURE__ */ y("header", {
+function C({ title: n, breadcrumbs: r, actions: i, renderLink: a, labels: o, onSidebarOpen: s, className: c, ...l }) {
+	let d = h(o);
+	return /* @__PURE__ */ p("header", {
 		"data-slot": "app-header",
 		className: e("shrink-0 border-b border-border bg-background", c),
 		...l,
-		children: [/* @__PURE__ */ y("div", {
+		children: [/* @__PURE__ */ p("div", {
 			className: "flex h-14 min-w-0 items-center gap-2 px-4 md:hidden",
 			children: [
-				s ? /* @__PURE__ */ v(t, {
+				s ? /* @__PURE__ */ f(t, {
 					type: "button",
 					variant: "ghost",
 					size: "icon",
-					"aria-label": u.openSidebar,
-					title: u.openSidebar,
+					"aria-label": d.openSidebar,
+					title: d.openSidebar,
 					onClick: s,
-					children: /* @__PURE__ */ v(g, {})
+					children: /* @__PURE__ */ f(u, {})
 				}) : null,
-				n ? /* @__PURE__ */ v("span", {
+				n ? /* @__PURE__ */ f("span", {
 					className: "min-w-0 flex-1 truncate text-sm font-semibold text-foreground",
 					children: n
 				}) : null,
-				i ? /* @__PURE__ */ v("div", {
+				i ? /* @__PURE__ */ f("div", {
 					className: "ml-auto flex shrink-0 items-center gap-1",
 					children: i
 				}) : null
 			]
-		}), /* @__PURE__ */ y("div", {
+		}), /* @__PURE__ */ p("div", {
 			className: "hidden h-14 min-w-0 items-center gap-2 px-4 md:flex",
-			children: [r?.length ? /* @__PURE__ */ v(O, {
+			children: [r?.length ? /* @__PURE__ */ f(S, {
 				breadcrumbs: r,
 				renderLink: a
-			}) : /* @__PURE__ */ v("div", {
+			}) : /* @__PURE__ */ f("div", {
 				className: "min-w-0 flex-1",
-				children: n ? /* @__PURE__ */ v("p", {
+				children: n ? /* @__PURE__ */ f("p", {
 					className: "truncate text-[13px] font-medium leading-4 text-foreground",
 					children: n
 				}) : null
-			}), i ? /* @__PURE__ */ v("div", {
+			}), i ? /* @__PURE__ */ f("div", {
 				className: "ml-auto flex shrink-0 items-center gap-2",
 				children: i
 			}) : null]
 		})]
 	});
 }
-function A({ navigation: t, currentPath: n, renderLink: r, brand: i, brandIcon: c, sidebarTop: l, sidebarFooter: u, headerTitle: p, headerBreadcrumbs: m, headerActions: h, children: g, defaultSidebarCollapsed: _ = !1, sidebarCollapsed: b, onSidebarCollapsedChange: S, sidebarStorageKey: C, closeMobileOnPathChange: w = !0, labels: T, sidebarClassName: E, headerClassName: O, mainClassName: A, className: j, ...M }) {
-	let [N, P] = f.useState(!1), [F, I] = f.useState(_), L = b ?? F;
-	f.useEffect(() => {
-		if (!C || b !== void 0 || typeof window > "u") return;
-		let e = window.localStorage.getItem(C);
-		e === "collapsed" && I(!0), e === "expanded" && I(!1);
-	}, [b, C]), f.useEffect(() => {
-		w && P(!1);
-	}, [w, n]);
-	let R = f.useCallback((e) => {
-		S?.(e), b === void 0 && I(e), C && typeof window < "u" && window.localStorage.setItem(C, e ? "collapsed" : "expanded");
-	}, [
-		S,
-		b,
-		C
-	]), z = {
+function w({ navigation: t, currentPath: n, renderLink: r, brand: l, sidebarHeaderActions: u, sidebarTop: d, sidebarFooter: m, headerTitle: g, headerBreadcrumbs: _, headerActions: v, children: y, closeMobileOnPathChange: b = !0, labels: S, sidebarClassName: w, headerClassName: T, mainClassName: E, className: D, ...O }) {
+	let [k, A] = c.useState(!1);
+	c.useEffect(() => {
+		b && A(!1);
+	}, [b, n]);
+	let j = {
 		navigation: t,
 		currentPath: n,
 		renderLink: r,
-		brand: i,
-		brandIcon: c,
-		top: l,
-		footer: u,
-		labels: T,
-		onNavigate: () => P(!1)
+		brand: l,
+		headerActions: u,
+		top: d,
+		footer: m,
+		labels: S,
+		onNavigate: () => A(!1)
 	};
-	return /* @__PURE__ */ y("div", {
+	return /* @__PURE__ */ p("div", {
 		"data-slot": "app-shell",
-		className: e("flex min-h-dvh w-full bg-background text-foreground", j),
-		...M,
+		className: e("flex min-h-dvh w-full bg-background text-foreground", D),
+		...O,
 		children: [
-			/* @__PURE__ */ v(D, {
-				...z,
-				collapsed: L,
-				onCollapsedChange: R,
-				className: E
+			/* @__PURE__ */ f(x, {
+				...j,
+				className: w
 			}),
-			/* @__PURE__ */ y("div", {
+			/* @__PURE__ */ p("div", {
 				className: "flex min-h-dvh min-w-0 flex-1 flex-col",
-				children: [/* @__PURE__ */ v(k, {
-					title: p,
-					breadcrumbs: m,
-					actions: h,
+				children: [/* @__PURE__ */ f(C, {
+					title: g,
+					breadcrumbs: _,
+					actions: v,
 					renderLink: r,
-					labels: T,
-					onSidebarOpen: () => P(!0),
-					className: O
-				}), /* @__PURE__ */ v("main", {
+					labels: S,
+					onSidebarOpen: () => A(!0),
+					className: T
+				}), /* @__PURE__ */ f("main", {
 					"data-slot": "app-shell-main",
-					className: e("min-h-0 flex-1 overflow-auto", A),
-					children: g
+					className: e("min-h-0 flex-1 overflow-auto", E),
+					children: y
 				})]
 			}),
-			/* @__PURE__ */ v(a, {
-				open: N,
-				onOpenChange: P,
-				children: /* @__PURE__ */ y(o, {
+			/* @__PURE__ */ f(i, {
+				open: k,
+				onOpenChange: A,
+				children: /* @__PURE__ */ p(a, {
 					side: "left",
 					showCloseButton: !1,
 					className: "w-[18rem] p-0 text-sidebar-foreground sm:max-w-none [&>button]:hidden",
-					children: [/* @__PURE__ */ v(d, { children: /* @__PURE__ */ v(s, { children: x(T).navigation }) }), /* @__PURE__ */ v(D, {
-						...z,
+					children: [/* @__PURE__ */ f(s, { children: /* @__PURE__ */ f(o, { children: h(S).navigation }) }), /* @__PURE__ */ f(x, {
+						...j,
 						mobile: !0
 					})]
 				})
@@ -304,4 +263,4 @@ function A({ navigation: t, currentPath: n, renderLink: r, brand: i, brandIcon: 
 	});
 }
 //#endregion
-export { k as AppHeader, A as AppShell, D as AppSidebar };
+export { C as AppHeader, w as AppShell, x as AppSidebar };

@@ -43,23 +43,18 @@ export type AppShellRenderLink = (props: AppShellRenderLinkProps) => React.React
 export interface AppShellLabels {
     navigation?: string;
     openSidebar?: string;
-    closeSidebar?: string;
-    collapseSidebar?: string;
-    expandSidebar?: string;
 }
 export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
     navigation: AppShellNavigationGroup[];
     currentPath: string;
     renderLink: AppShellRenderLink;
     brand: React.ReactNode;
-    brandIcon?: React.ReactNode;
+    headerActions?: React.ReactNode;
     top?: React.ReactNode;
     footer?: React.ReactNode;
-    collapsed?: boolean;
     mobile?: boolean;
     labels?: AppShellLabels;
     onNavigate?: () => void;
-    onCollapsedChange?: (collapsed: boolean) => void;
 }
 export interface AppHeaderProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
     title?: React.ReactNode;
@@ -74,23 +69,19 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
     currentPath: string;
     renderLink: AppShellRenderLink;
     brand: React.ReactNode;
-    brandIcon?: React.ReactNode;
+    sidebarHeaderActions?: React.ReactNode;
     sidebarTop?: React.ReactNode;
     sidebarFooter?: React.ReactNode;
     headerTitle?: React.ReactNode;
     headerBreadcrumbs?: AppShellBreadcrumb[];
     headerActions?: React.ReactNode;
     children: React.ReactNode;
-    defaultSidebarCollapsed?: boolean;
-    sidebarCollapsed?: boolean;
-    onSidebarCollapsedChange?: (collapsed: boolean) => void;
-    sidebarStorageKey?: string;
     closeMobileOnPathChange?: boolean;
     labels?: AppShellLabels;
     sidebarClassName?: string;
     headerClassName?: string;
     mainClassName?: string;
 }
-export declare function AppSidebar({ className, collapsed, mobile, ...props }: AppSidebarProps): import("react/jsx-runtime").JSX.Element;
+export declare function AppSidebar({ className, mobile, ...props }: AppSidebarProps): import("react/jsx-runtime").JSX.Element;
 export declare function AppHeader({ title, breadcrumbs, actions, renderLink, labels, onSidebarOpen, className, ...props }: AppHeaderProps): import("react/jsx-runtime").JSX.Element;
-export declare function AppShell({ navigation, currentPath, renderLink, brand, brandIcon, sidebarTop, sidebarFooter, headerTitle, headerBreadcrumbs, headerActions, children, defaultSidebarCollapsed, sidebarCollapsed, onSidebarCollapsedChange, sidebarStorageKey, closeMobileOnPathChange, labels, sidebarClassName, headerClassName, mainClassName, className, ...props }: AppShellProps): import("react/jsx-runtime").JSX.Element;
+export declare function AppShell({ navigation, currentPath, renderLink, brand, sidebarHeaderActions, sidebarTop, sidebarFooter, headerTitle, headerBreadcrumbs, headerActions, children, closeMobileOnPathChange, labels, sidebarClassName, headerClassName, mainClassName, className, ...props }: AppShellProps): import("react/jsx-runtime").JSX.Element;

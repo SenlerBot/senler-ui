@@ -1,25 +1,17 @@
 import * as React from 'react';
 import {
   ChevronRightIcon,
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
   MenuIcon,
 } from 'lucide-react';
 
 import { Badge } from '../atoms/badge';
 import { Button } from '../atoms/button';
 import { ScrollArea } from '../atoms/scroll-area';
-import { Separator } from '../atoms/separator';
 import {
   Sheet,
   SheetContent,
   SheetTitle,
 } from '../atoms/sheet';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '../atoms/tooltip';
 import { VisuallyHidden } from '../atoms/visually-hidden';
 import { cn } from '../lib/utils';
 
@@ -71,9 +63,6 @@ export type AppShellRenderLink = (props: AppShellRenderLinkProps) => React.React
 export interface AppShellLabels {
   navigation?: string;
   openSidebar?: string;
-  closeSidebar?: string;
-  collapseSidebar?: string;
-  expandSidebar?: string;
 }
 
 export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
@@ -81,14 +70,12 @@ export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
   currentPath: string;
   renderLink: AppShellRenderLink;
   brand: React.ReactNode;
-  brandIcon?: React.ReactNode;
+  headerActions?: React.ReactNode;
   top?: React.ReactNode;
   footer?: React.ReactNode;
-  collapsed?: boolean;
   mobile?: boolean;
   labels?: AppShellLabels;
   onNavigate?: () => void;
-  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
 export interface AppHeaderProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
@@ -105,17 +92,13 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   currentPath: string;
   renderLink: AppShellRenderLink;
   brand: React.ReactNode;
-  brandIcon?: React.ReactNode;
+  sidebarHeaderActions?: React.ReactNode;
   sidebarTop?: React.ReactNode;
   sidebarFooter?: React.ReactNode;
   headerTitle?: React.ReactNode;
   headerBreadcrumbs?: AppShellBreadcrumb[];
   headerActions?: React.ReactNode;
   children: React.ReactNode;
-  defaultSidebarCollapsed?: boolean;
-  sidebarCollapsed?: boolean;
-  onSidebarCollapsedChange?: (collapsed: boolean) => void;
-  sidebarStorageKey?: string;
   closeMobileOnPathChange?: boolean;
   labels?: AppShellLabels;
   sidebarClassName?: string;
@@ -126,9 +109,6 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
 const defaultLabels = {
   navigation: 'Navigation',
   openSidebar: 'Open navigation',
-  closeSidebar: 'Close navigation',
-  collapseSidebar: 'Collapse navigation',
-  expandSidebar: 'Expand navigation',
 };
 
 function getLabels(labels: AppShellLabels | undefined) {
@@ -193,14 +173,12 @@ function callNavigationHandlers(
 function AppSidebarNavItem({
   item,
   currentPath,
-  collapsed,
   renderLink,
   onNavigate,
   depth = 0,
 }: {
   item: AppShellNavigationItem;
   currentPath: string;
-  collapsed: boolean;
   renderLink: AppShellRenderLink;
   onNavigate?: () => void;
   depth?: number;
@@ -209,28 +187,24 @@ function AppSidebarNavItem({
   const title = getItemTitle(item);
   const Icon = item.icon;
   const hasChildren = !!item.items?.length;
-  const showChildren = !collapsed && hasChildren && (active || item.defaultOpen);
+  const showChildren = hasChildren && (active || item.defaultOpen);
   const itemClassName = cn(
     'group/app-shell-nav-item flex h-8 w-full items-center gap-2 rounded-md text-sm outline-none transition-colors',
     'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
     'focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50',
     'aria-disabled:pointer-events-none aria-disabled:opacity-50',
     active && 'bg-muted font-medium text-foreground',
-    collapsed ? 'justify-center px-2' : 'px-2',
-    depth > 0 && !collapsed && 'h-7 text-[13px] text-sidebar-foreground/80'
+    'px-2',
+    depth > 0 && 'h-7 text-[13px] text-sidebar-foreground/80'
   );
   const content = (
     <>
       {Icon ? <Icon className='size-4 shrink-0 text-muted-foreground group-hover/app-shell-nav-item:text-inherit' /> : null}
-      {!collapsed ? (
-        <>
-          <span className='min-w-0 flex-1 truncate'>{item.label}</span>
-          {item.badge !== undefined ? (
-            <Badge variant='secondary' className='ml-auto max-w-16 rounded-full px-1.5 py-0 text-[11px]'>
-              {item.badge}
-            </Badge>
-          ) : null}
-        </>
+      <span className='min-w-0 flex-1 truncate'>{item.label}</span>
+      {item.badge !== undefined ? (
+        <Badge variant='secondary' className='ml-auto max-w-16 rounded-full px-1.5 py-0 text-[11px]'>
+          {item.badge}
+        </Badge>
       ) : null}
     </>
   );
@@ -278,14 +252,7 @@ function AppSidebarNavItem({
 
   return (
     <li className='min-w-0'>
-      {collapsed ? (
-        <Tooltip>
-          <TooltipTrigger asChild>{control}</TooltipTrigger>
-          <TooltipContent side='right' align='center'>
-            {title}
-          </TooltipContent>
-        </Tooltip>
-      ) : control}
+      {control}
 
       {showChildren ? (
         <ul className='mt-1 grid gap-1 border-l border-sidebar-border pl-3'>
@@ -294,7 +261,6 @@ function AppSidebarNavItem({
               key={child.id}
               item={child}
               currentPath={currentPath}
-              collapsed={collapsed}
               renderLink={renderLink}
               onNavigate={onNavigate}
               depth={depth + 1}
@@ -311,57 +277,32 @@ function AppSidebarContent({
   currentPath,
   renderLink,
   brand,
-  brandIcon,
+  headerActions,
   top,
   footer,
-  collapsed = false,
-  mobile = false,
   labels,
   onNavigate,
-  onCollapsedChange,
 }: AppSidebarProps) {
   const resolvedLabels = getLabels(labels);
 
   return (
     <div className='flex h-full min-h-0 w-full flex-col'>
-      <div
-        className={cn(
-          'flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3',
-          collapsed && !mobile && 'justify-center px-2'
-        )}
-      >
+      <div className='flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3'>
         <div className='min-w-0 flex-1 overflow-hidden'>
-          {collapsed && !mobile ? (
-            <div className='flex size-8 items-center justify-center overflow-hidden rounded-md'>
-              {brandIcon ?? brand}
-            </div>
-          ) : brand}
+          {brand}
         </div>
-
-        {!mobile && onCollapsedChange ? (
-          <Button
-            type='button'
-            variant='ghost'
-            size='icon_sm'
-            aria-label={collapsed ? resolvedLabels.expandSidebar : resolvedLabels.collapseSidebar}
-            title={collapsed ? resolvedLabels.expandSidebar : resolvedLabels.collapseSidebar}
-            onClick={() => onCollapsedChange(!collapsed)}
-          >
-            {collapsed ? <ChevronsRightIcon /> : <ChevronsLeftIcon />}
-          </Button>
-        ) : null}
+        {headerActions ? <div className='flex shrink-0 items-center gap-0.5'>{headerActions}</div> : null}
       </div>
 
-      {top && (!collapsed || mobile) ? (
-        <div className='shrink-0 border-b border-sidebar-border p-2'>{top}</div>
+      {top ? (
+        <div className='shrink-0 p-2'>{top}</div>
       ) : null}
 
       <ScrollArea className='min-h-0 flex-1'>
         <nav aria-label={resolvedLabels.navigation} className='grid gap-3 p-2'>
-          {navigation.map((group, index) => (
+          {navigation.map((group) => (
             <div key={group.id} className='grid gap-1'>
-              {index > 0 && !collapsed ? <Separator className='my-1 bg-sidebar-border' /> : null}
-              {group.label && !collapsed ? (
+              {group.label ? (
                 <div className='px-2 py-1 text-xs font-medium text-sidebar-foreground/70'>
                   {group.label}
                 </div>
@@ -372,7 +313,6 @@ function AppSidebarContent({
                     key={item.id}
                     item={item}
                     currentPath={currentPath}
-                    collapsed={collapsed && !mobile}
                     renderLink={renderLink}
                     onNavigate={onNavigate}
                   />
@@ -383,8 +323,8 @@ function AppSidebarContent({
         </nav>
       </ScrollArea>
 
-      {footer && (!collapsed || mobile) ? (
-        <div className='shrink-0 border-t border-sidebar-border p-2'>{footer}</div>
+      {footer ? (
+        <div className='shrink-0 p-2'>{footer}</div>
       ) : null}
     </div>
   );
@@ -392,7 +332,6 @@ function AppSidebarContent({
 
 export function AppSidebar({
   className,
-  collapsed = false,
   mobile = false,
   ...props
 }: AppSidebarProps) {
@@ -403,7 +342,7 @@ export function AppSidebar({
         data-mobile='true'
         className={cn('flex h-full bg-sidebar text-sidebar-foreground', className)}
       >
-        <AppSidebarContent collapsed={false} mobile {...props} />
+        <AppSidebarContent {...props} />
       </div>
     );
   }
@@ -411,14 +350,13 @@ export function AppSidebar({
   return (
     <aside
       data-slot='app-sidebar'
-      data-state={collapsed ? 'collapsed' : 'expanded'}
+      data-state='expanded'
       className={cn(
-        'hidden h-dvh shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear md:flex',
-        collapsed ? 'w-12' : 'w-64',
+        'hidden h-dvh w-64 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex',
         className
       )}
     >
-      <AppSidebarContent collapsed={collapsed} {...props} />
+      <AppSidebarContent {...props} />
     </aside>
   );
 }
@@ -526,17 +464,13 @@ export function AppShell({
   currentPath,
   renderLink,
   brand,
-  brandIcon,
+  sidebarHeaderActions,
   sidebarTop,
   sidebarFooter,
   headerTitle,
   headerBreadcrumbs,
   headerActions,
   children,
-  defaultSidebarCollapsed = false,
-  sidebarCollapsed,
-  onSidebarCollapsedChange,
-  sidebarStorageKey,
   closeMobileOnPathChange = true,
   labels,
   sidebarClassName,
@@ -546,22 +480,6 @@ export function AppShell({
   ...props
 }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [uncontrolledCollapsed, setUncontrolledCollapsed] = React.useState(defaultSidebarCollapsed);
-  const collapsed = sidebarCollapsed ?? uncontrolledCollapsed;
-
-  React.useEffect(() => {
-    if (!sidebarStorageKey || sidebarCollapsed !== undefined || typeof window === 'undefined') {
-      return;
-    }
-
-    const storedState = window.localStorage.getItem(sidebarStorageKey);
-    if (storedState === 'collapsed') {
-      setUncontrolledCollapsed(true);
-    }
-    if (storedState === 'expanded') {
-      setUncontrolledCollapsed(false);
-    }
-  }, [sidebarCollapsed, sidebarStorageKey]);
 
   React.useEffect(() => {
     if (closeMobileOnPathChange) {
@@ -569,27 +487,12 @@ export function AppShell({
     }
   }, [closeMobileOnPathChange, currentPath]);
 
-  const setCollapsed = React.useCallback(
-    (nextCollapsed: boolean) => {
-      onSidebarCollapsedChange?.(nextCollapsed);
-
-      if (sidebarCollapsed === undefined) {
-        setUncontrolledCollapsed(nextCollapsed);
-      }
-
-      if (sidebarStorageKey && typeof window !== 'undefined') {
-        window.localStorage.setItem(sidebarStorageKey, nextCollapsed ? 'collapsed' : 'expanded');
-      }
-    },
-    [onSidebarCollapsedChange, sidebarCollapsed, sidebarStorageKey]
-  );
-
   const sidebarProps = {
     navigation,
     currentPath,
     renderLink,
     brand,
-    brandIcon,
+    headerActions: sidebarHeaderActions,
     top: sidebarTop,
     footer: sidebarFooter,
     labels,
@@ -604,8 +507,6 @@ export function AppShell({
     >
       <AppSidebar
         {...sidebarProps}
-        collapsed={collapsed}
-        onCollapsedChange={setCollapsed}
         className={sidebarClassName}
       />
 

@@ -19,7 +19,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.4.0.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.0.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -62,7 +62,7 @@ import { LayoutContainer } from '@senler/ui/layout/container';
 
 ## App Shell
 
-Use `AppShell` when a product needs the standard Senler sidebar and header behavior. The component owns the layout, desktop sidebar, mobile drawer, active menu state, collapsed sidebar, header actions, and breadcrumbs. The application provides only navigation data and a router-specific link renderer.
+Use `AppShell` when a product needs the standard Senler sidebar and header behavior. The component owns the layout, desktop sidebar, mobile drawer, active menu state, header slots, footer slot, and breadcrumbs. The application provides navigation data, product-specific controls, and a router-specific link renderer.
 
 ```tsx
 import { AppShell } from '@senler/ui/app-shell';
@@ -86,6 +86,9 @@ export function Layout() {
   return (
     <AppShell
       brand={<span className="text-sm font-semibold">Senler</span>}
+      sidebarHeaderActions={<AccountControls />}
+      sidebarTop={<ProjectSelector />}
+      sidebarFooter={<SidebarFooter />}
       navigation={navigation}
       currentPath={location.pathname}
       headerTitle="Agents"

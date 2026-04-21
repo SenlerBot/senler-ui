@@ -13,7 +13,6 @@ const stylesEntry = path.resolve(dirname, 'src/styles.css');
 const externalPackages = [
   'react',
   'react-dom',
-  'react/jsx-runtime',
   'class-variance-authority',
   'clsx',
   'lucide-react',
@@ -25,12 +24,18 @@ function isExternal(id: string) {
   return (
     externalPackages.includes(id) ||
     id.startsWith('@radix-ui/') ||
+    id.startsWith('react/') ||
     id.startsWith('react-dom/')
   );
 }
 
 export default defineConfig({
   plugins: [react()],
+  oxc: {
+    jsx: {
+      development: false,
+    },
+  },
   build: {
     copyPublicDir: false,
     cssCodeSplit: true,
