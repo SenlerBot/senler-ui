@@ -32,6 +32,12 @@ export function Example() {
 }
 ```
 
+Optional code highlighting is exported separately so the core entrypoint does not pull `prism-react-renderer` into apps that do not use it:
+
+```tsx
+import { CodeBlock } from '@senler/ui/code';
+```
+
 ## Source Of Truth
 
 The source package lives in `aibot-cabinet/packages/senler-ui`.

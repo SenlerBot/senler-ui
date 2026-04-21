@@ -6,6 +6,7 @@ import { defineConfig } from 'vite';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const packageEntry = path.resolve(dirname, 'src/index.ts');
+const codeEntry = path.resolve(dirname, 'src/code.ts');
 const stylesEntry = path.resolve(dirname, 'src/styles.css');
 
 const externalPackages = [
@@ -35,6 +36,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: packageEntry,
+        code: codeEntry,
         styles: stylesEntry,
       },
       formats: ['es'],
