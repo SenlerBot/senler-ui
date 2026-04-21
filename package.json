@@ -1,9 +1,9 @@
 {
   "name": "@senler/ui",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": false,
   "type": "module",
-  "description": "Senler shared React UI components",
+  "description": "Senler React 19 UI component library with shared styles, atoms, layout primitives, forms, and overlays",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/SenlerBot/senler-ui/issues"
   },
-  "homepage": "https://github.com/SenlerBot/senler-ui#readme",
+  "homepage": "https://ui.senler.io",
   "sideEffects": [
     "./dist/styles.css"
   ],
