@@ -5,7 +5,7 @@ Shared Senler React UI components.
 ## Install
 
 ```bash
-npm install git+ssh://git@gitlab.collabox.dev/aibot/senler-ui.git
+npm install git+https://github.com/SenlerBot/senler-ui.git#v0.3.1
 ```
 
 Requires React 19:
