@@ -1,12 +1,12 @@
 import { ComponentProps, forwardRef, ReactNode, useId } from 'react';
-import { Input } from '@/shared/ui/atoms/input';
+import { Input } from './input';
 import {
   Field,
   FieldError,
   FieldLabel,
   FieldDescription,
-} from '@/shared/ui/atoms/field';
-import { cn } from '@/shared/lib/utils/cn';
+} from './field';
+import { cn } from '../../lib/utils/cn';
 
 interface Props extends ComponentProps<typeof Input> {
   label?: string;
