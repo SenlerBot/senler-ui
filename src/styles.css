@@ -1,0 +1,430 @@
+@import "tailwindcss";
+/* Утилиты animate-in / fade-in / zoom-in / slide-in (Radix + shadcn) — без плагина классы не попадают в бандл */
+@plugin "tailwindcss-animate";
+
+/* Class-based dark mode (next-themes adds .dark to <html>) */
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================
+   Shadcn/ui CSS Variables (Tailwind v4)
+   ============================================ */
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(222.2 84% 4.9%);
+  
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222.2 84% 4.9%);
+  
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222.2 84% 4.9%);
+  
+  --primary: hsl(222.2 47.4% 11.2%);
+  --primary-foreground: hsl(210 40% 98%);
+  
+  --secondary: hsl(210 40% 96.1%);
+  --secondary-foreground: hsl(222.2 47.4% 11.2%);
+  
+  --muted: #E5ECF1;
+  --muted-foreground: hsl(215.4 16.3% 46.9%);
+  
+  --accent: hsla(205, 30%, 92%, 0.600);
+  --accent-foreground: hsl(222.2 47.4% 11.2%);
+  
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+  
+  --border: hsl(214.3 31.8% 91.4%);
+  --input: hsl(214.3 31.8% 91.4%);
+  --ring: hsl(222.2 84% 4.9%);
+  
+  --radius: 0.5rem;
+  
+  /* Sidebar */
+  --sidebar: #F6F9FB;
+  --sidebar-foreground: hsl(222.2 84% 4.9%);
+  --sidebar-border: #DFE7EC;
+  --sidebar-ring: hsl(222.2 84% 4.9%);
+  --sidebar-accent: hsl(210 40% 96.1%);
+  --sidebar-accent-foreground: hsl(222.2 47.4% 11.2%);
+}
+
+.dark {
+  --background: hsl(222.2 84% 4.9%);
+  --foreground: hsl(210 40% 98%);
+  
+  --card: hsl(222.2 84% 4.9%);
+  --card-foreground: hsl(210 40% 98%);
+  
+  --popover: hsl(222.2 84% 4.9%);
+  --popover-foreground: hsl(210 40% 98%);
+  
+  --primary: hsl(210 40% 98%);
+  --primary-foreground: hsl(222.2 47.4% 11.2%);
+  
+  --secondary: hsl(217.2 32.6% 17.5%);
+  --secondary-foreground: hsl(210 40% 98%);
+  
+  --muted: hsl(217.2 32.6% 17.5%);
+  --muted-foreground: hsl(215 20.2% 65.1%);
+  
+  --accent: hsl(217.2 32.6% 17.5%);
+  --accent-foreground: hsl(210 40% 98%);
+  
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(210 40% 98%);
+  
+  --border: hsl(217.2 32.6% 17.5%);
+  --input: hsl(217.2 32.6% 17.5%);
+  --ring: hsl(212.7 26.8% 83.9%);
+  
+  /* Sidebar */
+  --sidebar: hsl(222.2 84% 4.9%);
+  --sidebar-foreground: hsl(210 40% 98%);
+  --sidebar-border: hsl(217.2 32.6% 17.5%);
+  --sidebar-ring: hsl(212.7 26.8% 83.9%);
+  --sidebar-accent: hsl(217.2 32.6% 17.5%);
+  --sidebar-accent-foreground: hsl(210 40% 98%);
+}
+
+/* ============================================
+   Tailwind v4 Theme Integration (@theme inline)
+   ============================================ */
+
+@theme inline {
+  /* Shadcn/ui colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  
+  /* Border radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+/* ============================================
+   Custom Project Colors
+   ============================================ */
+
+@theme {
+  --color-primary-main: #4f46e5;
+  --color-primary-dark: #4338ca;
+  --color-primary-light: #818cf8;
+  --color-secondary-main: #10b981;
+  --color-error-main: #ef4444;
+  --color-warning-main: #f59e0b;
+}
+
+/* ============================================
+   Base Styles & Animations
+   ============================================ */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  button,
+  [role="button"],
+  a,
+  select,
+  summary,
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    cursor: pointer;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  #root {
+    height: 100%;
+  }
+}
+
+/* ============================================
+   ProseMirror Base Styles
+   ============================================ */
+
+.ProseMirror {
+  position: relative;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.ProseMirror pre {
+  white-space: pre-wrap;
+}
+
+.ProseMirror li {
+  position: relative;
+}
+
+.ProseMirror-hideselection *::selection {
+  background: transparent;
+}
+
+.ProseMirror-hideselection *::-moz-selection {
+  background: transparent;
+}
+
+.ProseMirror-hideselection {
+  caret-color: transparent;
+}
+
+.ProseMirror-selectednode {
+  outline: 2px solid #8cf;
+}
+
+li.ProseMirror-selectednode {
+  outline: none;
+}
+
+li.ProseMirror-selectednode:after {
+  content: "";
+  position: absolute;
+  left: -32px;
+  right: -2px;
+  top: -2px;
+  bottom: -2px;
+  border: 2px solid #8cf;
+  pointer-events: none;
+}
+
+img.ProseMirror-separator {
+  display: inline !important;
+  border: none !important;
+  margin: 0 !important;
+}
+
+/* ============================================
+   Lexical Editor Styles
+   ============================================ */
+
+.lexical-editor-wrapper {
+  position: relative;
+  background-color: var(--background);
+}
+
+.lexical-content-editable {
+  position: relative;
+}
+
+.lexical-content-editable:focus {
+  outline: none;
+}
+
+.lexical-placeholder {
+  user-select: none;
+}
+
+/* Текстовое форматирование */
+.lexical-text-bold {
+  font-weight: bold;
+}
+
+.lexical-text-italic {
+  font-style: italic;
+}
+
+.lexical-text-underline {
+  text-decoration: underline;
+}
+
+.lexical-text-strikethrough {
+  text-decoration: line-through;
+}
+
+.lexical-text-code {
+  background-color: hsl(var(--muted));
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Ссылки */
+.lexical-link {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.lexical-link:hover {
+  text-decoration: none;
+}
+
+/* Код блок */
+.lexical-code-block {
+  background-color: hsl(var(--muted));
+  padding: 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  margin: 8px 0;
+}
+
+/* Списки */
+.lexical-list-ul,
+.lexical-list-ol {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+
+.lexical-listitem {
+  margin: 4px 0;
+}
+
+/* Paragraph */
+.lexical-paragraph {
+  margin: 0;
+  padding: 0;
+}
+
+/* Scrollbar для контента */
+.lexical-content-editable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lexical-content-editable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lexical-content-editable::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+.lexical-content-editable::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* ============================================
+   Policy Page Prose Styles
+   ============================================ */
+
+.policy-prose {
+  line-height: 1.75;
+  color: var(--foreground);
+  max-width: 65ch;
+}
+
+.policy-prose h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  margin-top: 0;
+  line-height: 1.3;
+}
+
+.policy-prose h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.policy-prose h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.policy-prose p {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.policy-prose ul,
+.policy-prose ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+.policy-prose ul {
+  list-style-type: disc;
+}
+
+.policy-prose ol {
+  list-style-type: decimal;
+}
+
+.policy-prose li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.policy-prose a {
+  color: hsl(217 91% 60%);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.policy-prose a:hover {
+  text-decoration: none;
+}
+
+.policy-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.policy-prose th,
+.policy-prose td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.policy-prose th {
+  font-weight: 600;
+  background-color: var(--muted);
+}
+
+.policy-prose em {
+  color: var(--muted-foreground);
+}
+
+.policy-prose strong {
+  font-weight: 600;
+}
+
+.policy-prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+
