@@ -5,13 +5,13 @@ Shared Senler React UI components.
 ## Install
 
 ```bash
-npm install git+https://github.com/SenlerBot/senler-ui.git#v0.3.1
+npm install git+https://github.com/SenlerBot/senler-ui.git#v0.3.2
 ```
 
-Requires React 19:
+Requires React 19 and `lucide-react`:
 
 ```bash
-npm install react@^19 react-dom@^19
+npm install react@^19 react-dom@^19 lucide-react
 ```
 
 ## Usage
