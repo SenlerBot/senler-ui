@@ -1,8 +1,8 @@
 import { jsx as e } from "react/jsx-runtime";
 import { useTheme as t } from "next-themes";
-import { Toaster as n } from "sonner";
+import { Toaster as n, toast as r } from "sonner";
 //#region src/atoms/sonner.tsx
-function r({ ...r }) {
+function i({ ...r }) {
 	let { resolvedTheme: i } = t();
 	return /* @__PURE__ */ e(n, {
 		theme: i === "dark" ? "dark" : "light",
@@ -23,4 +23,4 @@ function r({ ...r }) {
 	});
 }
 //#endregion
-export { r as Toaster };
+export { i as Toaster, r as toast };

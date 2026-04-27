@@ -1,0 +1,123 @@
+import { type ReactNode } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+import { cn } from '../lib/utils';
+
+const chipVariants = cva(
+  'inline-flex items-center rounded-full font-medium transition-colors',
+  {
+    variants: {
+      color: {
+        primary: '',
+        secondary: '',
+        success: '',
+        error: '',
+        info: '',
+        default: '',
+      },
+      size: {
+        small: 'px-2 py-0.5 text-xs',
+        medium: 'px-3 py-1 text-sm',
+      },
+      variant: {
+        filled: '',
+        outlined: 'border bg-transparent',
+      },
+    },
+    compoundVariants: [
+      {
+        variant: 'filled',
+        color: 'primary',
+        className: 'bg-primary text-primary-foreground',
+      },
+      {
+        variant: 'filled',
+        color: 'secondary',
+        className: 'bg-secondary text-secondary-foreground',
+      },
+      {
+        variant: 'filled',
+        color: 'success',
+        className: 'bg-green-500/15 text-green-700 dark:text-green-400',
+      },
+      {
+        variant: 'filled',
+        color: 'error',
+        className: 'bg-red-500/15 text-red-700 dark:text-red-400',
+      },
+      {
+        variant: 'filled',
+        color: 'info',
+        className: 'bg-blue-500/15 text-blue-700 dark:text-blue-400',
+      },
+      {
+        variant: 'filled',
+        color: 'default',
+        className: 'bg-muted text-foreground',
+      },
+      {
+        variant: 'outlined',
+        color: 'primary',
+        className: 'border-primary text-primary',
+      },
+      {
+        variant: 'outlined',
+        color: 'secondary',
+        className: 'border-secondary text-secondary-foreground',
+      },
+      {
+        variant: 'outlined',
+        color: 'success',
+        className: 'border-green-500/40 text-green-700 dark:text-green-400',
+      },
+      {
+        variant: 'outlined',
+        color: 'error',
+        className: 'border-red-500/40 text-red-700 dark:text-red-400',
+      },
+      {
+        variant: 'outlined',
+        color: 'info',
+        className: 'border-blue-500/40 text-blue-700 dark:text-blue-400',
+      },
+      {
+        variant: 'outlined',
+        color: 'default',
+        className: 'border-border text-muted-foreground',
+      },
+    ],
+    defaultVariants: {
+      color: 'default',
+      size: 'medium',
+      variant: 'filled',
+    },
+  }
+);
+
+export type ChipColor = NonNullable<VariantProps<typeof chipVariants>['color']>;
+export type ChipSize = NonNullable<VariantProps<typeof chipVariants>['size']>;
+export type ChipVariant = NonNullable<VariantProps<typeof chipVariants>['variant']>;
+
+export interface ChipProps extends VariantProps<typeof chipVariants> {
+  label: ReactNode;
+  className?: string;
+  icon?: ReactNode;
+}
+
+function Chip({
+  label,
+  color,
+  size,
+  variant,
+  className,
+  icon,
+}: ChipProps) {
+  return (
+    <span className={cn(chipVariants({ color, size, variant }), className)}>
+      {icon ? <span className='mr-1 flex items-center'>{icon}</span> : null}
+      {label}
+    </span>
+  );
+}
+
+export { Chip, chipVariants };
