@@ -6,9 +6,10 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 
 ## What Is Included
 
-- Shared CSS tokens and base component styles via `@senler/ui/styles.css`.
+- Shared CSS tokens via `@senler/ui/tokens.css`.
+- Full standalone component stylesheet via `@senler/ui/styles.css`.
 - Core actions and feedback: `Button`, `Badge`, `Alert`, `Progress`, `Skeleton`, `Spinner`, `PageLoader`, `Announce`, `Empty`.
-- Form controls: `Input`, `Textarea`, `CheckBox`, `RadioGroup`, `Switch`, `Slider`, `Select`, `Label`, `Field`, `Form`, `InputField`.
+- Form controls: `Input`, `Textarea`, `CheckBox`, `RadioGroup`, `Switch`, `Slider`, `Select`, `SearchableSelect`, `AsyncSearchableSelect`, `Label`, `Field`, `Form`, `InputField`.
 - Surfaces and content: `Card`, `Table`, `Img`, `ImagePreview`, `Separator`, `ScrollArea`, `VisuallyHidden`, `SvgIcon`.
 - Overlays and menus: `Dialog`, `AlertDialog`, `Sheet`, `Popover`, `Tooltip`, `HoverCard`, `DropdownMenu`, `ContextMenu`, `Menubar`.
 - Navigation and disclosure primitives: `Tabs`, `Accordion`, `Collapsible`, `Link`.
@@ -36,6 +37,13 @@ Import the stylesheet once in the application entrypoint:
 import '@senler/ui/styles.css';
 ```
 
+If the host application already owns its Tailwind pipeline and global styles,
+prefer the token-only entrypoint:
+
+```ts
+import '@senler/ui/tokens.css';
+```
+
 Then import components from the root entrypoint:
 
 ```tsx
@@ -57,6 +65,7 @@ Subpath imports are also available when a project wants narrower imports:
 
 ```tsx
 import { Button } from '@senler/ui/atoms/button';
+import { SearchableSelect } from '@senler/ui/compound/searchable-select';
 import { LayoutContainer } from '@senler/ui/layout/container';
 ```
 

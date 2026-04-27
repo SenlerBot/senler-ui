@@ -39,6 +39,7 @@ export * from './atoms/tabs';
 export * from './atoms/textarea';
 export * from './atoms/tooltip';
 export * from './atoms/visually-hidden';
+export * from './compound/searchable-select';
 export * from './layout/container';
 export * from './layout/field';
 export * from './layout/section';
