@@ -9,7 +9,6 @@ const packageEntry = path.resolve(dirname, 'src/index.ts');
 const appShellEntry = path.resolve(dirname, 'src/app-shell.ts');
 const codeEntry = path.resolve(dirname, 'src/code.ts');
 const stylesEntry = path.resolve(dirname, 'src/styles.css');
-const tokensEntry = path.resolve(dirname, 'src/tokens.css');
 
 const externalPackages = [
   'react',
@@ -17,17 +16,25 @@ const externalPackages = [
   'class-variance-authority',
   'clsx',
   'lucide-react',
+  'next-themes',
   'prism-react-renderer',
+  'react-day-picker',
   'react-select',
+  'sonner',
   'tailwind-merge',
 ];
 
 function isExternal(id: string) {
   return (
     externalPackages.includes(id) ||
+    id.startsWith('@date-fns/') ||
     id.startsWith('@radix-ui/') ||
+    id.startsWith('date-fns/') ||
+    id.startsWith('next-themes/') ||
+    id.startsWith('react-day-picker/') ||
     id.startsWith('react-select/') ||
     id.startsWith('react/') ||
+    id.startsWith('sonner/') ||
     id.startsWith('react-dom/')
   );
 }
@@ -48,7 +55,6 @@ export default defineConfig({
         'app-shell': appShellEntry,
         code: codeEntry,
         styles: stylesEntry,
-        tokens: tokensEntry,
       },
       formats: ['es'],
       cssFileName: 'styles',

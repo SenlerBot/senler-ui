@@ -6,13 +6,14 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 
 ## What Is Included
 
+- Shared Tailwind integration via `@senler/ui/tailwind.css`.
 - Shared CSS tokens via `@senler/ui/tokens.css`.
 - Full standalone component stylesheet via `@senler/ui/styles.css`.
-- Core actions and feedback: `Button`, `Badge`, `Alert`, `Progress`, `Skeleton`, `Spinner`, `PageLoader`, `Announce`, `Empty`.
+- Core actions and feedback: `Button`, `Badge`, `Alert`, `Progress`, `Skeleton`, `Spinner`, `PageLoader`, `Announce`, `Empty`, `Toaster`.
 - Form controls: `Input`, `Textarea`, `CheckBox`, `RadioGroup`, `Switch`, `Slider`, `Select`, `SearchableSelect`, `AsyncSearchableSelect`, `Label`, `Field`, `Form`, `InputField`.
-- Surfaces and content: `Card`, `Table`, `Img`, `ImagePreview`, `Separator`, `ScrollArea`, `VisuallyHidden`, `SvgIcon`.
+- Surfaces and content: `Card`, `Table`, `Avatar`, `Img`, `ImagePreview`, `Separator`, `ScrollArea`, `VisuallyHidden`, `SvgIcon`.
 - Overlays and menus: `Dialog`, `AlertDialog`, `Sheet`, `Popover`, `Tooltip`, `HoverCard`, `DropdownMenu`, `ContextMenu`, `Menubar`.
-- Navigation and disclosure primitives: `Tabs`, `Accordion`, `Collapsible`, `Link`.
+- Navigation and disclosure primitives: `Tabs`, `Accordion`, `Collapsible`, `Link`, `Calendar`.
 - Layout helpers: `LayoutContainer`, `LayoutSection`, `LayoutField`.
 - Application shell: `AppShell`, `AppSidebar`, `AppHeader` from `@senler/ui/app-shell`.
 - Optional code highlighting: `CodeBlock` from `@senler/ui/code`.
@@ -20,7 +21,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.0.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.5.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -31,18 +32,25 @@ npm install react@^19 react-dom@^19 lucide-react
 
 ## Usage
 
-Import the stylesheet once in the application entrypoint:
+Import the stylesheet once in the application entrypoint when Senler UI owns the
+Tailwind output:
 
 ```tsx
 import '@senler/ui/styles.css';
 ```
 
 If the host application already owns its Tailwind pipeline and global styles,
-prefer the token-only entrypoint:
+import the Tailwind integration entrypoint from the app CSS file after
+`tailwindcss`. It registers semantic color utilities, the dark variant, and
+scans Senler UI classes:
 
-```ts
-import '@senler/ui/tokens.css';
+```css
+@import "tailwindcss";
+@import "@senler/ui/tailwind.css";
 ```
+
+Use `@senler/ui/tokens.css` only when you need raw CSS variables without
+Tailwind utility generation.
 
 Then import components from the root entrypoint:
 

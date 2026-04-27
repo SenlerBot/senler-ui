@@ -1,0 +1,5 @@
+@import "./tokens.css";
+
+@source ".";
+
+@custom-variant dark (&:where(.dark, .dark *));
