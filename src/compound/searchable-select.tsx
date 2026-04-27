@@ -14,6 +14,10 @@ import ReactAsyncSelect, {
 
 import { FieldDescription, FieldError } from '../atoms/field';
 import { Label } from '../atoms/label';
+import {
+  overlayLayerClassName,
+  overlaySolidSurfaceClassName,
+} from '../lib/overlay-styles';
 import { cn } from '../lib/utils';
 
 export const searchableSelectDefaults = {
@@ -107,7 +111,9 @@ function buildSearchableSelectClassNames<
       ),
     menu: (state) =>
       cn(
-        'z-50 mt-1 overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md',
+        overlayLayerClassName,
+        'mt-1',
+        overlaySolidSurfaceClassName,
         classNames?.menu?.(state),
       ),
     menuList: (state) =>
