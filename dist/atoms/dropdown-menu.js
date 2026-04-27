@@ -120,6 +120,6 @@ function S({ className: t, ...n }) {
 	});
 }
 var C = t.forwardRef(d);
-C.displayName = "Content";
+C.displayName = "DropdownMenuContent";
 //#endregion
-export { m as DropdownMenuCheckboxItem, f as DropdownMenuGroup, p as DropdownMenuItem, _ as DropdownMenuLabel, l as DropdownMenuPortal, h as DropdownMenuRadioGroup, g as DropdownMenuRadioItem, c as DropdownMenuRoot, v as DropdownMenuSeparator, y as DropdownMenuShortcut, b as DropdownMenuSub, S as DropdownMenuSubContent, x as DropdownMenuSubTrigger, u as DropdownMenuTrigger, C as ForwardedContent };
+export { m as DropdownMenuCheckboxItem, C as DropdownMenuContent, f as DropdownMenuGroup, p as DropdownMenuItem, _ as DropdownMenuLabel, l as DropdownMenuPortal, h as DropdownMenuRadioGroup, g as DropdownMenuRadioItem, c as DropdownMenuRoot, v as DropdownMenuSeparator, y as DropdownMenuShortcut, b as DropdownMenuSub, S as DropdownMenuSubContent, x as DropdownMenuSubTrigger, u as DropdownMenuTrigger };

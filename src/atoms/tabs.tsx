@@ -121,7 +121,7 @@ function TabsTrigger({
 
 const TabsListContext = React.createContext<{ variant?: TabsListVariant } | null>(null);
 
-const TabsListWithContext = React.forwardRef<
+const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   TabsListProps
 >(({ size = tabsListDefaults.size, variant = tabsListDefaults.variant, className, children, ...props }, ref) => {
@@ -139,6 +139,7 @@ const TabsListWithContext = React.forwardRef<
     </TabsListContext.Provider>
   );
 });
+TabsList.displayName = 'TabsList';
 
 function TabsContent({
   className,
@@ -155,7 +156,7 @@ function TabsContent({
 
 export { 
   TabsRoot, 
-  TabsListWithContext as TabsList, 
+  TabsList, 
   TabsTrigger, 
   TabsContent 
 };

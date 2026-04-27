@@ -39,6 +39,6 @@ type TabsTriggerProps = React.ComponentProps<typeof TabsPrimitive.Trigger> & {
     count?: number;
 };
 declare function TabsTrigger({ variant, count, className, children, ...props }: TabsTriggerProps): import("react/jsx-runtime").JSX.Element;
-declare const TabsListWithContext: React.ForwardRefExoticComponent<Omit<TabsListProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
+declare const TabsList: React.ForwardRefExoticComponent<Omit<TabsListProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
 declare function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>): import("react/jsx-runtime").JSX.Element;
-export { TabsRoot, TabsListWithContext as TabsList, TabsTrigger, TabsContent };
+export { TabsRoot, TabsList, TabsTrigger, TabsContent };

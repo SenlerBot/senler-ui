@@ -45,7 +45,7 @@ function DropdownMenuTrigger({
   );
 }
 
-function DropdownMenuContent(
+function DropdownMenuContentPrimitive(
   {
     className,
     sideOffset = 4,
@@ -250,14 +250,14 @@ function DropdownMenuSubContent({
   );
 }
 
-const ForwardedContent = React.forwardRef(DropdownMenuContent);
-ForwardedContent.displayName = 'Content';
+const DropdownMenuContent = React.forwardRef(DropdownMenuContentPrimitive);
+DropdownMenuContent.displayName = 'DropdownMenuContent';
 
 export {
   DropdownMenuRoot,
   DropdownMenuPortal,
   DropdownMenuTrigger,
-  ForwardedContent as DropdownMenuContent,
+  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuItem,

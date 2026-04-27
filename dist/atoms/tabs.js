@@ -64,6 +64,7 @@ var v = n.createContext(null), y = n.forwardRef(({ size: t = d.size, variant: n 
 		children: a
 	})
 }));
+y.displayName = "TabsList";
 function b({ className: t, ...n }) {
 	return /* @__PURE__ */ r(o.Content, {
 		"data-slot": "tabs-content",
@@ -72,4 +73,4 @@ function b({ className: t, ...n }) {
 	});
 }
 //#endregion
-export { b as TabsContent, y as TabsListWithContext, g as TabsRoot, _ as TabsTrigger, d as tabsListDefaults, l as tabsListSizeClasses, u as tabsListSizeOptions, s as tabsListVariantClasses, c as tabsListVariantOptions, f as tabsTriggerDefaults, p as tabsTriggerVariantClasses };
+export { b as TabsContent, y as TabsList, g as TabsRoot, _ as TabsTrigger, d as tabsListDefaults, l as tabsListSizeClasses, u as tabsListSizeOptions, s as tabsListVariantClasses, c as tabsListVariantOptions, f as tabsTriggerDefaults, p as tabsTriggerVariantClasses };
