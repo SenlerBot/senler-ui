@@ -35,7 +35,7 @@ function MenubarRadioGroup({
   );
 }
 
-function MenubarTrigger(
+function MenubarTriggerPrimitive(
   {
     className,
     ...props
@@ -235,13 +235,14 @@ function MenubarSubContent({
   );
 }
 
-const ForwardedTrigger = React.forwardRef(MenubarTrigger);
+const MenubarTrigger = React.forwardRef(MenubarTriggerPrimitive);
+MenubarTrigger.displayName = 'MenubarTrigger';
 
 export {
   Menubar,
   MenubarPortal,
   MenubarMenu,
-  ForwardedTrigger as MenubarTrigger,
+  MenubarTrigger,
   MenubarContent,
   MenubarGroup,
   MenubarSeparator,

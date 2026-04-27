@@ -8,7 +8,7 @@ export const dialogContentDefaults = {
   showCloseButton: true,
 };
 
-function Dialog({
+function DialogRoot({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return (
@@ -153,7 +153,7 @@ function DialogDescription({
 }
 
 export {
-  Dialog as DialogRoot,
+  DialogRoot,
   DialogClose,
   DialogContent,
   DialogDescription,

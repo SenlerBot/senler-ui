@@ -1,6 +1,6 @@
 {
   "name": "@senler/ui",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": false,
   "type": "module",
   "description": "Senler React 19 UI component library with shared styles, atoms, layout primitives, forms, and overlays",

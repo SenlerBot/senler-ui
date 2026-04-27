@@ -103,4 +103,4 @@ function g({ className: t, ...n }) {
 	});
 }
 //#endregion
-export { s as Dialog, u as DialogClose, f as DialogContent, g as DialogDescription, m as DialogFooter, p as DialogHeader, d as DialogOverlay, l as DialogPortal, h as DialogTitle, c as DialogTrigger, o as dialogContentDefaults };
+export { u as DialogClose, f as DialogContent, g as DialogDescription, m as DialogFooter, p as DialogHeader, d as DialogOverlay, l as DialogPortal, s as DialogRoot, h as DialogTitle, c as DialogTrigger, o as dialogContentDefaults };

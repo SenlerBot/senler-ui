@@ -126,5 +126,6 @@ function C({ className: t, ...n }) {
 	});
 }
 var w = t.forwardRef(p);
+w.displayName = "MenubarTrigger";
 //#endregion
-export { w as ForwardedTrigger, c as Menubar, g as MenubarCheckboxItem, m as MenubarContent, u as MenubarGroup, h as MenubarItem, v as MenubarLabel, l as MenubarMenu, d as MenubarPortal, f as MenubarRadioGroup, _ as MenubarRadioItem, y as MenubarSeparator, b as MenubarShortcut, x as MenubarSub, C as MenubarSubContent, S as MenubarSubTrigger };
+export { c as Menubar, g as MenubarCheckboxItem, m as MenubarContent, u as MenubarGroup, h as MenubarItem, v as MenubarLabel, l as MenubarMenu, d as MenubarPortal, f as MenubarRadioGroup, _ as MenubarRadioItem, y as MenubarSeparator, b as MenubarShortcut, x as MenubarSub, C as MenubarSubContent, S as MenubarSubTrigger, w as MenubarTrigger };
