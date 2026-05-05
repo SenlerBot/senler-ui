@@ -1,0 +1,19 @@
+@font-face {
+  font-family: "Inter";
+  src: url("@senler/ui/fonts/inter-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --senler-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:where(html) {
+  font-family: var(--senler-font-sans);
+}
+
+@theme inline {
+  --font-sans: var(--senler-font-sans);
+}

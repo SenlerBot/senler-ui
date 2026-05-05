@@ -8,6 +8,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 
 - Shared Tailwind integration via `@senler/ui/tailwind.css`.
 - Shared CSS tokens via `@senler/ui/tokens.css`.
+- Bundled Inter font via `@senler/ui/fonts.css`.
 - Full standalone component stylesheet via `@senler/ui/styles.css`.
 - Core actions and feedback: `Button`, `Badge`, `Alert`, `Progress`, `Skeleton`, `Spinner`, `PageLoader`, `Announce`, `Empty`, `Toaster`.
 - Form controls: `Input`, `Textarea`, `CheckBox`, `RadioGroup`, `Switch`, `Slider`, `Select`, `SearchableSelect`, `AsyncSearchableSelect`, `Label`, `Field`, `Form`, `InputField`.
@@ -33,7 +34,7 @@ npm install react@^19 react-dom@^19 lucide-react
 ## Usage
 
 Import the stylesheet once in the application entrypoint when Senler UI owns the
-Tailwind output:
+Tailwind output. This includes the bundled Inter font:
 
 ```tsx
 import '@senler/ui/styles.css';
@@ -46,6 +47,7 @@ scans Senler UI classes:
 
 ```css
 @import "tailwindcss";
+@import "@senler/ui/fonts.css";
 @import "@senler/ui/tailwind.css";
 ```
 
