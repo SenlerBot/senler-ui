@@ -1,3 +1,5 @@
 import * as React from 'react';
-declare const Input: React.ForwardRefExoticComponent<Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref"> & React.RefAttributes<HTMLInputElement>>;
+import { type AiDataAttributes } from '../lib/ai-auto-attributes';
+type InputProps = React.ComponentProps<'input'> & AiDataAttributes;
+declare const Input: React.ForwardRefExoticComponent<Omit<InputProps, "ref"> & React.RefAttributes<HTMLInputElement>>;
 export { Input };

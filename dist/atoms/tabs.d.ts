@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { type VariantProps } from 'class-variance-authority';
+import { type AiDataAttributes } from '../lib/ai-auto-attributes';
 export declare const tabsListVariantClasses: {
     readonly default: "p-[2px] gap-[2px] rounded-[6px] bg-muted";
     readonly underline: "gap-6 border-b border-border";
@@ -34,11 +35,11 @@ type TabsListProps = React.ComponentProps<typeof TabsPrimitive.List> & VariantPr
     variant?: TabsListVariant;
     size?: TabsListSize;
 };
-type TabsTriggerProps = React.ComponentProps<typeof TabsPrimitive.Trigger> & {
+type TabsTriggerProps = React.ComponentProps<typeof TabsPrimitive.Trigger> & AiDataAttributes & {
     variant?: TabsListVariant;
     count?: number;
 };
-declare function TabsTrigger({ variant, count, className, children, ...props }: TabsTriggerProps): import("react/jsx-runtime").JSX.Element;
+declare function TabsTrigger({ variant, count, className, children, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: TabsTriggerProps): import("react/jsx-runtime").JSX.Element;
 declare const TabsList: React.ForwardRefExoticComponent<Omit<TabsListProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
 declare function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>): import("react/jsx-runtime").JSX.Element;
 export { TabsRoot, TabsList, TabsTrigger, TabsContent };

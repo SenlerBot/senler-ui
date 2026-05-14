@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { type VariantProps } from 'class-variance-authority';
+import { type AiDataAttributes } from '../lib/ai-auto-attributes';
 export declare const switchSizeClasses: {
     readonly xs: "h-3.5 w-5.5 p-0.5";
     readonly tiny: "h-4 w-[26px] p-0.5";
@@ -20,7 +21,7 @@ declare const switchRootVariants: (props?: ({
     size?: "small" | "xs" | "tiny" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 type BaseButtonProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'defaultValue' | 'onChange' | 'type' | 'value'>;
-interface SwitchProps extends BaseButtonProps, VariantProps<typeof switchRootVariants> {
+interface SwitchProps extends BaseButtonProps, VariantProps<typeof switchRootVariants>, AiDataAttributes {
     checked?: boolean;
     defaultChecked?: boolean;
     onCheckedChange?: (checked: boolean) => void;

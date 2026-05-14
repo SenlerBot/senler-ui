@@ -502,7 +502,7 @@ export function AppShell({
   return (
     <div
       data-slot='app-shell'
-      className={cn('flex min-h-dvh w-full bg-background text-foreground', className)}
+      className={cn('flex h-dvh min-h-0 w-full overflow-hidden bg-background text-foreground', className)}
       {...props}
     >
       <AppSidebar
@@ -510,7 +510,7 @@ export function AppShell({
         className={sidebarClassName}
       />
 
-      <div className='flex min-h-dvh min-w-0 flex-1 flex-col'>
+      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col'>
         <AppHeader
           title={headerTitle}
           breadcrumbs={headerBreadcrumbs}

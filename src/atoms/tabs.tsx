@@ -3,6 +3,11 @@ import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { cn } from '../lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { literalKeys } from '../lib/literal-keys';
+import {
+  AI_KIND,
+  type AiDataAttributes,
+  getAiLabelFallback,
+} from '../lib/ai-auto-attributes';
 
 export const tabsListVariantClasses = {
   default: 'p-[2px] gap-[2px] rounded-[6px] bg-muted',
@@ -90,7 +95,7 @@ type TabsListProps = React.ComponentProps<typeof TabsPrimitive.List> &
     size?: TabsListSize;
   };
 
-type TabsTriggerProps = React.ComponentProps<typeof TabsPrimitive.Trigger> & {
+type TabsTriggerProps = React.ComponentProps<typeof TabsPrimitive.Trigger> & AiDataAttributes & {
   variant?: TabsListVariant;
   count?: number;
 };
@@ -100,14 +105,26 @@ function TabsTrigger({
   count,
   className,
   children,
+  'data-ai-kind': dataAiKind,
+  'data-ai-label': dataAiLabel,
   ...props
 }: TabsTriggerProps) {
   const listElement = React.useContext(TabsListContext);
   const effectiveVariant = variant || listElement?.variant || tabsTriggerDefaults.variant;
+  const aiLabel = getAiLabelFallback(
+    dataAiLabel,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    children,
+  );
 
   return (
     <TabsPrimitive.Trigger
       data-slot='tabs-trigger'
+      data-ai-kind={dataAiKind ?? AI_KIND.tab}
+      data-ai-label={aiLabel}
       className={cn(tabTriggerVariants({ variant: effectiveVariant }), className)}
       {...props}
     >

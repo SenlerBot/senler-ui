@@ -8,6 +8,11 @@ import {
   overlaySolidSurfaceClassName,
   overlayStateAnimationClassName,
 } from '../lib/overlay-styles';
+import {
+  AI_KIND,
+  type AiDataAttributes,
+  getAiLabelFallback,
+} from '../lib/ai-auto-attributes';
 import { cn } from '../lib/utils';
 
 type DropdownMenuItemType = {
@@ -41,14 +46,34 @@ function DropdownMenuPortal({
 }
 function DropdownMenuTrigger({
   className,
+  children,
+  'aria-label': ariaLabel,
+  title,
+  'data-ai-kind': dataAiKind,
+  'data-ai-label': dataAiLabel,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger> & AiDataAttributes) {
+  const aiLabel = getAiLabelFallback(
+    dataAiLabel,
+    typeof ariaLabel === 'string' ? ariaLabel : undefined,
+    typeof title === 'string' ? title : undefined,
+    undefined,
+    undefined,
+    children,
+  );
+
   return (
     <DropdownMenuPrimitive.Trigger
       className={cn('focus-visible:outline-none', className)}
       data-slot='dropdown-menu-trigger'
+      data-ai-kind={dataAiKind ?? AI_KIND.button}
+      data-ai-label={aiLabel}
+      aria-label={ariaLabel}
+      title={title}
       {...props}
-    />
+    >
+      {children}
+    </DropdownMenuPrimitive.Trigger>
   );
 }
 
@@ -90,11 +115,25 @@ function DropdownMenuGroup({
 }
 function DropdownMenuItem({
   className,
+  children,
+  'data-ai-kind': dataAiKind,
+  'data-ai-label': dataAiLabel,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Item>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & AiDataAttributes) {
+  const aiLabel = getAiLabelFallback(
+    dataAiLabel,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    children,
+  );
+
   return (
     <DropdownMenuPrimitive.Item
       data-slot='dropdown-menu-item'
+      data-ai-kind={dataAiKind ?? AI_KIND.button}
+      data-ai-label={aiLabel}
       className={cn(
         'relative flex min-h-8 cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5',
         'text-popover-foreground',
@@ -103,18 +142,33 @@ function DropdownMenuItem({
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </DropdownMenuPrimitive.Item>
   );
 }
 function DropdownMenuCheckboxItem({
   className,
   children,
   checked,
+  'data-ai-kind': dataAiKind,
+  'data-ai-label': dataAiLabel,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem> & AiDataAttributes) {
+  const aiLabel = getAiLabelFallback(
+    dataAiLabel,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    children,
+  );
+
   return (
     <DropdownMenuPrimitive.CheckboxItem
       data-slot='dropdown-menu-checkbox-item'
+      data-ai-kind={dataAiKind ?? AI_KIND.field}
+      data-ai-label={aiLabel}
       className={cn(
         "relative flex min-h-8 cursor-pointer select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:text-muted-foreground [&_svg:not([class*='size-'])]:size-4",
         className
@@ -144,11 +198,24 @@ function DropdownMenuRadioGroup({
 function DropdownMenuRadioItem({
   className,
   children,
+  'data-ai-kind': dataAiKind,
+  'data-ai-label': dataAiLabel,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem> & AiDataAttributes) {
+  const aiLabel = getAiLabelFallback(
+    dataAiLabel,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    children,
+  );
+
   return (
     <DropdownMenuPrimitive.RadioItem
       data-slot='dropdown-menu-radio-item'
+      data-ai-kind={dataAiKind ?? AI_KIND.field}
+      data-ai-label={aiLabel}
       className={cn(
         "relative flex min-h-8 cursor-pointer select-none items-center gap-2 rounded-md py-1.5 pr-2 pl-8 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:text-muted-foreground [&_svg:not([class*='size-'])]:size-4",
         className

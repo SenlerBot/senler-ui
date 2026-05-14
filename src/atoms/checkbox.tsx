@@ -1,17 +1,31 @@
 import * as React from 'react';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { Check } from 'lucide-react';
+import {
+  AI_KIND,
+  type AiDataAttributes,
+  getAiLabelFallback,
+} from '../lib/ai-auto-attributes';
 import { cn } from '../lib/utils';
 
 interface CheckBoxProps
-  extends React.ComponentProps<typeof CheckboxPrimitive.Root> {
+  extends React.ComponentProps<typeof CheckboxPrimitive.Root>,
+    AiDataAttributes {
   label?: React.ReactNode;
   tooltip?: React.ReactNode;
 }
 
-function CheckBox({ className, label, tooltip, id, ...props }: CheckBoxProps) {
+function CheckBox({ className, label, tooltip, id, 'aria-label': ariaLabel, title, name, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: CheckBoxProps) {
   const generatedId = React.useId();
   const checkboxId = id || generatedId;
+  const aiLabel = getAiLabelFallback(
+    dataAiLabel,
+    typeof ariaLabel === 'string' ? ariaLabel : undefined,
+    typeof title === 'string' ? title : undefined,
+    undefined,
+    name,
+    label,
+  );
 
   return (
     <div className='flex items-center'>
@@ -19,6 +33,11 @@ function CheckBox({ className, label, tooltip, id, ...props }: CheckBoxProps) {
         <CheckboxPrimitive.Root
           id={checkboxId}
           data-slot='checkbox'
+          data-ai-kind={dataAiKind ?? AI_KIND.field}
+          data-ai-label={aiLabel}
+          aria-label={ariaLabel}
+          title={title}
+          name={name}
           className={cn(
             'peer size-4 shrink-0 rounded border shadow-xs transition-all outline-none cursor-pointer',
             'data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary',

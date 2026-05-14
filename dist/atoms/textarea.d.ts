@@ -1,3 +1,5 @@
 import * as React from 'react';
-declare const Textarea: React.ForwardRefExoticComponent<Omit<React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, "ref"> & React.RefAttributes<HTMLTextAreaElement>>;
+import { type AiDataAttributes } from '../lib/ai-auto-attributes';
+type TextareaProps = React.ComponentProps<'textarea'> & AiDataAttributes;
+declare const Textarea: React.ForwardRefExoticComponent<Omit<TextareaProps, "ref"> & React.RefAttributes<HTMLTextAreaElement>>;
 export { Textarea };

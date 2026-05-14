@@ -1,35 +1,41 @@
 import { cn as e } from "../lib/utils/cn.js";
-import * as t from "react";
-import { Check as n } from "lucide-react";
-import { jsx as r, jsxs as i } from "react/jsx-runtime";
-import * as a from "@radix-ui/react-checkbox";
+import { AI_KIND as t, getAiLabelFallback as n } from "../lib/ai-auto-attributes.js";
+import * as r from "react";
+import { Check as i } from "lucide-react";
+import { jsx as a, jsxs as o } from "react/jsx-runtime";
+import * as s from "@radix-ui/react-checkbox";
 //#region src/atoms/checkbox.tsx
-function o({ className: o, label: s, tooltip: c, id: l, ...u }) {
-	let d = t.useId(), f = l || d;
-	return /* @__PURE__ */ i("div", {
+function c({ className: c, label: l, tooltip: u, id: d, "aria-label": f, title: p, name: m, "data-ai-kind": h, "data-ai-label": g, ..._ }) {
+	let v = r.useId(), y = d || v, b = n(g, typeof f == "string" ? f : void 0, typeof p == "string" ? p : void 0, void 0, m, l);
+	return /* @__PURE__ */ o("div", {
 		className: "flex items-center",
-		children: [/* @__PURE__ */ i("div", {
+		children: [/* @__PURE__ */ o("div", {
 			className: "flex",
-			children: [/* @__PURE__ */ r(a.Root, {
-				id: f,
+			children: [/* @__PURE__ */ a(s.Root, {
+				id: y,
 				"data-slot": "checkbox",
-				className: e("peer size-4 shrink-0 rounded border shadow-xs transition-all outline-none cursor-pointer", "data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary", "data-[state=unchecked]:bg-muted data-[state=unchecked]:border-border", "hover:border-primary", "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]", "disabled:cursor-not-allowed disabled:opacity-50", o),
-				...u,
-				children: /* @__PURE__ */ r(a.Indicator, {
+				"data-ai-kind": h ?? t.field,
+				"data-ai-label": b,
+				"aria-label": f,
+				title: p,
+				name: m,
+				className: e("peer size-4 shrink-0 rounded border shadow-xs transition-all outline-none cursor-pointer", "data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary", "data-[state=unchecked]:bg-muted data-[state=unchecked]:border-border", "hover:border-primary", "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]", "disabled:cursor-not-allowed disabled:opacity-50", c),
+				..._,
+				children: /* @__PURE__ */ a(s.Indicator, {
 					"data-slot": "checkbox-indicator",
 					className: "flex items-center justify-center text-current",
-					children: /* @__PURE__ */ r(n, { className: "size-3.5 stroke-[3]" })
+					children: /* @__PURE__ */ a(i, { className: "size-3.5 stroke-[3]" })
 				})
-			}), s && /* @__PURE__ */ r("label", {
-				htmlFor: f,
+			}), l && /* @__PURE__ */ a("label", {
+				htmlFor: y,
 				className: "ml-2 text-sm leading-4 cursor-pointer select-none",
-				children: s
+				children: l
 			})]
-		}), c && /* @__PURE__ */ r("div", {
+		}), u && /* @__PURE__ */ a("div", {
 			className: "ml-2",
-			children: c
+			children: u
 		})]
 	});
 }
 //#endregion
-export { o as CheckBox };
+export { c as CheckBox };

@@ -223,7 +223,7 @@ function w({ navigation: t, currentPath: n, renderLink: r, brand: l, sidebarHead
 	};
 	return /* @__PURE__ */ p("div", {
 		"data-slot": "app-shell",
-		className: e("flex min-h-dvh w-full bg-background text-foreground", D),
+		className: e("flex h-dvh min-h-0 w-full overflow-hidden bg-background text-foreground", D),
 		...O,
 		children: [
 			/* @__PURE__ */ f(x, {
@@ -231,7 +231,7 @@ function w({ navigation: t, currentPath: n, renderLink: r, brand: l, sidebarHead
 				className: w
 			}),
 			/* @__PURE__ */ p("div", {
-				className: "flex min-h-dvh min-w-0 flex-1 flex-col",
+				className: "flex h-full min-h-0 min-w-0 flex-1 flex-col",
 				children: [/* @__PURE__ */ f(C, {
 					title: g,
 					breadcrumbs: _,

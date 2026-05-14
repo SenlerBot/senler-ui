@@ -3,6 +3,12 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2Icon } from 'lucide-react';
 
+import {
+  AI_ACTION,
+  AI_KIND,
+  type AiDataAttributes,
+  getAiLabelFallback,
+} from '../lib/ai-auto-attributes';
 import { literalKeys } from '../lib/literal-keys';
 import { cn } from '../lib/utils';
 
@@ -70,7 +76,8 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends ComponentProps<'button'>,
-    VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants>,
+    AiDataAttributes {
   variant?: ButtonVariant;
   size?: ButtonSize;
   type?: ButtonType;
@@ -88,15 +95,35 @@ function Button({
   loading,
   disabled,
   children,
+  'aria-label': ariaLabel,
+  title,
+  name,
+  'data-ai-kind': dataAiKind,
+  'data-ai-label': dataAiLabel,
+  'data-ai-action': dataAiAction,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : 'button';
+  const aiLabel = getAiLabelFallback(
+    dataAiLabel,
+    typeof ariaLabel === 'string' ? ariaLabel : undefined,
+    typeof title === 'string' ? title : undefined,
+    undefined,
+    name,
+    children,
+  );
 
   return (
     <Comp
       ref={ref}
       type={type}
       data-slot="button"
+      data-ai-kind={dataAiKind ?? AI_KIND.button}
+      data-ai-action={dataAiAction ?? (type === 'submit' ? AI_ACTION.save : undefined)}
+      data-ai-label={aiLabel}
+      aria-label={ariaLabel}
+      title={title}
+      name={name}
       disabled={disabled || loading}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}

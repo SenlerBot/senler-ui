@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { literalKeys } from '../lib/literal-keys';
+import {
+  AI_KIND,
+  type AiDataAttributes,
+  getAiLabelFallback,
+} from '../lib/ai-auto-attributes';
 import { cn } from '../lib/utils';
 
 export const switchSizeClasses = {
@@ -66,7 +71,7 @@ type BaseButtonProps = Omit<
   'defaultValue' | 'onChange' | 'type' | 'value'
 >;
 
-interface SwitchProps extends BaseButtonProps, VariantProps<typeof switchRootVariants> {
+interface SwitchProps extends BaseButtonProps, VariantProps<typeof switchRootVariants>, AiDataAttributes {
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -95,6 +100,10 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
       className,
       size,
       onClick,
+      'aria-label': ariaLabel,
+      title,
+      'data-ai-kind': dataAiKind,
+      'data-ai-label': dataAiLabel,
       ...props
     },
     ref
@@ -104,6 +113,13 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     const currentChecked = checked ?? internalChecked;
     const switchState = getSwitchState(currentChecked);
     const shouldRenderInput = Boolean(name) || required || Boolean(form);
+    const aiLabel = getAiLabelFallback(
+      dataAiLabel,
+      typeof ariaLabel === 'string' ? ariaLabel : undefined,
+      typeof title === 'string' ? title : undefined,
+      undefined,
+      name,
+    );
 
     const handleClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -135,8 +151,12 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           aria-required={required}
           disabled={disabled}
           data-slot="switch"
+          data-ai-kind={dataAiKind ?? AI_KIND.field}
+          data-ai-label={aiLabel}
           data-state={switchState}
           data-disabled={disabled ? '' : undefined}
+          aria-label={ariaLabel}
+          title={title}
           className={cn(
             switchRootVariants({ size, className }),
             'bg-input',

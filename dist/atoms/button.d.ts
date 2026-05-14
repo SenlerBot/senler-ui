@@ -1,5 +1,6 @@
 import { type ComponentProps } from 'react';
 import { type VariantProps } from 'class-variance-authority';
+import { type AiDataAttributes } from '../lib/ai-auto-attributes';
 export declare const buttonVariantClasses: {
     readonly default: "bg-primary text-primary-foreground hover:bg-primary/90";
     readonly destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60";
@@ -34,12 +35,12 @@ declare const buttonVariants: (props?: ({
     variant?: "link" | "default" | "secondary" | "destructive" | "outline" | "ghost" | null | undefined;
     size?: "default" | "none" | "sm" | "lg" | "icon" | "icon_sm" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
-export interface ButtonProps extends ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends ComponentProps<'button'>, VariantProps<typeof buttonVariants>, AiDataAttributes {
     variant?: ButtonVariant;
     size?: ButtonSize;
     type?: ButtonType;
     asChild?: boolean;
     loading?: boolean;
 }
-declare function Button({ className, variant, size, ref, asChild, type, loading, disabled, children, ...props }: ButtonProps): import("react/jsx-runtime").JSX.Element;
+declare function Button({ className, variant, size, ref, asChild, type, loading, disabled, children, 'aria-label': ariaLabel, title, name, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, 'data-ai-action': dataAiAction, ...props }: ButtonProps): import("react/jsx-runtime").JSX.Element;
 export { Button, buttonVariants, };

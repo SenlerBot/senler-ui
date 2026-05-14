@@ -48,3 +48,4 @@ export * from './compound/searchable-select';
 export * from './layout/container';
 export * from './layout/field';
 export * from './layout/section';
+export * from './lib/ai-auto-attributes';

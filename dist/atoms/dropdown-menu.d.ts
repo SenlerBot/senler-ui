@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { type AiDataAttributes } from '../lib/ai-auto-attributes';
 type DropdownMenuItemType = {
     label: string;
     isLoading?: boolean;
@@ -11,12 +12,12 @@ type DropdownMenuItemType = {
 };
 declare function DropdownMenuRoot({ modal, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>): import("react/jsx-runtime").JSX.Element;
 declare function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>): import("react/jsx-runtime").JSX.Element;
-declare function DropdownMenuTrigger({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>): import("react/jsx-runtime").JSX.Element;
+declare function DropdownMenuTrigger({ className, children, 'aria-label': ariaLabel, title, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger> & AiDataAttributes): import("react/jsx-runtime").JSX.Element;
 declare function DropdownMenuGroup({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Group>): import("react/jsx-runtime").JSX.Element;
-declare function DropdownMenuItem({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Item>): import("react/jsx-runtime").JSX.Element;
-declare function DropdownMenuCheckboxItem({ className, children, checked, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>): import("react/jsx-runtime").JSX.Element;
+declare function DropdownMenuItem({ className, children, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & AiDataAttributes): import("react/jsx-runtime").JSX.Element;
+declare function DropdownMenuCheckboxItem({ className, children, checked, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem> & AiDataAttributes): import("react/jsx-runtime").JSX.Element;
 declare function DropdownMenuRadioGroup({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>): import("react/jsx-runtime").JSX.Element;
-declare function DropdownMenuRadioItem({ className, children, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>): import("react/jsx-runtime").JSX.Element;
+declare function DropdownMenuRadioItem({ className, children, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem> & AiDataAttributes): import("react/jsx-runtime").JSX.Element;
 declare function DropdownMenuLabel({ className, inset, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Label> & {
     inset?: boolean;
 }): import("react/jsx-runtime").JSX.Element;
