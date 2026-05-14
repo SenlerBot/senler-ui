@@ -37,6 +37,10 @@ export function getAiTextFromReactNode(children: React.ReactNode): string | unde
         return String(child);
       }
 
+      if (React.isValidElement<{ children?: React.ReactNode }>(child)) {
+        return getAiTextFromReactNode(child.props.children) ?? '';
+      }
+
       return '';
     })
     .filter(Boolean)
