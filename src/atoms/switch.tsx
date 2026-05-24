@@ -33,7 +33,7 @@ export const switchThumbSizeClasses = {
 } as const;
 
 const switchRootVariants = cva(
-  'peer inline-flex shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
+  'peer inline-flex cursor-pointer shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       size: switchSizeClasses,

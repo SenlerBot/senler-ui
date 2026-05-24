@@ -16,7 +16,7 @@ var l = {
 	xs: "size-2.5 data-[state=checked]:translate-x-2",
 	tiny: "size-3 data-[state=checked]:translate-x-2.5",
 	small: "size-4 data-[state=checked]:translate-x-2"
-}, p = c("peer inline-flex shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50", {
+}, p = c("peer inline-flex cursor-pointer shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50", {
 	variants: { size: l },
 	defaultVariants: { size: d.size }
 }), m = c("pointer-events-none block rounded-full ring-0 transition-transform", {

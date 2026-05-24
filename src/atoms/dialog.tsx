@@ -17,9 +17,16 @@ function DialogRoot({
 }
 
 function DialogTrigger({
+  className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot='dialog-trigger' {...props} />;
+  return (
+    <DialogPrimitive.Trigger
+      data-slot='dialog-trigger'
+      className={cn('cursor-pointer', className)}
+      {...props}
+    />
+  );
 }
 
 function DialogPortal({
@@ -29,9 +36,16 @@ function DialogPortal({
 }
 
 function DialogClose({
+  className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot='dialog-close' {...props} />;
+  return (
+    <DialogPrimitive.Close
+      data-slot='dialog-close'
+      className={cn('cursor-pointer', className)}
+      {...props}
+    />
+  );
 }
 
 const DialogOverlay = React.forwardRef<
@@ -83,12 +97,12 @@ const DialogContent = React.forwardRef<
             {showCloseButton && (
               <DialogPrimitive.Close
                 data-slot='dialog-close'
-                className='absolute top-3 right-3 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none'
+                className='absolute top-3 right-3 cursor-pointer rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none'
                 asChild
               >
                 <button
                   type="button"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted"
+                  className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
                 >
                   <XIcon className="h-4 w-4" />
                   <span className="sr-only">Close</span>

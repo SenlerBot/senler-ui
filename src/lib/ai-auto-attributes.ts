@@ -24,10 +24,66 @@ export const AI_ACTION = {
   save: 'save',
 } as const;
 
+const ICON_AI_LABELS = new Map([
+  ['ArrowLeft', 'Назад / back'],
+  ['ArrowRight', 'Вперед / next'],
+  ['Check', 'Подтвердить / confirm'],
+  ['CheckIcon', 'Подтвердить / confirm'],
+  ['ChevronLeft', 'Назад / previous'],
+  ['ChevronRight', 'Вперед / next'],
+  ['Copy', 'Копировать / copy'],
+  ['CopyIcon', 'Копировать / copy'],
+  ['Download', 'Скачать / download'],
+  ['Edit', 'Редактировать / edit'],
+  ['Edit2', 'Редактировать / edit'],
+  ['Ellipsis', 'Еще / more'],
+  ['Eye', 'Показать / view'],
+  ['MoreHorizontal', 'Еще / more'],
+  ['MoreVertical', 'Еще / more'],
+  ['Pencil', 'Редактировать / edit'],
+  ['Plus', 'Добавить / add'],
+  ['RefreshCw', 'Обновить / refresh'],
+  ['RotateCw', 'Обновить / refresh'],
+  ['Save', 'Сохранить / save'],
+  ['Search', 'Поиск / search'],
+  ['Settings', 'Настройки / settings'],
+  ['Moon', 'Темная тема / dark theme'],
+  ['Sun', 'Светлая тема / light theme'],
+  ['Trash', 'Удалить / delete'],
+  ['Trash2', 'Удалить / delete'],
+  ['Upload', 'Загрузить / upload'],
+  ['X', 'Закрыть / close'],
+  ['XIcon', 'Закрыть / close'],
+]);
+
 function normalizeAiLabel(value: string | undefined): string | undefined {
   const normalized = value?.replace(/\s+/g, ' ').trim();
 
   return normalized && normalized.length > 0 ? normalized : undefined;
+}
+
+function getReactElementTypeName(type: React.ReactElement['type'] | object): string | undefined {
+  if (typeof type === 'string') {
+    return type;
+  }
+
+  if (typeof type === 'function') {
+    return type.name;
+  }
+
+  if (typeof type === 'object' && type !== null) {
+    const displayName = Object.getOwnPropertyDescriptor(type, 'displayName')?.value;
+
+    return typeof displayName === 'string' ? displayName : undefined;
+  }
+
+  return undefined;
+}
+
+function getAiIconLabel(child: React.ReactElement): string | undefined {
+  const typeName = getReactElementTypeName(child.type);
+
+  return typeName ? ICON_AI_LABELS.get(typeName) : undefined;
 }
 
 export function getAiTextFromReactNode(children: React.ReactNode): string | undefined {
@@ -38,7 +94,7 @@ export function getAiTextFromReactNode(children: React.ReactNode): string | unde
       }
 
       if (React.isValidElement<{ children?: React.ReactNode }>(child)) {
-        return getAiTextFromReactNode(child.props.children) ?? '';
+        return getAiTextFromReactNode(child.props.children) ?? getAiIconLabel(child) ?? '';
       }
 
       return '';

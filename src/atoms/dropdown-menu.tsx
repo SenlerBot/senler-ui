@@ -64,7 +64,7 @@ function DropdownMenuTrigger({
 
   return (
     <DropdownMenuPrimitive.Trigger
-      className={cn('focus-visible:outline-none', className)}
+      className={cn('cursor-pointer focus-visible:outline-none', className)}
       data-slot='dropdown-menu-trigger'
       data-ai-kind={dataAiKind ?? AI_KIND.button}
       data-ai-label={aiLabel}

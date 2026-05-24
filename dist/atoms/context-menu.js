@@ -45,7 +45,7 @@ function p({ className: t, inset: r, children: s, ...c }) {
 	return /* @__PURE__ */ a(o.SubTrigger, {
 		"data-slot": "context-menu-sub-trigger",
 		"data-inset": r,
-		className: e("relative flex items-center h-8 px-2 py-1 m-1 rounded-sm text-sm", "text-foreground font-normal leading-none select-none outline-none", "data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary", "data-[disabled]:pointer-events-none", t),
+		className: e("relative flex h-8 cursor-pointer items-center px-2 py-1 m-1 rounded-sm text-sm", "text-foreground font-normal leading-none select-none outline-none", "data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary", "data-[disabled]:pointer-events-none", t),
 		...c,
 		children: [s, /* @__PURE__ */ i(n, { className: "ml-auto" })]
 	});
@@ -69,14 +69,14 @@ function g({ className: t, inset: n, variant: r = "default", ...a }) {
 		"data-slot": "context-menu-item",
 		"data-inset": n,
 		"data-variant": r,
-		className: e("relative flex items-center h-8 px-2 py-1 m-1 rounded-sm text-sm", "text-foreground font-normal leading-none select-none outline-none", "data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary", "data-[disabled]:pointer-events-none", t),
+		className: e("relative flex h-8 cursor-pointer items-center px-2 py-1 m-1 rounded-sm text-sm", "text-foreground font-normal leading-none select-none outline-none", "data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary", "data-[disabled]:pointer-events-none", t),
 		...a
 	});
 }
 function _({ className: n, children: r, checked: s, ...c }) {
 	return /* @__PURE__ */ a(o.CheckboxItem, {
 		"data-slot": "context-menu-checkbox-item",
-		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", n),
+		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", n),
 		checked: s,
 		...c,
 		children: [/* @__PURE__ */ i("span", {
@@ -88,7 +88,7 @@ function _({ className: n, children: r, checked: s, ...c }) {
 function v({ className: t, children: n, ...s }) {
 	return /* @__PURE__ */ a(o.RadioItem, {
 		"data-slot": "context-menu-radio-item",
-		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", t),
+		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", t),
 		...s,
 		children: [/* @__PURE__ */ i("span", {
 			className: "pointer-events-none absolute left-2 flex size-3.5 items-center justify-center",

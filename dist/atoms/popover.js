@@ -10,10 +10,11 @@ function l({ ...e }) {
 		...e
 	});
 }
-function u({ ...e }) {
+function u({ className: t, ...n }) {
 	return /* @__PURE__ */ s(c.Trigger, {
 		"data-slot": "popover-trigger",
-		...e
+		className: e("cursor-pointer", t),
+		...n
 	});
 }
 function d({ className: l, align: u = "center", sideOffset: d = 4, surface: f = "solid", ...p }) {

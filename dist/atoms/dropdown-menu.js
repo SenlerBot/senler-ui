@@ -22,7 +22,7 @@ function g({ ...e }) {
 function _({ className: r, children: i, "aria-label": a, title: o, "data-ai-kind": s, "data-ai-label": c, ...l }) {
 	let u = n(c, typeof a == "string" ? a : void 0, typeof o == "string" ? o : void 0, void 0, void 0, i);
 	return /* @__PURE__ */ f(m.Trigger, {
-		className: e("focus-visible:outline-none", r),
+		className: e("cursor-pointer focus-visible:outline-none", r),
 		"data-slot": "dropdown-menu-trigger",
 		"data-ai-kind": s ?? t.button,
 		"data-ai-label": u,

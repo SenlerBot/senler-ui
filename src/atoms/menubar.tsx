@@ -46,7 +46,7 @@ function MenubarTriggerPrimitive(
     <MenubarPrimitive.Trigger
       ref={ref}
       data-slot='menubar-trigger'
-      className={cn('cursor-default bg-transparent', className)}
+      className={cn('cursor-pointer bg-transparent', className)}
       {...props}
     />
   );
@@ -82,7 +82,7 @@ function MenubarItem({
     <MenubarPrimitive.Item
       data-slot='menubar-item'
       className={cn(
-        'text-[13px] leading-none text-foreground rounded-[3px] flex items-center justify-between h-8 px-1.5 mx-1 relative select-none outline-none data-[highlighted]:bg-accent data-[highlighted]:[&_svg]:text-primary data-[disabled]:pointer-events-none',
+        'text-[13px] leading-none text-foreground rounded-[3px] flex h-8 cursor-pointer items-center justify-between px-1.5 mx-1 relative select-none outline-none data-[highlighted]:bg-accent data-[highlighted]:[&_svg]:text-primary data-[disabled]:pointer-events-none',
         className
       )}
       {...props}
@@ -100,7 +100,7 @@ function MenubarCheckboxItem({
     <MenubarPrimitive.CheckboxItem
       data-slot='menubar-checkbox-item'
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       checked={checked}
@@ -125,7 +125,7 @@ function MenubarRadioItem({
     <MenubarPrimitive.RadioItem
       data-slot='menubar-radio-item'
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -208,7 +208,7 @@ function MenubarSubTrigger({
       data-slot='menubar-sub-trigger'
       data-inset={inset}
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[inset]:pl-8',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[inset]:pl-8',
         className
       )}
       {...props}

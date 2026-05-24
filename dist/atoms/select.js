@@ -25,14 +25,14 @@ var h = ["popper", "item-aligned"], g = { position: "popper" }, _ = m.Root, v = 
 b.displayName = m.Trigger.displayName;
 var x = c.forwardRef(({ className: t, ...n }, r) => /* @__PURE__ */ f(m.ScrollUpButton, {
 	ref: r,
-	className: e("flex cursor-default items-center justify-center py-1", t),
+	className: e("flex cursor-pointer items-center justify-center py-1", t),
 	...n,
 	children: /* @__PURE__ */ f(d, { className: "h-4 w-4" })
 }));
 x.displayName = m.ScrollUpButton.displayName;
 var S = c.forwardRef(({ className: t, ...n }, r) => /* @__PURE__ */ f(m.ScrollDownButton, {
 	ref: r,
-	className: e("flex cursor-default items-center justify-center py-1", t),
+	className: e("flex cursor-pointer items-center justify-center py-1", t),
 	...n,
 	children: /* @__PURE__ */ f(u, { className: "h-4 w-4" })
 }));

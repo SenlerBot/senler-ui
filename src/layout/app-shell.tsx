@@ -189,7 +189,7 @@ function AppSidebarNavItem({
   const hasChildren = !!item.items?.length;
   const showChildren = hasChildren && (active || item.defaultOpen);
   const itemClassName = cn(
-    'group/app-shell-nav-item flex h-8 w-full items-center gap-2 rounded-md text-sm outline-none transition-colors',
+    'group/app-shell-nav-item flex h-8 w-full cursor-pointer items-center gap-2 rounded-md text-sm outline-none transition-colors',
     'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
     'focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50',
     'aria-disabled:pointer-events-none aria-disabled:opacity-50',
@@ -375,7 +375,7 @@ function AppHeaderBreadcrumbs({
         const isClickable = !isLast && !!breadcrumb.href && !!renderLink;
         const className = cn(
           'text-[13px] font-medium leading-4 whitespace-nowrap text-foreground transition-colors',
-          isClickable && 'hover:text-primary'
+          isClickable && 'cursor-pointer hover:text-primary'
         );
 
         return (

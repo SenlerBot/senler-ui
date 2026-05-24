@@ -68,7 +68,7 @@ function ContextMenuSubTrigger({
       data-slot='context-menu-sub-trigger'
       data-inset={inset}
       className={cn(
-        'relative flex items-center h-8 px-2 py-1 m-1 rounded-sm text-sm',
+        'relative flex h-8 cursor-pointer items-center px-2 py-1 m-1 rounded-sm text-sm',
         'text-foreground font-normal leading-none select-none outline-none',
         'data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary',
         'data-[disabled]:pointer-events-none',
@@ -143,7 +143,7 @@ function ContextMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        'relative flex items-center h-8 px-2 py-1 m-1 rounded-sm text-sm',
+        'relative flex h-8 cursor-pointer items-center px-2 py-1 m-1 rounded-sm text-sm',
         'text-foreground font-normal leading-none select-none outline-none',
         'data-[highlighted]:bg-accent data-[highlighted]:svg:text-primary',
         'data-[disabled]:pointer-events-none',
@@ -164,7 +164,7 @@ function ContextMenuCheckboxItem({
     <ContextMenuPrimitive.CheckboxItem
       data-slot='context-menu-checkbox-item'
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       checked={checked}
@@ -189,7 +189,7 @@ function ContextMenuRadioItem({
     <ContextMenuPrimitive.RadioItem
       data-slot='context-menu-radio-item'
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

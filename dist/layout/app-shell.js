@@ -28,7 +28,7 @@ function v(e, t) {
 	e.onSelect?.(), t?.();
 }
 function y({ item: t, currentPath: r, renderLink: i, onNavigate: a, depth: o = 0 }) {
-	let s = g(t, r), c = _(t), l = t.icon, u = !!t.items?.length && (s || t.defaultOpen), m = e("group/app-shell-nav-item flex h-8 w-full items-center gap-2 rounded-md text-sm outline-none transition-colors", "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", "focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50", "aria-disabled:pointer-events-none aria-disabled:opacity-50", s && "bg-muted font-medium text-foreground", "px-2", o > 0 && "h-7 text-[13px] text-sidebar-foreground/80"), h = /* @__PURE__ */ p(d, { children: [
+	let s = g(t, r), c = _(t), l = t.icon, u = !!t.items?.length && (s || t.defaultOpen), m = e("group/app-shell-nav-item flex h-8 w-full cursor-pointer items-center gap-2 rounded-md text-sm outline-none transition-colors", "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", "focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50", "aria-disabled:pointer-events-none aria-disabled:opacity-50", s && "bg-muted font-medium text-foreground", "px-2", o > 0 && "h-7 text-[13px] text-sidebar-foreground/80"), h = /* @__PURE__ */ p(d, { children: [
 		l ? /* @__PURE__ */ f(l, { className: "size-4 shrink-0 text-muted-foreground group-hover/app-shell-nav-item:text-inherit" }) : null,
 		/* @__PURE__ */ f("span", {
 			className: "min-w-0 flex-1 truncate",
@@ -144,7 +144,7 @@ function S({ breadcrumbs: t, renderLink: n }) {
 	return /* @__PURE__ */ f("div", {
 		className: "flex min-w-0 flex-1 items-center gap-1 overflow-hidden",
 		children: t.map((r, i) => {
-			let a = i !== t.length - 1 && !!r.href && !!n, o = e("text-[13px] font-medium leading-4 whitespace-nowrap text-foreground transition-colors", a && "hover:text-primary");
+			let a = i !== t.length - 1 && !!r.href && !!n, o = e("text-[13px] font-medium leading-4 whitespace-nowrap text-foreground transition-colors", a && "cursor-pointer hover:text-primary");
 			return /* @__PURE__ */ p(c.Fragment, { children: [i > 0 ? /* @__PURE__ */ f(l, { className: "size-4 shrink-0 text-muted-foreground" }) : null, a && r.href ? n({
 				breadcrumb: r,
 				href: r.href,

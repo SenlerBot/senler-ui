@@ -1,23 +1,25 @@
-import { jsx as e } from "react/jsx-runtime";
-import * as t from "@radix-ui/react-collapsible";
+import { cn as e } from "../lib/utils/cn.js";
+import { jsx as t } from "react/jsx-runtime";
+import * as n from "@radix-ui/react-collapsible";
 //#region src/atoms/collapsible.tsx
-function n({ ...n }) {
-	return /* @__PURE__ */ e(t.Root, {
+function r({ ...e }) {
+	return /* @__PURE__ */ t(n.Root, {
 		"data-slot": "collapsible",
-		...n
+		...e
 	});
 }
-function r({ ...n }) {
-	return /* @__PURE__ */ e(t.CollapsibleTrigger, {
+function i({ className: r, ...i }) {
+	return /* @__PURE__ */ t(n.CollapsibleTrigger, {
 		"data-slot": "collapsible-trigger",
-		...n
+		className: e("cursor-pointer", r),
+		...i
 	});
 }
-function i({ ...n }) {
-	return /* @__PURE__ */ e(t.CollapsibleContent, {
+function a({ ...e }) {
+	return /* @__PURE__ */ t(n.CollapsibleContent, {
 		"data-slot": "collapsible-content",
-		...n
+		...e
 	});
 }
 //#endregion
-export { n as Collapsible, i as CollapsibleContent, r as CollapsibleTrigger };
+export { r as Collapsible, a as CollapsibleContent, i as CollapsibleTrigger };

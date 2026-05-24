@@ -5,7 +5,18 @@ import { buttonVariants } from './button';
 
 const AlertDialog = AlertDialogPrimitive.Root;
 
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
+function AlertDialogTrigger({
+  className,
+  ...props
+}: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
+  return (
+    <AlertDialogPrimitive.Trigger
+      data-slot='alert-dialog-trigger'
+      className={cn('cursor-pointer', className)}
+      {...props}
+    />
+  );
+}
 
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
@@ -140,4 +151,3 @@ export {
   AlertDialogAction,
   AlertDialogCancel,
 };
-

@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/utils';
 
 const linkVariants = cva(
-  'flex items-center gap-1.5 leading-normal cursor-default text-primary text-sm transition-colors',
+  'flex cursor-pointer items-center gap-1.5 leading-normal text-primary text-sm transition-colors',
   {
     variants: {
       hover: {

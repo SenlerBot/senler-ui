@@ -12,10 +12,11 @@ function s({ ...e }) {
 		...e
 	});
 }
-function c({ ...e }) {
+function c({ className: t, ...n }) {
 	return /* @__PURE__ */ r(a.Trigger, {
 		"data-slot": "dialog-trigger",
-		...e
+		className: e("cursor-pointer", t),
+		...n
 	});
 }
 function l({ ...e }) {
@@ -24,10 +25,11 @@ function l({ ...e }) {
 		...e
 	});
 }
-function u({ ...e }) {
+function u({ className: t, ...n }) {
 	return /* @__PURE__ */ r(a.Close, {
 		"data-slot": "dialog-close",
-		...e
+		className: e("cursor-pointer", t),
+		...n
 	});
 }
 var d = t.forwardRef(({ className: t, ...n }, i) => /* @__PURE__ */ r(a.Overlay, {
@@ -58,11 +60,11 @@ var f = t.forwardRef(({ className: t, children: s, showCloseButton: c = o.showCl
 				className: e("bg-background relative z-10 grid w-full gap-4 rounded-lg border p-4 shadow-lg sm:max-w-lg", t),
 				children: [s, c && /* @__PURE__ */ r(a.Close, {
 					"data-slot": "dialog-close",
-					className: "absolute top-3 right-3 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none",
+					className: "absolute top-3 right-3 cursor-pointer rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none",
 					asChild: !0,
 					children: /* @__PURE__ */ i("button", {
 						type: "button",
-						className: "inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted",
+						className: "inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md hover:bg-muted",
 						children: [/* @__PURE__ */ r(n, { className: "h-4 w-4" }), /* @__PURE__ */ r("span", {
 							className: "sr-only",
 							children: "Close"

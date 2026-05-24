@@ -38,7 +38,7 @@ function p({ className: t, ...n }, r) {
 	return /* @__PURE__ */ a(s.Trigger, {
 		ref: r,
 		"data-slot": "menubar-trigger",
-		className: e("cursor-default bg-transparent", t),
+		className: e("cursor-pointer bg-transparent", t),
 		...n
 	});
 }
@@ -54,14 +54,14 @@ function m({ className: t, align: n = "center", sideOffset: r = 4, ...i }) {
 function h({ className: t, ...n }) {
 	return /* @__PURE__ */ a(s.Item, {
 		"data-slot": "menubar-item",
-		className: e("text-[13px] leading-none text-foreground rounded-[3px] flex items-center justify-between h-8 px-1.5 mx-1 relative select-none outline-none data-[highlighted]:bg-accent data-[highlighted]:[&_svg]:text-primary data-[disabled]:pointer-events-none", t),
+		className: e("text-[13px] leading-none text-foreground rounded-[3px] flex h-8 cursor-pointer items-center justify-between px-1.5 mx-1 relative select-none outline-none data-[highlighted]:bg-accent data-[highlighted]:[&_svg]:text-primary data-[disabled]:pointer-events-none", t),
 		...n
 	});
 }
 function g({ className: t, children: r, checked: i, ...c }) {
 	return /* @__PURE__ */ o(s.CheckboxItem, {
 		"data-slot": "menubar-checkbox-item",
-		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", t),
+		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", t),
 		checked: i,
 		...c,
 		children: [/* @__PURE__ */ a("span", {
@@ -73,7 +73,7 @@ function g({ className: t, children: r, checked: i, ...c }) {
 function _({ className: t, children: n, ...r }) {
 	return /* @__PURE__ */ o(s.RadioItem, {
 		"data-slot": "menubar-radio-item",
-		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", t),
+		className: e("focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer items-center gap-2 rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", t),
 		...r,
 		children: [/* @__PURE__ */ a("span", {
 			className: "pointer-events-none absolute left-2 flex size-3.5 items-center justify-center",
@@ -113,7 +113,7 @@ function S({ className: t, inset: n, children: i, ...c }) {
 	return /* @__PURE__ */ o(s.SubTrigger, {
 		"data-slot": "menubar-sub-trigger",
 		"data-inset": n,
-		className: e("focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[inset]:pl-8", t),
+		className: e("focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[inset]:pl-8", t),
 		...c,
 		children: [i, /* @__PURE__ */ a(r, { className: "ml-auto h-4 w-4" })]
 	});

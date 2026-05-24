@@ -4,7 +4,15 @@ import * as n from "react";
 import { jsx as r, jsxs as i } from "react/jsx-runtime";
 import * as a from "@radix-ui/react-alert-dialog";
 //#region src/atoms/alert-dialog.tsx
-var o = a.Root, s = a.Trigger, c = a.Portal, l = n.forwardRef(({ className: t, ...n }, i) => /* @__PURE__ */ r(a.Overlay, {
+var o = a.Root;
+function s({ className: t, ...n }) {
+	return /* @__PURE__ */ r(a.Trigger, {
+		"data-slot": "alert-dialog-trigger",
+		className: e("cursor-pointer", t),
+		...n
+	});
+}
+var c = a.Portal, l = n.forwardRef(({ className: t, ...n }, i) => /* @__PURE__ */ r(a.Overlay, {
 	className: e("fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0", t),
 	...n,
 	ref: i
