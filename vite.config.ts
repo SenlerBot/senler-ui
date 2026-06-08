@@ -8,6 +8,7 @@ const dirname = path.dirname(filename);
 const packageEntry = path.resolve(dirname, 'src/index.ts');
 const appShellEntry = path.resolve(dirname, 'src/app-shell.ts');
 const codeEntry = path.resolve(dirname, 'src/code.ts');
+const viteCssCompatEntry = path.resolve(dirname, 'src/vite-css-compat.ts');
 const stylesEntry = path.resolve(dirname, 'src/styles.css');
 
 const externalPackages = [
@@ -15,6 +16,7 @@ const externalPackages = [
   'react-dom',
   'class-variance-authority',
   'clsx',
+  'lightningcss',
   'lucide-react',
   'next-themes',
   'prism-react-renderer',
@@ -54,6 +56,7 @@ export default defineConfig({
         index: packageEntry,
         'app-shell': appShellEntry,
         code: codeEntry,
+        'vite-css-compat': viteCssCompatEntry,
         styles: stylesEntry,
       },
       formats: ['es'],
