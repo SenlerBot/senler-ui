@@ -7,6 +7,8 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const packageEntry = path.resolve(dirname, 'src/index.ts');
 const appShellEntry = path.resolve(dirname, 'src/app-shell.ts');
+const browserCompatEntry = path.resolve(dirname, 'src/browser-compat.ts');
+const browserSupportEntry = path.resolve(dirname, 'src/browser-support.ts');
 const codeEntry = path.resolve(dirname, 'src/code.ts');
 const viteCssCompatEntry = path.resolve(dirname, 'src/vite-css-compat.ts');
 const stylesEntry = path.resolve(dirname, 'src/styles.css');
@@ -24,6 +26,7 @@ const externalPackages = [
   'react-select',
   'sonner',
   'tailwind-merge',
+  'web-streams-polyfill',
 ];
 
 function isExternal(id: string) {
@@ -55,6 +58,8 @@ export default defineConfig({
       entry: {
         index: packageEntry,
         'app-shell': appShellEntry,
+        'browser-compat': browserCompatEntry,
+        'browser-support': browserSupportEntry,
         code: codeEntry,
         'vite-css-compat': viteCssCompatEntry,
         styles: stylesEntry,

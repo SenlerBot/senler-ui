@@ -1,7 +1,8 @@
 import { browserslistToTargets, Features, transform as transformCss } from 'lightningcss'
 import type { Plugin } from 'vite'
+import { SENLER_BROWSER_COMPATIBILITY_BROWSERS } from './browser-support'
 
-export const DEFAULT_CSS_COMPATIBILITY_BROWSERS = ['ios_saf 13', 'safari 13']
+export const DEFAULT_CSS_COMPATIBILITY_BROWSERS = [...SENLER_BROWSER_COMPATIBILITY_BROWSERS]
 
 export interface CssCompatibilityPluginOptions {
   browsers?: string[]
@@ -10,6 +11,7 @@ export interface CssCompatibilityPluginOptions {
 const CSS_COMPATIBILITY_FEATURES = Features.Colors | Features.LogicalProperties | Features.Selectors | Features.VendorPrefixes
 const CSS_HASH_PATTERN = /-[A-Za-z0-9_-]{8}(?=\.css$)/
 const COLOR_MIX_FALLBACK_SUPPORTS = '@supports not (color: color-mix(in lab, red, red))'
+const COLOR_MIX_FALLBACK_SUPPORTS_PATTERN = /@supports\s+not\s*\(\s*color\s*:\s*color-mix\(in\s+lab\s*,\s*red\s*,\s*red\s*\)\s*\)/
 
 interface RgbColor {
   red: number
@@ -426,6 +428,10 @@ const buildRgbVariableBlock = (
 }
 
 const addColorMixFallbacks = (css: string) => {
+  if (COLOR_MIX_FALLBACK_SUPPORTS_PATTERN.test(css)) {
+    return css
+  }
+
   const fallbacks = collectColorMixFallbacks(css)
 
   if (fallbacks.length === 0) {
