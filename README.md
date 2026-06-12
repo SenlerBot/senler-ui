@@ -23,7 +23,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.16.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.17.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -65,8 +65,8 @@ when a project uses streaming APIs directly or through React Router:
 import '@senler/ui/browser-compat';
 ```
 
-For Vite applications, add the CSS compatibility plugin so the final production
-CSS is transformed with the same browser policy:
+For Vite applications, add the CSS compatibility plugin so development and
+production CSS are transformed with the same browser policy:
 
 ```ts
 import { createCssCompatibilityPlugin } from '@senler/ui/vite-css-compat';

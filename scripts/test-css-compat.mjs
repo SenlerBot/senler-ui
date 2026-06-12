@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict'
-import { applyCssCompatibilityToBundle } from '../dist/vite-css-compat.js'
+import {
+  applyCssCompatibilityToBundle,
+  transformCssForBrowserCompatibility,
+} from '../dist/vite-css-compat.js'
 
 const cssFileName = 'assets/app-aaaaaaaa.css'
 const css = `
@@ -72,6 +75,20 @@ assert.equal(
   /rgba\(var\(--senler-accent-rgb\),\s*0?\.4\)/.test(transformedCss),
   true,
   'color-mix fallback should use RGB CSS variable',
+)
+
+const devTransformedCss = transformCssForBrowserCompatibility(css, 'src/styles.css', {}, false)
+
+assert.equal(devTransformedCss.includes('@layer'), false, 'Dev CSS transform should unwrap cascade layers')
+assert.equal(
+  devTransformedCss.includes('--tw-gradient-position: to right in oklab'),
+  false,
+  'Dev CSS transform should remove unsupported gradient interpolation',
+)
+assert.equal(
+  colorMixFallbackGuardPattern.test(devTransformedCss),
+  true,
+  'Dev CSS transform should emit color-mix fallback guard',
 )
 
 console.log('css-compat: ok')

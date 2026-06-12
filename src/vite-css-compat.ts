@@ -1,5 +1,5 @@
 import { browserslistToTargets, Features, transform as transformCss } from 'lightningcss'
-import type { Plugin } from 'vite'
+import type { Plugin, ResolvedConfig } from 'vite'
 import { SENLER_BROWSER_COMPATIBILITY_BROWSERS } from './browser-support'
 
 export const DEFAULT_CSS_COMPATIBILITY_BROWSERS = [...SENLER_BROWSER_COMPATIBILITY_BROWSERS]
@@ -12,6 +12,7 @@ const CSS_COMPATIBILITY_FEATURES = Features.Colors | Features.LogicalProperties 
 const CSS_HASH_PATTERN = /-[A-Za-z0-9_-]{8}(?=\.css$)/
 const COLOR_MIX_FALLBACK_SUPPORTS = '@supports not (color: color-mix(in lab, red, red))'
 const COLOR_MIX_FALLBACK_SUPPORTS_PATTERN = /@supports\s+not\s*\(\s*color\s*:\s*color-mix\(in\s+lab\s*,\s*red\s*,\s*red\s*\)\s*\)/
+const CSS_REQUEST_PATTERN = /\.css(?:$|\?)/
 
 interface RgbColor {
   red: number
@@ -513,12 +514,35 @@ const createCssHash = (source: string) => {
   return (hash >>> 0).toString(16).padStart(8, '0')
 }
 
+const createCssCompatibilityTargets = (options: CssCompatibilityPluginOptions) => (
+  browserslistToTargets(options.browsers ?? DEFAULT_CSS_COMPATIBILITY_BROWSERS)
+)
+
+const normalizeCssRequestFileName = (id: string) => id.split('?')[0] ?? id
+
+export const transformCssForBrowserCompatibility = (
+  css: string,
+  fileName: string,
+  options: CssCompatibilityPluginOptions = {},
+  minify = true,
+) => {
+  const result = transformCss({
+    filename: fileName,
+    code: new TextEncoder().encode(normalizeBrowserCompatibleCss(css)),
+    minify,
+    targets: createCssCompatibilityTargets(options),
+    include: CSS_COMPATIBILITY_FEATURES,
+    errorRecovery: true,
+  })
+
+  return normalizeBrowserCompatibleCss(new TextDecoder().decode(result.code))
+}
+
 export const applyCssCompatibilityToBundle = (
   bundle: CssCompatibilityBundle,
   options: CssCompatibilityPluginOptions = {},
 ) => {
   const cssRenames = new Map<string, string>()
-  const targets = browserslistToTargets(options.browsers ?? DEFAULT_CSS_COMPATIBILITY_BROWSERS)
 
   for (const asset of Object.values(bundle)) {
     if (asset.type !== 'asset' || !asset.fileName.endsWith('.css')) {
@@ -526,18 +550,7 @@ export const applyCssCompatibilityToBundle = (
     }
 
     const source = typeof asset.source === 'string' ? asset.source : new TextDecoder().decode(asset.source)
-    const unlayeredCss = normalizeBrowserCompatibleCss(source)
-    const result = transformCss({
-      filename: asset.fileName,
-      code: new TextEncoder().encode(unlayeredCss),
-      minify: true,
-      targets,
-      include: CSS_COMPATIBILITY_FEATURES,
-      errorRecovery: true,
-    })
-
-    const transformedCss = new TextDecoder().decode(result.code)
-    const normalizedCss = normalizeBrowserCompatibleCss(transformedCss)
+    const normalizedCss = transformCssForBrowserCompatibility(source, asset.fileName, options)
     const nextFileName = createCssFileName(asset.fileName, normalizedCss)
 
     if (nextFileName !== asset.fileName) {
@@ -565,10 +578,38 @@ export const applyCssCompatibilityToBundle = (
   }
 }
 
-export const createCssCompatibilityPlugin = (options: CssCompatibilityPluginOptions = {}): Plugin => ({
-  name: 'css-compatibility',
-  enforce: 'post',
-  generateBundle(_, bundle) {
-    applyCssCompatibilityToBundle(bundle, options)
-  },
-})
+export const createCssCompatibilityPlugin = (options: CssCompatibilityPluginOptions = {}): Plugin => {
+  let resolvedConfig: ResolvedConfig | null = null
+
+  return {
+    name: 'css-compatibility',
+    enforce: 'post',
+    configResolved(config) {
+      resolvedConfig = config
+    },
+    transform(code, id) {
+      if (resolvedConfig?.command !== 'serve' || !CSS_REQUEST_PATTERN.test(id)) {
+        return null
+      }
+
+      const transformedCss = transformCssForBrowserCompatibility(
+        code,
+        normalizeCssRequestFileName(id),
+        options,
+        false,
+      )
+
+      if (transformedCss === code) {
+        return null
+      }
+
+      return {
+        code: transformedCss,
+        map: null,
+      }
+    },
+    generateBundle(_, bundle) {
+      applyCssCompatibilityToBundle(bundle, options)
+    },
+  }
+}

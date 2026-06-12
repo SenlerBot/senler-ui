@@ -16,6 +16,7 @@ type CssCompatibilityChunk = {
 };
 export type CssCompatibilityBundle = Record<string, CssCompatibilityAsset | CssCompatibilityChunk>;
 export declare const normalizeBrowserCompatibleCss: (css: string) => string;
+export declare const transformCssForBrowserCompatibility: (css: string, fileName: string, options?: CssCompatibilityPluginOptions, minify?: boolean) => string;
 export declare const applyCssCompatibilityToBundle: (bundle: CssCompatibilityBundle, options?: CssCompatibilityPluginOptions) => void;
 export declare const createCssCompatibilityPlugin: (options?: CssCompatibilityPluginOptions) => Plugin;
 export {};
