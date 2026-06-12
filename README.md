@@ -23,7 +23,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.18.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.19.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -88,9 +88,8 @@ export default defineConfig({
 The runtime entrypoint installs missing Web Streams globals such as
 `TransformStream`, `TextEncoderStream`, and `TextDecoderStream`. The Vite helper
 sets the shared JS target, patches known dependency syntax that Safari cannot
-parse, and transforms CSS in development and production: vendor prefixes,
-logical properties, cascade layers, and fallbacks for supported `color-mix`
-patterns.
+parse, and transforms final production CSS: vendor prefixes, logical
+properties, cascade layers, and fallbacks for supported `color-mix` patterns.
 
 Then import components from the root entrypoint:
 

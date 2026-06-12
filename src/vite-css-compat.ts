@@ -1,5 +1,5 @@
 import { browserslistToTargets, Features, transform as transformCss } from 'lightningcss'
-import type { Plugin, ResolvedConfig } from 'vite'
+import type { Plugin } from 'vite'
 import { SENLER_BROWSER_COMPATIBILITY_BROWSERS } from './browser-support'
 
 export const DEFAULT_CSS_COMPATIBILITY_BROWSERS = [...SENLER_BROWSER_COMPATIBILITY_BROWSERS]
@@ -12,7 +12,6 @@ const CSS_COMPATIBILITY_FEATURES = Features.Colors | Features.LogicalProperties 
 const CSS_HASH_PATTERN = /-[A-Za-z0-9_-]{8}(?=\.css$)/
 const COLOR_MIX_FALLBACK_SUPPORTS = '@supports not (color: color-mix(in lab, red, red))'
 const COLOR_MIX_FALLBACK_SUPPORTS_PATTERN = /@supports\s+not\s*\(\s*color\s*:\s*color-mix\(in\s+lab\s*,\s*red\s*,\s*red\s*\)\s*\)/
-const CSS_REQUEST_PATTERN = /\.css(?:$|\?)/
 
 interface RgbColor {
   red: number
@@ -518,8 +517,6 @@ const createCssCompatibilityTargets = (options: CssCompatibilityPluginOptions) =
   browserslistToTargets(options.browsers ?? DEFAULT_CSS_COMPATIBILITY_BROWSERS)
 )
 
-const normalizeCssRequestFileName = (id: string) => id.split('?')[0] ?? id
-
 export const transformCssForBrowserCompatibility = (
   css: string,
   fileName: string,
@@ -579,35 +576,9 @@ export const applyCssCompatibilityToBundle = (
 }
 
 export const createCssCompatibilityPlugin = (options: CssCompatibilityPluginOptions = {}): Plugin => {
-  let resolvedConfig: ResolvedConfig | null = null
-
   return {
     name: 'css-compatibility',
     enforce: 'post',
-    configResolved(config) {
-      resolvedConfig = config
-    },
-    transform(code, id) {
-      if (resolvedConfig?.command !== 'serve' || !CSS_REQUEST_PATTERN.test(id)) {
-        return null
-      }
-
-      const transformedCss = transformCssForBrowserCompatibility(
-        code,
-        normalizeCssRequestFileName(id),
-        options,
-        false,
-      )
-
-      if (transformedCss === code) {
-        return null
-      }
-
-      return {
-        code: transformedCss,
-        map: null,
-      }
-    },
     generateBundle(_, bundle) {
       applyCssCompatibilityToBundle(bundle, options)
     },
