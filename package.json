@@ -1,6 +1,6 @@
 {
   "name": "@senler/ui",
-  "version": "0.5.17",
+  "version": "0.5.18",
   "private": false,
   "type": "module",
   "description": "Senler React 19 UI component library with shared styles, atoms, layout primitives, forms, and overlays",
@@ -47,6 +47,10 @@
     "./browser-support": {
       "types": "./dist/browser-support.d.ts",
       "import": "./dist/browser-support.js"
+    },
+    "./vite-browser-compat": {
+      "types": "./dist/vite-browser-compat.d.ts",
+      "import": "./dist/vite-browser-compat.js"
     },
     "./vite-css-compat": {
       "types": "./dist/vite-css-compat.d.ts",

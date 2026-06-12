@@ -3,6 +3,7 @@ import {
   applyCssCompatibilityToBundle,
   transformCssForBrowserCompatibility,
 } from '../dist/vite-css-compat.js'
+import { createDependencySyntaxCompatibilityPlugin } from '../dist/vite-browser-compat.js'
 
 const cssFileName = 'assets/app-aaaaaaaa.css'
 const css = `
@@ -89,6 +90,29 @@ assert.equal(
   colorMixFallbackGuardPattern.test(devTransformedCss),
   true,
   'Dev CSS transform should emit color-mix fallback guard',
+)
+
+const dependencySyntaxPlugin = createDependencySyntaxCompatibilityPlugin()
+const emailAutolinkPatch = dependencySyntaxPlugin.transform(
+  'const email = /(?<=^|\\s|\\p{P}|\\p{S})([-.\\w]+)@([-\\w]+(?:\\.[-\\w]+)+)/gu;',
+  '/node_modules/mdast-util-gfm-autolink-literal/index.js',
+)
+const lexicalPatch = dependencySyntaxPlugin.transform(
+  'const markdown = /(?<!\\\\)\\*\\*/g;',
+  '/node_modules/@lexical/markdown/index.js',
+)
+
+assert.notEqual(emailAutolinkPatch, null, 'Dependency syntax plugin should patch email autolink lookbehind')
+assert.equal(
+  emailAutolinkPatch.code.includes('?<='),
+  false,
+  'Dependency syntax plugin should remove unsupported positive lookbehind',
+)
+assert.notEqual(lexicalPatch, null, 'Dependency syntax plugin should patch Lexical lookbehind')
+assert.equal(
+  lexicalPatch.code.includes('?<!'),
+  false,
+  'Dependency syntax plugin should remove unsupported negative lookbehind',
 )
 
 console.log('css-compat: ok')

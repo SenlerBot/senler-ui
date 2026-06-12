@@ -18,12 +18,12 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 - Layout helpers: `LayoutContainer`, `LayoutSection`, `LayoutField`.
 - Application shell: `AppShell`, `AppSidebar`, `AppHeader` from `@senler/ui/app-shell`.
 - Optional code highlighting: `CodeBlock` from `@senler/ui/code`.
-- Browser compatibility helpers: `@senler/ui/browser-compat` and `@senler/ui/vite-css-compat`.
+- Browser compatibility helpers: `@senler/ui/browser-compat` and `@senler/ui/vite-browser-compat`.
 
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.17.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.18.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -65,24 +65,32 @@ when a project uses streaming APIs directly or through React Router:
 import '@senler/ui/browser-compat';
 ```
 
-For Vite applications, add the CSS compatibility plugin so development and
-production CSS are transformed with the same browser policy:
+For Vite applications, use the browser compatibility helper so JavaScript,
+dependency syntax patches, and CSS transforms share the same browser policy:
 
 ```ts
-import { createCssCompatibilityPlugin } from '@senler/ui/vite-css-compat';
+import {
+  SENLER_JS_COMPATIBILITY_TARGET,
+  createBrowserCompatibilityPlugins,
+} from '@senler/ui/vite-browser-compat';
 
 export default defineConfig({
   plugins: [
     react(),
-    createCssCompatibilityPlugin(),
+    ...createBrowserCompatibilityPlugins(),
   ],
+  build: {
+    target: SENLER_JS_COMPATIBILITY_TARGET,
+  },
 });
 ```
 
 The runtime entrypoint installs missing Web Streams globals such as
-`TransformStream`, `TextEncoderStream`, and `TextDecoderStream`. The Vite plugin
-handles CSS only: vendor prefixes, logical properties, cascade layers, and
-fallbacks for supported `color-mix` patterns.
+`TransformStream`, `TextEncoderStream`, and `TextDecoderStream`. The Vite helper
+sets the shared JS target, patches known dependency syntax that Safari cannot
+parse, and transforms CSS in development and production: vendor prefixes,
+logical properties, cascade layers, and fallbacks for supported `color-mix`
+patterns.
 
 Then import components from the root entrypoint:
 

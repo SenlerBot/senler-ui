@@ -10,6 +10,7 @@ const appShellEntry = path.resolve(dirname, 'src/app-shell.ts');
 const browserCompatEntry = path.resolve(dirname, 'src/browser-compat.ts');
 const browserSupportEntry = path.resolve(dirname, 'src/browser-support.ts');
 const codeEntry = path.resolve(dirname, 'src/code.ts');
+const viteBrowserCompatEntry = path.resolve(dirname, 'src/vite-browser-compat.ts');
 const viteCssCompatEntry = path.resolve(dirname, 'src/vite-css-compat.ts');
 const stylesEntry = path.resolve(dirname, 'src/styles.css');
 
@@ -61,6 +62,7 @@ export default defineConfig({
         'browser-compat': browserCompatEntry,
         'browser-support': browserSupportEntry,
         code: codeEntry,
+        'vite-browser-compat': viteBrowserCompatEntry,
         'vite-css-compat': viteCssCompatEntry,
         styles: stylesEntry,
       },
