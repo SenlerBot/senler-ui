@@ -21,7 +21,7 @@ function r({ theme: r = i, language: a = "json", code: o = "", ...s }) {
 }
 var i = {
 	plain: {
-		color: "hsl(var(--foreground))",
+		color: "var(--foreground)",
 		backgroundColor: "inherit"
 	},
 	styles: [
@@ -34,7 +34,7 @@ var i = {
 				"cdata"
 			],
 			style: {
-				color: "hsl(var(--muted-foreground))",
+				color: "var(--muted-foreground)",
 				fontStyle: "italic"
 			}
 		},
@@ -86,7 +86,7 @@ var i = {
 				"punctuation",
 				"symbol"
 			],
-			style: { color: "hsl(var(--foreground))" }
+			style: { color: "var(--foreground)" }
 		},
 		{
 			types: ["class-name", "maybe-class-name"],

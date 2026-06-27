@@ -23,7 +23,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.19.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.20.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:

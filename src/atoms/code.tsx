@@ -39,14 +39,14 @@ function CodeBlock({
 
 const defaultTheme = {
   plain: {
-    color: 'hsl(var(--foreground))',
+    color: 'var(--foreground)',
     backgroundColor: 'inherit',
   },
   styles: [
     {
       types: ['comment', 'block-comment', 'prolog', 'doctype', 'cdata'],
       style: {
-        color: 'hsl(var(--muted-foreground))',
+        color: 'var(--muted-foreground)',
         fontStyle: 'italic',
       },
     },
@@ -89,7 +89,7 @@ const defaultTheme = {
     {
       types: ['operator', 'punctuation', 'symbol'],
       style: {
-        color: 'hsl(var(--foreground))',
+        color: 'var(--foreground)',
       },
     },
     {
