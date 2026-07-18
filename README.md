@@ -4,6 +4,17 @@ Senler UI is a React 19 component library for building Senler-compatible interfa
 
 Documentation: [ui.senler.io](https://ui.senler.io)
 
+## Development
+
+This repository is the only editable source of truth for `@senler/ui`.
+The copy under `aibot-cabinet/packages/senler-ui` is a generated vendor snapshot
+and must be updated with the Cabinet `npm run ui:sync` command.
+
+Use `npm run check:fast` while editing. Run `npm run build` once before
+publishing; it performs one full check, one artifact build, and one distribution
+test. The `prepack` hook only verifies that `dist` was built from the current
+source, so `npm publish` does not repeat the full workflow.
+
 ## What Is Included
 
 - Shared Tailwind integration via `@senler/ui/tailwind.css`.
@@ -23,7 +34,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.20.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.21.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:

@@ -1,6 +1,7 @@
+import browserslist from 'browserslist'
 import { browserslistToTargets, Features, transform as transformCss } from 'lightningcss'
 import type { Plugin } from 'vite'
-import { SENLER_BROWSER_COMPATIBILITY_BROWSERS } from './browser-support'
+import { SENLER_BROWSER_COMPATIBILITY_BROWSERS } from './browser-support.js'
 
 export const DEFAULT_CSS_COMPATIBILITY_BROWSERS = [...SENLER_BROWSER_COMPATIBILITY_BROWSERS]
 
@@ -11,7 +12,8 @@ export interface CssCompatibilityPluginOptions {
 const CSS_COMPATIBILITY_FEATURES = Features.Colors | Features.LogicalProperties | Features.Selectors | Features.VendorPrefixes
 const CSS_HASH_PATTERN = /-[A-Za-z0-9_-]{8}(?=\.css$)/
 const COLOR_MIX_FALLBACK_SUPPORTS = '@supports not (color: color-mix(in lab, red, red))'
-const COLOR_MIX_FALLBACK_SUPPORTS_PATTERN = /@supports\s+not\s*\(\s*color\s*:\s*color-mix\(in\s+lab\s*,\s*red\s*,\s*red\s*\)\s*\)/
+const COLOR_MIX_FALLBACK_SUPPORTS_PATTERN = /^@supports\s+not\s*\(\s*color\s*:\s*color-mix\(in\s+lab\s*,\s*red\s*,\s*red\s*\)\s*\)$/
+const COLOR_MIX_GENERATED_SENTINEL = '--senler-ui-color-mix-fallback-generated'
 
 interface RgbColor {
   red: number
@@ -20,10 +22,19 @@ interface RgbColor {
 }
 
 interface ColorMixFallback {
+  atRules: string[]
   selector: string
   property: string
   variableName: string
   alpha: string
+}
+
+interface CssBlock {
+  prelude: string
+  preludeStart: number
+  openingBraceIndex: number
+  closingBraceIndex: number
+  body: string
 }
 
 type CssCompatibilityAsset = {
@@ -40,6 +51,8 @@ type CssCompatibilityChunk = {
 }
 
 export type CssCompatibilityBundle = Record<string, CssCompatibilityAsset | CssCompatibilityChunk>
+
+const staticColorCache = new Map<string, RgbColor | null>()
 
 const isEscapedCssCharacter = (source: string, index: number) => {
   let slashCount = 0
@@ -108,6 +121,118 @@ const findMatchingBrace = (source: string, openingBraceIndex: number) => {
   }
 
   return -1
+}
+
+const normalizeCssPrelude = (prelude: string) => prelude
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .trim()
+
+const forEachCssBlock = (source: string, visitor: (block: CssBlock) => void) => {
+  let statementStart = 0
+  let index = 0
+  let quote = ''
+  let inComment = false
+  let parenthesisDepth = 0
+
+  while (index < source.length) {
+    const char = source[index]
+    const nextChar = source[index + 1]
+
+    if (inComment) {
+      if (char === '*' && nextChar === '/') {
+        inComment = false
+        index += 2
+      } else {
+        index += 1
+      }
+      continue
+    }
+
+    if (quote) {
+      if (char === '\\') {
+        index += 2
+      } else {
+        if (char === quote) {
+          quote = ''
+        }
+        index += 1
+      }
+      continue
+    }
+
+    if (char === '/' && nextChar === '*') {
+      inComment = true
+      index += 2
+      continue
+    }
+
+    if (char === '"' || char === "'") {
+      quote = char
+      index += 1
+      continue
+    }
+
+    if (char === '(') {
+      parenthesisDepth += 1
+      index += 1
+      continue
+    }
+
+    if (char === ')') {
+      parenthesisDepth = Math.max(0, parenthesisDepth - 1)
+      index += 1
+      continue
+    }
+
+    if (char === ';' && parenthesisDepth === 0) {
+      statementStart = index + 1
+      index += 1
+      continue
+    }
+
+    if (char !== '{' || parenthesisDepth !== 0) {
+      index += 1
+      continue
+    }
+
+    const closingBraceIndex = findMatchingBrace(source, index)
+    if (closingBraceIndex === -1) {
+      return
+    }
+
+    visitor({
+      prelude: normalizeCssPrelude(source.slice(statementStart, index)),
+      preludeStart: statementStart,
+      openingBraceIndex: index,
+      closingBraceIndex,
+      body: source.slice(index + 1, closingBraceIndex),
+    })
+    index = closingBraceIndex + 1
+    statementStart = index
+  }
+}
+
+const isColorMixFallbackGuard = (prelude: string) => (
+  COLOR_MIX_FALLBACK_SUPPORTS_PATTERN.test(prelude.replace(/\s+/g, ' '))
+)
+
+const visitCssStyleRules = (
+  css: string,
+  atRules: string[],
+  visitor: (selector: string, body: string, ruleAtRules: string[]) => void,
+) => {
+  forEachCssBlock(css, (block) => {
+    if (!block.prelude) {
+      return
+    }
+
+    if (block.prelude.startsWith('@')) {
+      visitCssStyleRules(block.body, [...atRules, block.prelude], visitor)
+      return
+    }
+
+    visitor(block.prelude, block.body, atRules)
+  })
 }
 
 const findLayerDelimiter = (source: string, startIndex: number) => {
@@ -305,6 +430,43 @@ const parseHslColor = (value: string): RgbColor | null => {
   )
 }
 
+const parseStaticCssColor = (value: string): RgbColor | null => {
+  const normalizedValue = value.trim().toLowerCase()
+  if (normalizedValue === 'transparent') {
+    return { red: 0, green: 0, blue: 0 }
+  }
+
+  const cachedColor = staticColorCache.get(normalizedValue)
+  if (cachedColor !== undefined) {
+    return cachedColor
+  }
+
+  try {
+    const result = transformCss({
+      filename: 'senler-static-color.css',
+      code: new TextEncoder().encode(`.color{color:color-mix(in srgb,${normalizedValue} 50%,transparent)}`),
+      minify: true,
+      targets: { chrome: 0 },
+      include: Features.Colors,
+    })
+    const transformedCss = new TextDecoder().decode(result.code)
+    const match = transformedCss.match(/rgba\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,/)
+    const color = match
+      ? {
+          red: clampColorChannel(Number(match[1])),
+          green: clampColorChannel(Number(match[2])),
+          blue: clampColorChannel(Number(match[3])),
+        }
+      : null
+
+    staticColorCache.set(normalizedValue, color)
+    return color
+  } catch {
+    staticColorCache.set(normalizedValue, null)
+    return null
+  }
+}
+
 const parseColor = (
   value: string | undefined,
   variables: Map<string, string>,
@@ -329,7 +491,10 @@ const parseColor = (
     return parseColor(variables.get(variableName), variables, seenVariables)
   }
 
-  return parseHexColor(trimmedValue) ?? parseRgbColor(trimmedValue) ?? parseHslColor(trimmedValue)
+  return parseHexColor(trimmedValue)
+    ?? parseRgbColor(trimmedValue)
+    ?? parseHslColor(trimmedValue)
+    ?? parseStaticCssColor(trimmedValue)
 }
 
 const collectCustomProperties = (body: string, target: Map<string, string>) => {
@@ -345,55 +510,33 @@ const collectCustomProperties = (body: string, target: Map<string, string>) => {
 const collectTopLevelColorVariables = (css: string) => {
   const rootVariables = new Map<string, string>()
   const darkVariables = new Map<string, string>()
-  let index = 0
 
-  while (index < css.length) {
-    const openingBraceIndex = css.indexOf('{', index)
-
-    if (openingBraceIndex === -1) {
-      break
-    }
-
-    const selector = css.slice(index, openingBraceIndex).trim()
-    const closingBraceIndex = findMatchingBrace(css, openingBraceIndex)
-
-    if (closingBraceIndex === -1) {
-      break
-    }
-
-    const body = css.slice(openingBraceIndex + 1, closingBraceIndex)
-
-    if (!selector.startsWith('@')) {
-      const selectors = selector.split(',').map((item) => item.trim())
+  forEachCssBlock(css, (block) => {
+    if (!block.prelude.startsWith('@')) {
+      const selectors = block.prelude.split(',').map((item) => item.trim())
 
       if (selectors.includes(':root') || selectors.includes(':host')) {
-        collectCustomProperties(body, rootVariables)
+        collectCustomProperties(block.body, rootVariables)
       }
 
       if (selectors.includes('.dark')) {
-        collectCustomProperties(body, darkVariables)
+        collectCustomProperties(block.body, darkVariables)
       }
     }
-
-    index = closingBraceIndex + 1
-  }
+  })
 
   return { rootVariables, darkVariables }
 }
 
 const collectColorMixFallbacks = (css: string): ColorMixFallback[] => {
   const fallbacks: ColorMixFallback[] = []
-  const rulePattern = /([^{}@][^{}]*)\{([^{}]*color-mix\(in oklab,\s*var\(--[A-Za-z0-9_-]+\)\s+[0-9.]+%,\s*transparent\)[^{}]*)\}/g
-  let ruleMatch = rulePattern.exec(css)
-
-  while (ruleMatch) {
-    const selector = ruleMatch[1].trim()
-    const body = ruleMatch[2]
+  visitCssStyleRules(css, [], (selector, body, atRules) => {
     const declarationPattern = /([A-Za-z-]+|--[A-Za-z0-9_-]+)\s*:\s*color-mix\(in oklab,\s*var\((--[A-Za-z0-9_-]+)\)\s+([0-9.]+)%,\s*transparent\)/g
     let declarationMatch = declarationPattern.exec(body)
 
     while (declarationMatch) {
       fallbacks.push({
+        atRules: atRules.filter((atRule) => !isColorMixFallbackGuard(atRule)),
         selector,
         property: declarationMatch[1],
         variableName: declarationMatch[2],
@@ -402,69 +545,134 @@ const collectColorMixFallbacks = (css: string): ColorMixFallback[] => {
 
       declarationMatch = declarationPattern.exec(body)
     }
-
-    ruleMatch = rulePattern.exec(css)
-  }
+  })
 
   return fallbacks
 }
 
 const formatRgbVariableValue = (color: RgbColor) => `${color.red}, ${color.green}, ${color.blue}`
+const areRgbColorsEqual = (left: RgbColor | null, right: RgbColor | null) => (
+  left !== null
+  && right !== null
+  && left.red === right.red
+  && left.green === right.green
+  && left.blue === right.blue
+)
 
-const buildRgbVariableBlock = (
-  selector: string,
-  variables: Map<string, string>,
+const buildRgbVariableDeclarations = (
+  resolvedVariables: Map<string, string>,
+  declaredVariables: Map<string, string>,
   variableNames: string[],
 ) => {
-  const declarations = variableNames
+  return variableNames
     .map((variableName) => {
-      const color = parseColor(variables.get(variableName), variables)
+      if (declaredVariables.has(`${variableName}-rgb`)) {
+        return ''
+      }
+
+      const color = parseColor(resolvedVariables.get(variableName), resolvedVariables)
 
       return color ? `${variableName}-rgb:${formatRgbVariableValue(color)}` : ''
     })
     .filter(Boolean)
+    .join(';')
+}
 
-  return declarations.length > 0 ? `${selector}{${declarations.join(';')}}` : ''
+const removeGeneratedColorMixFallback = (css: string) => {
+  let generatedStart = -1
+  let generatedEnd = -1
+
+  forEachCssBlock(css, (block) => {
+    if (
+      generatedStart !== -1
+      || !isColorMixFallbackGuard(block.prelude)
+      || !new RegExp(`(?:^|[;{])\\s*${COLOR_MIX_GENERATED_SENTINEL}\\s*:`).test(block.body)
+    ) {
+      return
+    }
+
+    const rawPrelude = css.slice(block.preludeStart, block.openingBraceIndex)
+    const atRuleOffset = rawPrelude.search(/@supports/i)
+    if (atRuleOffset === -1) {
+      return
+    }
+
+    generatedStart = block.preludeStart + atRuleOffset
+    generatedEnd = block.closingBraceIndex + 1
+  })
+
+  if (generatedStart === -1) {
+    return css
+  }
+
+  return removeGeneratedColorMixFallback(`${css.slice(0, generatedStart)}${css.slice(generatedEnd)}`)
+}
+
+const wrapInAtRules = (body: string, atRules: string[]) => (
+  atRules.reduceRight((nestedBody, atRule) => `${atRule}{${nestedBody}}`, body)
+)
+
+const buildCompatibilityRules = (fallbacks: ColorMixFallback[]) => {
+  return fallbacks
+    .map((fallback) => wrapInAtRules(
+      `${fallback.selector}{${fallback.property}:rgba(var(${fallback.variableName}-rgb), ${fallback.alpha})}`,
+      fallback.atRules,
+    ))
+    .join('')
+}
+
+const insertAfterLeadingComments = (css: string, generatedCss: string) => {
+  const leadingComments = css.match(/^(\s*(?:\/\*[\s\S]*?\*\/\s*)*)/)?.[0] ?? ''
+
+  return `${leadingComments}${generatedCss}${css.slice(leadingComments.length)}`
 }
 
 const addColorMixFallbacks = (css: string) => {
-  if (COLOR_MIX_FALLBACK_SUPPORTS_PATTERN.test(css)) {
-    return css
-  }
-
-  const fallbacks = collectColorMixFallbacks(css)
+  const sourceCss = removeGeneratedColorMixFallback(css)
+  const fallbacks = collectColorMixFallbacks(sourceCss)
 
   if (fallbacks.length === 0) {
-    return css
+    return sourceCss
   }
 
-  const { rootVariables, darkVariables } = collectTopLevelColorVariables(css)
+  const { rootVariables, darkVariables } = collectTopLevelColorVariables(sourceCss)
   const resolvedDarkVariables = new Map([...rootVariables, ...darkVariables])
-  const variableNames = [...new Set(fallbacks.map((fallback) => fallback.variableName))]
-    .filter((variableName) => parseColor(rootVariables.get(variableName), rootVariables))
-  const rootRgbBlock = buildRgbVariableBlock(':root,:host', rootVariables, variableNames)
-  const darkRgbBlock = buildRgbVariableBlock('.dark', resolvedDarkVariables, variableNames)
-
-  if (!rootRgbBlock) {
-    return css
-  }
-
-  const fallbackRules = new Map<string, ColorMixFallback>()
-
-  for (const fallback of fallbacks) {
-    fallbackRules.set(
-      `${fallback.selector}|${fallback.property}|${fallback.variableName}|${fallback.alpha}`,
-      fallback,
-    )
-  }
-
-  const compatibilityRules = [...fallbackRules.values()]
-    .map((fallback) => (
-      `${fallback.selector}{${fallback.property}:rgba(var(${fallback.variableName}-rgb), ${fallback.alpha})}`
+  const supportedVariableNames = [...new Set(fallbacks.map((fallback) => fallback.variableName))]
+    .filter((variableName) => (
+      parseColor(rootVariables.get(variableName), rootVariables)
+      || parseColor(resolvedDarkVariables.get(variableName), resolvedDarkVariables)
     ))
-    .join('')
+  const supportedVariables = new Set(supportedVariableNames)
+  const supportedFallbacks = fallbacks.filter((fallback) => supportedVariables.has(fallback.variableName))
+  const rootRgbDeclarations = buildRgbVariableDeclarations(
+    rootVariables,
+    rootVariables,
+    supportedVariableNames,
+  )
+  const darkVariableNames = supportedVariableNames.filter((variableName) => {
+    const rootColor = parseColor(rootVariables.get(variableName), rootVariables)
+    const darkColor = parseColor(resolvedDarkVariables.get(variableName), resolvedDarkVariables)
 
-  return `${rootRgbBlock}${darkRgbBlock}${COLOR_MIX_FALLBACK_SUPPORTS}{${compatibilityRules}}${css}`
+    return darkColor !== null && !areRgbColorsEqual(rootColor, darkColor)
+  })
+  const darkRgbDeclarations = buildRgbVariableDeclarations(
+    resolvedDarkVariables,
+    darkVariables,
+    darkVariableNames,
+  )
+  const compatibilityRules = buildCompatibilityRules(supportedFallbacks)
+
+  if (!rootRgbDeclarations && !darkRgbDeclarations && !compatibilityRules) {
+    return sourceCss
+  }
+
+  const rootRgbBlock = `:root,:host{${COLOR_MIX_GENERATED_SENTINEL}:1${rootRgbDeclarations ? `;${rootRgbDeclarations}` : ''}}`
+  const darkRgbBlock = darkRgbDeclarations ? `.dark{${darkRgbDeclarations}}` : ''
+
+  return insertAfterLeadingComments(
+    sourceCss,
+    `${COLOR_MIX_FALLBACK_SUPPORTS}{${rootRgbBlock}${darkRgbBlock}${compatibilityRules}}`,
+  )
 }
 
 const removeUnsupportedGradientInterpolation = (css: string) => (
@@ -513,8 +721,12 @@ const createCssHash = (source: string) => {
   return (hash >>> 0).toString(16).padStart(8, '0')
 }
 
+export const resolveCssCompatibilityBrowsers = (
+  options: CssCompatibilityPluginOptions = {},
+) => browserslist(options.browsers ?? DEFAULT_CSS_COMPATIBILITY_BROWSERS)
+
 const createCssCompatibilityTargets = (options: CssCompatibilityPluginOptions) => (
-  browserslistToTargets(options.browsers ?? DEFAULT_CSS_COMPATIBILITY_BROWSERS)
+  browserslistToTargets(resolveCssCompatibilityBrowsers(options))
 )
 
 export const transformCssForBrowserCompatibility = (

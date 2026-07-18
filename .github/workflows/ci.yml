@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: .cache
+          key: ${{ runner.os }}-ts-${{ hashFiles('package-lock.json', 'tsconfig*.json') }}
+      - run: npm ci --prefer-offline --no-audit --fund=false
+      - run: npm run check:full
+      - run: npm run build:artifact
+      - run: npm run test:dist
+      - run: npm run package:state:check
+      - run: npm pack --ignore-scripts --dry-run
+      - name: Verify committed distribution
+        run: |
+          git diff --exit-code -- dist
+          test -z "$(git ls-files --others --exclude-standard -- dist)"

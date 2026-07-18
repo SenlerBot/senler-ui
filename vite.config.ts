@@ -18,6 +18,7 @@ const externalPackages = [
   'react',
   'react-dom',
   'class-variance-authority',
+  'browserslist',
   'clsx',
   'lightningcss',
   'lucide-react',

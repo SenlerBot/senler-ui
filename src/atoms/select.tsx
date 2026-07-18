@@ -48,7 +48,7 @@ const SelectTrigger = React.forwardRef<
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex min-h-8 w-full cursor-pointer items-center justify-between gap-1 rounded-lg border border-input bg-background px-2 py-1.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+        'flex min-h-8 w-full cursor-pointer items-center justify-between gap-1 rounded-lg border border-input bg-background px-2 py-1.5 text-sm placeholder:text-muted-foreground outline-none transition-[color,border-color,box-shadow] focus:border-primary focus-visible:border-primary data-[state=open]:border-primary aria-invalid:border-destructive disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
         className
       )}
       data-ai-kind={dataAiKind ?? AI_KIND.field}

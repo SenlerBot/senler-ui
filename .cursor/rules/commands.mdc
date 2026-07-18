@@ -1,0 +1,20 @@
+---
+description: Канонические проверки, сборка и публикация Senler UI
+alwaysApply: true
+---
+
+# Проверки и сборка
+
+`src` — канонический исходный код, `dist` — только публикуемый результат сборки.
+
+1. Во время разработки запускай точечный `npm run test:source` или `npm run check:fast`.
+2. После завершения изменений один раз запускай `npm run build`.
+3. `npm run build` выполняет full check, одну сборку и dist-тест.
+4. Отдельные `check:full` и `build:artifact` используются CI, который явно связывает их с одним commit.
+
+`prepack` не собирает пакет повторно: он проверяет `dist/.source-hash` и падает,
+если artifact не соответствует текущему source.
+
+Не запускай тяжёлые команды параллельно. Локально `check:full`, `build:artifact` и `build` проходят через общий resource gate; CI и Docker обходят его автоматически.
+
+Consumer smoke должен получать уже собранный пакет через `npm pack --ignore-scripts`: он не устанавливает зависимости исходного Cabinet и не запускает `prepack` повторно.

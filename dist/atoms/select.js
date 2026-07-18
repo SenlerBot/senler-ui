@@ -10,7 +10,7 @@ var h = ["popper", "item-aligned"], g = { position: "popper" }, _ = m.Root, v = 
 	let h = n(c, typeof a == "string" ? a : void 0, typeof o == "string" ? o : void 0, void 0, void 0, i);
 	return /* @__PURE__ */ p(m.Trigger, {
 		ref: d,
-		className: e("flex min-h-8 w-full cursor-pointer items-center justify-between gap-1 rounded-lg border border-input bg-background px-2 py-1.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1", r),
+		className: e("flex min-h-8 w-full cursor-pointer items-center justify-between gap-1 rounded-lg border border-input bg-background px-2 py-1.5 text-sm placeholder:text-muted-foreground outline-none transition-[color,border-color,box-shadow] focus:border-primary focus-visible:border-primary data-[state=open]:border-primary aria-invalid:border-destructive disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1", r),
 		"data-ai-kind": s ?? t.field,
 		"data-ai-label": h,
 		"aria-label": a,

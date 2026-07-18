@@ -8,5 +8,4 @@ export const SENLER_BROWSER_COMPATIBILITY_BROWSERS = [
   'not dead',
 ] as const
 
-export const SENLER_JS_COMPATIBILITY_TARGET = 'es2019'
-
+export const SENLER_JS_COMPATIBILITY_TARGET = 'es2020'

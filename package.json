@@ -1,6 +1,6 @@
 {
   "name": "@senler/ui",
-  "version": "0.5.20",
+  "version": "0.5.21",
   "private": false,
   "type": "module",
   "description": "Senler React 19 UI component library with shared styles, atoms, layout primitives, forms, and overlays",
@@ -13,6 +13,9 @@
     "url": "https://github.com/SenlerBot/senler-ui/issues"
   },
   "homepage": "https://ui.senler.io",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "sideEffects": [
     "./dist/browser-compat.js",
     "./dist/fonts.css",
@@ -86,12 +89,23 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && vite build && npm run copy:css && tsc -p tsconfig.build.json",
+    "build": "sh scripts/development/run-heavy-task.sh --repo senler-ui --task build -- npm run build:internal",
+    "build:internal": "npm run check:full:internal && npm run build:artifact:internal && npm run test:dist",
+    "build:artifact": "sh scripts/development/run-heavy-task.sh --repo senler-ui --task build-artifact -- npm run build:artifact:internal",
+    "build:artifact:internal": "npm run clean && vite build && npm run copy:css && tsc -p tsconfig.build.json && npm run package:state:write && npm run normalize:dist",
     "copy:css": "node scripts/copy-css.mjs",
-    "test": "npm run test:css-compat",
-    "test:css-compat": "npm run build && node scripts/test-css-compat.mjs",
-    "type-check": "tsc -p tsconfig.json --noEmit",
-    "prepack": "npm run build"
+    "normalize:dist": "chmod -R a+rX dist",
+    "test": "npm run test:source",
+    "test:source": "node scripts/test-css-compat.mjs --source",
+    "test:dist": "node scripts/test-css-compat.mjs --dist && node scripts/test-package.mjs",
+    "type-check": "tsc -p tsconfig.json --noEmit --incremental --tsBuildInfoFile .cache/tsconfig.type-check.tsbuildinfo",
+    "type-check:configs": "tsc -p tsconfig.configs.json --noEmit",
+    "package:state:write": "node scripts/package-state.mjs --write",
+    "package:state:check": "node scripts/package-state.mjs --check",
+    "check:fast": "npm run type-check && npm run type-check:configs",
+    "check:full": "sh scripts/development/run-heavy-task.sh --repo senler-ui --task check-full -- npm run check:full:internal",
+    "check:full:internal": "npm run check:fast && npm run test:source",
+    "prepack": "npm run package:state:check"
   },
   "peerDependencies": {
     "lightningcss": ">=1.31.0 <2",
@@ -134,6 +148,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "browserslist": "^4.28.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "next-themes": "^0.4.6",
@@ -145,11 +160,12 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^22.15.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "lightningcss": "^1.32.0",
-    "lucide-react": "^1.7.0",
+    "lucide-react": "1.7.0",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
