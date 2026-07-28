@@ -36,7 +36,7 @@ function v(e) {
 	if (typeof window > "u") return t > 0 ? { hiddenUntil: t } : null;
 	try {
 		let n = JSON.parse(window.localStorage.getItem(e) ?? "null");
-		return typeof n != "object" || !n || Array.isArray(n) || !("hiddenUntil" in n) || typeof n.hiddenUntil != "number" || !Number.isFinite(n.hiddenUntil) ? null : { hiddenUntil: Math.max(n.hiddenUntil, t) };
+		return typeof n != "object" || !n || Array.isArray(n) || !("hiddenUntil" in n) || typeof n.hiddenUntil != "number" || !Number.isFinite(n.hiddenUntil) ? t > 0 ? { hiddenUntil: t } : null : { hiddenUntil: Math.max(n.hiddenUntil, t) };
 	} catch {
 		return t > 0 ? { hiddenUntil: t } : null;
 	}
@@ -137,7 +137,7 @@ function T(r = a) {
 			try {
 				window.localStorage.setItem(e, JSON.stringify({ hiddenUntil: t }));
 			} catch {}
-			p();
+			c(Date.now());
 		}, [r]),
 		refresh: e(() => {
 			typeof window < "u" && window.location.reload();

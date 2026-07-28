@@ -116,7 +116,7 @@ function readStoredPromptState(storageKey: string): StoredPromptState | null {
       typeof value.hiddenUntil !== 'number' ||
       !Number.isFinite(value.hiddenUntil)
     ) {
-      return null;
+      return inMemoryHiddenUntil > 0 ? { hiddenUntil: inMemoryHiddenUntil } : null;
     }
 
     return { hiddenUntil: Math.max(value.hiddenUntil, inMemoryHiddenUntil) };
@@ -329,9 +329,9 @@ export function useFrontendUpdatePrompt(
         JSON.stringify({ hiddenUntil: hiddenUntilValue }),
       );
     } catch {
-      // The prompt still closes for this render cycle through the snapshot event.
+      // In-memory state still closes the prompt when storage is unavailable.
     }
-    emitSnapshot();
+    setVisibilityNow(Date.now());
   }, [cooldownMs]);
 
   const refresh = useCallback(() => {
