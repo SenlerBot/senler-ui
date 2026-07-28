@@ -12,6 +12,8 @@ const browserSupportEntry = path.resolve(dirname, 'src/browser-support.ts');
 const codeEntry = path.resolve(dirname, 'src/code.ts');
 const viteBrowserCompatEntry = path.resolve(dirname, 'src/vite-browser-compat.ts');
 const viteCssCompatEntry = path.resolve(dirname, 'src/vite-css-compat.ts');
+const viteAppVersionEntry = path.resolve(dirname, 'src/vite-app-version.ts');
+const frontendReleaseEntry = path.resolve(dirname, 'src/frontend-release.ts');
 const stylesEntry = path.resolve(dirname, 'src/styles.css');
 
 const externalPackages = [
@@ -33,6 +35,7 @@ const externalPackages = [
 
 function isExternal(id: string) {
   return (
+    id.startsWith('node:') ||
     externalPackages.includes(id) ||
     id.startsWith('@date-fns/') ||
     id.startsWith('@radix-ui/') ||
@@ -65,6 +68,8 @@ export default defineConfig({
         code: codeEntry,
         'vite-browser-compat': viteBrowserCompatEntry,
         'vite-css-compat': viteCssCompatEntry,
+        'vite-app-version': viteAppVersionEntry,
+        'frontend-release': frontendReleaseEntry,
         styles: stylesEntry,
       },
       formats: ['es'],
