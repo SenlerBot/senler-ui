@@ -7,17 +7,17 @@ import { cva as s } from "class-variance-authority";
 import * as c from "@radix-ui/react-tabs";
 //#region src/atoms/tabs.tsx
 var l = {
-	default: "p-[2px] gap-[2px] rounded-[6px] bg-muted",
+	default: "gap-[2px] rounded-full bg-muted px-1 py-1",
 	underline: "gap-6 border-b border-border"
 }, u = t(l), d = {
 	small: "h-6",
-	medium: "h-7",
+	medium: "h-8",
 	large: "h-8"
 }, f = t(d), p = {
 	variant: "default",
 	size: "medium"
 }, m = { variant: "default" }, h = {
-	default: "data-[state=active]:bg-background box-border rounded-[4px] px-[6px] py-1 text-[13px] font-medium leading-4 tracking-[-0.0325px] text-foreground",
+	default: "data-[state=active]:bg-background box-border rounded-full px-[6px] py-1 text-[13px] font-medium leading-4 tracking-[-0.0325px] text-foreground",
 	underline: "relative pb-3 pt-0 px-0 text-[15px] font-normal text-muted-foreground data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[2px] data-[state=active]:after:bg-primary"
 }, g = s("inline-flex items-center", {
 	variants: {
@@ -28,7 +28,7 @@ var l = {
 		variant: p.variant,
 		size: p.size
 	}
-}), _ = s("inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0", {
+}), _ = s("inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0", {
 	variants: { variant: h },
 	defaultVariants: { variant: m.variant }
 });
