@@ -13,7 +13,7 @@ function a({ ...e }) {
 function o({ className: n, ...i }) {
 	return /* @__PURE__ */ r(t.Item, {
 		"data-slot": "accordion-item",
-		className: e("border-b last:border-b-0", n),
+		className: e("border-b", n),
 		...i
 	});
 }
