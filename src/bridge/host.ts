@@ -1,12 +1,18 @@
 import {
+  createClearElementHighlightMessage,
+  createElementActionMessage,
   createInitMessage,
   createSubmitRequestMessage,
   createUiMessage,
   isSenlerBridgeReadyMessage,
   parseSenlerBridgeContext,
+  parseSenlerBridgeElementActionRequest,
+  parseSenlerBridgeElementActionResultMessage,
   parseSenlerBridgeResponseMessage,
   parseSenlerBridgeUiContext,
   type SenlerBridgeContext,
+  type SenlerBridgeElementActionRequest,
+  type SenlerBridgeElementActionResult,
   type SenlerBridgeToolConfiguratorResult,
   type SenlerBridgeUiContext,
 } from './protocol';
@@ -26,6 +32,10 @@ export interface SenlerBridgeHost {
   setContext(context: SenlerBridgeContext): void;
   setUi(ui: SenlerBridgeUiContext): void;
   requestToolConfiguratorSubmit(): Promise<SenlerBridgeToolConfiguratorResult>;
+  requestElementAction(
+    request: SenlerBridgeElementActionRequest,
+  ): Promise<SenlerBridgeElementActionResult>;
+  clearElementHighlight(): void;
   destroy(): void;
 }
 
@@ -49,6 +59,12 @@ export class SenlerBridgeHostError extends Error {
 
 interface PendingRequest {
   resolve: (result: SenlerBridgeToolConfiguratorResult) => void;
+  reject: (error: Error) => void;
+  timeoutId: number;
+}
+
+interface PendingElementAction {
+  resolve: (result: SenlerBridgeElementActionResult) => void;
   reject: (error: Error) => void;
   timeoutId: number;
 }
@@ -84,6 +100,7 @@ export function createSenlerBridgeHost(
   let connected = false;
   let destroyed = false;
   const pendingRequests = new Map<string, PendingRequest>();
+  const pendingElementActions = new Map<string, PendingElementAction>();
 
   const postToFrame = (message: unknown): boolean => {
     if (destroyed) return false;
@@ -106,6 +123,17 @@ export function createSenlerBridgeHost(
     if (isSenlerBridgeReadyMessage(event.data)) {
       connected = true;
       sendInit();
+      return;
+    }
+    const elementActionResult = parseSenlerBridgeElementActionResultMessage(
+      event.data,
+    );
+    if (elementActionResult) {
+      const pending = pendingElementActions.get(elementActionResult.request_id);
+      if (!pending) return;
+      hostWindow.clearTimeout(pending.timeoutId);
+      pendingElementActions.delete(elementActionResult.request_id);
+      pending.resolve(elementActionResult.result);
       return;
     }
     const response = parseSenlerBridgeResponseMessage(event.data);
@@ -185,6 +213,48 @@ export function createSenlerBridgeHost(
         }
       });
     },
+    requestElementAction(request) {
+      if (destroyed) {
+        return Promise.reject(
+          new SenlerBridgeHostError('destroyed', 'Senler Bridge host is destroyed'),
+        );
+      }
+      const parsedRequest = parseSenlerBridgeElementActionRequest(request);
+      if (!parsedRequest) {
+        return Promise.reject(
+          new SenlerBridgeHostError(
+            'invalid_context',
+            'Senler Bridge element action is invalid',
+          ),
+        );
+      }
+      const requestId = createRequestId(hostWindow);
+      return new Promise<SenlerBridgeElementActionResult>((resolve, reject) => {
+        const timeoutId = hostWindow.setTimeout(() => {
+          pendingElementActions.delete(requestId);
+          reject(
+            new SenlerBridgeHostError(
+              'request_timeout',
+              'The embedded application did not respond in time',
+            ),
+          );
+        }, requestTimeoutMs);
+        pendingElementActions.set(requestId, { resolve, reject, timeoutId });
+        if (!postToFrame(createElementActionMessage(requestId, parsedRequest))) {
+          hostWindow.clearTimeout(timeoutId);
+          pendingElementActions.delete(requestId);
+          reject(
+            new SenlerBridgeHostError(
+              'frame_unavailable',
+              'The embedded application is unavailable',
+            ),
+          );
+        }
+      });
+    },
+    clearElementHighlight() {
+      postToFrame(createClearElementHighlightMessage());
+    },
     destroy() {
       if (destroyed) return;
       destroyed = true;
@@ -199,6 +269,16 @@ export function createSenlerBridgeHost(
         );
       }
       pendingRequests.clear();
+      for (const pending of pendingElementActions.values()) {
+        hostWindow.clearTimeout(pending.timeoutId);
+        pending.reject(
+          new SenlerBridgeHostError(
+            'destroyed',
+            'Senler Bridge host is destroyed',
+          ),
+        );
+      }
+      pendingElementActions.clear();
     },
   };
 }

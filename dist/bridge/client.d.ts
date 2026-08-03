@@ -1,4 +1,4 @@
-import { type SenlerBridgeContext, type SenlerBridgeLanguage, type SenlerBridgeToolConfiguratorResult, type SenlerBridgeUiContext } from './protocol';
+import { type SenlerBridgeContext, type SenlerBridgeElementActionRequest, type SenlerBridgeElementActionResult, type SenlerBridgeLanguage, type SenlerBridgeToolConfiguratorResult, type SenlerBridgeUiContext } from './protocol';
 export interface SenlerBridgeClientOptions {
     parentOrigin: string;
     clientWindow?: Window;
@@ -10,6 +10,8 @@ export interface SenlerBridgeClient {
     getContext(): SenlerBridgeContext | null;
     onContextChange(listener: (context: SenlerBridgeContext) => void): () => void;
     onToolConfiguratorSubmit(handler: () => SenlerBridgeToolConfiguratorResult | Promise<SenlerBridgeToolConfiguratorResult>): () => void;
+    onElementAction(handler: (request: SenlerBridgeElementActionRequest) => SenlerBridgeElementActionResult | Promise<SenlerBridgeElementActionResult>): () => void;
+    onElementHighlightClear(handler: () => void): () => void;
     destroy(): void;
 }
 export declare function normalizeSenlerBridgeLanguage(language: string): SenlerBridgeLanguage;

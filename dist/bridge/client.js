@@ -1,102 +1,140 @@
-import { createErrorResponseMessage as e, createReadyMessage as t, createSuccessResponseMessage as n, parseSenlerBridgeInitMessage as r, parseSenlerBridgeRequestMessage as i, parseSenlerBridgeToolConfiguratorResult as a, parseSenlerBridgeUiMessage as o } from "./protocol.js";
+import { createElementActionResultMessage as e, createErrorResponseMessage as t, createReadyMessage as n, createSuccessResponseMessage as r, isSenlerBridgeClearElementHighlightMessage as i, parseSenlerBridgeElementActionMessage as a, parseSenlerBridgeElementActionResult as o, parseSenlerBridgeInitMessage as s, parseSenlerBridgeRequestMessage as c, parseSenlerBridgeToolConfiguratorResult as l, parseSenlerBridgeUiMessage as u } from "./protocol.js";
 //#region src/bridge/client.ts
-function s(e) {
+function d(e) {
 	let t = new URL(e).origin;
 	if (t === "null") throw Error("Senler Bridge parentOrigin is invalid");
 	return t;
 }
-function c(e) {
+function f(e) {
 	return e instanceof Error && e.message.trim() ? e.message.trim() : "Unable to save tool settings";
 }
-var l = 2e4;
-function u(e) {
+var p = 2e4;
+function m(e) {
 	return e.toLowerCase().startsWith("en") ? "en" : "ru";
 }
-function d(e, t, n) {
+function h(e, t, n) {
 	let r = new URLSearchParams(e), i = r.get("senler_theme"), a = r.get("senler_language");
 	return {
-		language: a === "ru" || a === "en" ? a : u(t),
+		language: a === "ru" || a === "en" ? a : m(t),
 		theme: i === "light" || i === "dark" ? i : n ? "dark" : "light"
 	};
 }
-function f(e, t = document.documentElement) {
+function g(e, t = document.documentElement) {
 	t.lang = e.language, t.classList.toggle("dark", e.theme === "dark"), t.style.colorScheme = e.theme;
 }
-function p(u) {
-	let d = u.clientWindow ?? window, p = s(u.parentOrigin), m = u.syncDocument !== !1, h = u.connectTimeoutMs ?? l;
-	if (!Number.isFinite(h) || h <= 0) throw Error("Senler Bridge connectTimeoutMs must be positive");
-	let g = null, _ = !1, v = null, y = /* @__PURE__ */ new Set(), b = /* @__PURE__ */ new Set(), x = (e) => {
-		_ || d.parent === d || d.parent.postMessage(e, p);
-	}, S = (e) => {
-		g = e, m && f(e.ui);
-		for (let t of y) t(e);
-		for (let t of b) d.clearTimeout(t.timeoutId), t.resolve(e);
-		b.clear();
-	}, C = (t) => {
-		if (_ || t.origin !== p || t.source !== d.parent) return;
-		let s = r(t.data);
-		if (s) {
-			S(s.context);
+function _(m) {
+	let h = m.clientWindow ?? window, _ = d(m.parentOrigin), v = m.syncDocument !== !1, y = m.connectTimeoutMs ?? p;
+	if (!Number.isFinite(y) || y <= 0) throw Error("Senler Bridge connectTimeoutMs must be positive");
+	let b = null, x = !1, S = null, C = null, w = /* @__PURE__ */ new Set(), T = /* @__PURE__ */ new Set(), E = /* @__PURE__ */ new Set(), D = (e) => {
+		x || h.parent === h || h.parent.postMessage(e, _);
+	}, O = (e) => {
+		b = e, v && g(e.ui);
+		for (let t of T) t(e);
+		for (let t of E) h.clearTimeout(t.timeoutId), t.resolve(e);
+		E.clear();
+	}, k = (n) => {
+		if (x || n.origin !== _ || n.source !== h.parent) return;
+		let d = s(n.data);
+		if (d) {
+			O(d.context);
 			return;
 		}
-		let l = o(t.data);
-		if (l && g) {
-			S({
-				...g,
-				ui: l.ui
+		let p = u(n.data);
+		if (p && b) {
+			O({
+				...b,
+				ui: p.ui
 			});
 			return;
 		}
-		let u = i(t.data);
-		if (u) {
-			if (!v) {
-				x(e(u.request_id, g?.ui.language === "ru" ? "Приложение ещё не готово сохранить настройки" : "The application is not ready to save settings yet"));
+		if (i(n.data)) {
+			for (let e of w) e();
+			return;
+		}
+		let m = a(n.data);
+		if (m) {
+			if (!C) {
+				D(e(m.request_id, {
+					status: "blocked",
+					error_code: "handler_unavailable",
+					error_message: "The application cannot act on interface elements"
+				}));
 				return;
 			}
-			Promise.resolve().then(() => v?.()).then((e) => {
-				let t = a(e);
-				if (!t) throw Error(g?.ui.language === "ru" ? "Приложение вернуло некорректные настройки" : "The application returned invalid settings");
-				x(n(u.request_id, t));
+			Promise.resolve().then(() => C?.(m.request)).then((t) => {
+				let n = o(t);
+				D(e(m.request_id, n ?? {
+					status: "failed",
+					error_code: "invalid_result",
+					error_message: "The application returned an invalid element action result"
+				}));
 			}).catch((t) => {
-				x(e(u.request_id, c(t)));
+				D(e(m.request_id, {
+					status: "failed",
+					error_code: "execution_failed",
+					error_message: f(t)
+				}));
+			});
+			return;
+		}
+		let g = c(n.data);
+		if (g) {
+			if (!S) {
+				D(t(g.request_id, b?.ui.language === "ru" ? "Приложение ещё не готово сохранить настройки" : "The application is not ready to save settings yet"));
+				return;
+			}
+			Promise.resolve().then(() => S?.()).then((e) => {
+				let t = l(e);
+				if (!t) throw Error(b?.ui.language === "ru" ? "Приложение вернуло некорректные настройки" : "The application returned invalid settings");
+				D(r(g.request_id, t));
+			}).catch((e) => {
+				D(t(g.request_id, f(e)));
 			});
 		}
 	};
-	return d.addEventListener("message", C), {
+	return h.addEventListener("message", k), {
 		connect() {
-			if (_) return Promise.reject(/* @__PURE__ */ Error("Senler Bridge client is destroyed"));
-			if (g) return x(t()), Promise.resolve(g);
+			if (x) return Promise.reject(/* @__PURE__ */ Error("Senler Bridge client is destroyed"));
+			if (b) return D(n()), Promise.resolve(b);
 			let e = new Promise((e, t) => {
 				let n = {
 					resolve: e,
 					reject: t,
-					timeoutId: d.setTimeout(() => {
-						b.delete(n), t(/* @__PURE__ */ Error("Senler Bridge connection timed out"));
-					}, h)
+					timeoutId: h.setTimeout(() => {
+						E.delete(n), t(/* @__PURE__ */ Error("Senler Bridge connection timed out"));
+					}, y)
 				};
-				b.add(n);
+				E.add(n);
 			});
-			return x(t()), e;
+			return D(n()), e;
 		},
 		getContext() {
-			return g;
+			return b;
 		},
 		onContextChange(e) {
-			return y.add(e), g && e(g), () => y.delete(e);
+			return T.add(e), b && e(b), () => T.delete(e);
 		},
 		onToolConfiguratorSubmit(e) {
-			return v = e, () => {
-				v === e && (v = null);
+			return S = e, () => {
+				S === e && (S = null);
 			};
 		},
+		onElementAction(e) {
+			return C = e, () => {
+				C === e && (C = null);
+			};
+		},
+		onElementHighlightClear(e) {
+			return w.add(e), () => w.delete(e);
+		},
 		destroy() {
-			if (!_) {
-				_ = !0, d.removeEventListener("message", C), y.clear(), v = null;
-				for (let e of b) d.clearTimeout(e.timeoutId), e.reject(/* @__PURE__ */ Error("Senler Bridge client is destroyed"));
-				b.clear();
+			if (!x) {
+				x = !0, h.removeEventListener("message", k), T.clear(), w.clear(), S = null, C = null;
+				for (let e of E) h.clearTimeout(e.timeoutId), e.reject(/* @__PURE__ */ Error("Senler Bridge client is destroyed"));
+				E.clear();
 			}
 		}
 	};
 }
 //#endregion
-export { f as applySenlerBridgeUiContext, p as createSenlerBridgeClient, u as normalizeSenlerBridgeLanguage, d as resolveSenlerBridgeBootstrapUi };
+export { g as applySenlerBridgeUiContext, _ as createSenlerBridgeClient, m as normalizeSenlerBridgeLanguage, h as resolveSenlerBridgeBootstrapUi };

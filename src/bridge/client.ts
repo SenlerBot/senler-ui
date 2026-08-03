@@ -1,12 +1,18 @@
 import {
+  createElementActionResultMessage,
   createErrorResponseMessage,
   createReadyMessage,
   createSuccessResponseMessage,
+  isSenlerBridgeClearElementHighlightMessage,
+  parseSenlerBridgeElementActionMessage,
+  parseSenlerBridgeElementActionResult,
   parseSenlerBridgeInitMessage,
   parseSenlerBridgeRequestMessage,
   parseSenlerBridgeToolConfiguratorResult,
   parseSenlerBridgeUiMessage,
   type SenlerBridgeContext,
+  type SenlerBridgeElementActionRequest,
+  type SenlerBridgeElementActionResult,
   type SenlerBridgeLanguage,
   type SenlerBridgeToolConfiguratorResult,
   type SenlerBridgeUiContext,
@@ -30,6 +36,14 @@ export interface SenlerBridgeClient {
       | SenlerBridgeToolConfiguratorResult
       | Promise<SenlerBridgeToolConfiguratorResult>,
   ): () => void;
+  onElementAction(
+    handler: (
+      request: SenlerBridgeElementActionRequest,
+    ) =>
+      | SenlerBridgeElementActionResult
+      | Promise<SenlerBridgeElementActionResult>,
+  ): () => void;
+  onElementHighlightClear(handler: () => void): () => void;
   destroy(): void;
 }
 
@@ -102,6 +116,14 @@ export function createSenlerBridgeClient(
         | SenlerBridgeToolConfiguratorResult
         | Promise<SenlerBridgeToolConfiguratorResult>)
     | null = null;
+  let elementActionHandler:
+    | ((
+        request: SenlerBridgeElementActionRequest,
+      ) =>
+        | SenlerBridgeElementActionResult
+        | Promise<SenlerBridgeElementActionResult>)
+    | null = null;
+  const elementHighlightClearListeners = new Set<() => void>();
   const contextListeners = new Set<(value: SenlerBridgeContext) => void>();
   const connectResolvers = new Set<{
     resolve: (value: SenlerBridgeContext) => void;
@@ -141,6 +163,50 @@ export function createSenlerBridgeClient(
     const uiMessage = parseSenlerBridgeUiMessage(event.data);
     if (uiMessage && context) {
       publishContext({ ...context, ui: uiMessage.ui });
+      return;
+    }
+    if (isSenlerBridgeClearElementHighlightMessage(event.data)) {
+      for (const listener of elementHighlightClearListeners) listener();
+      return;
+    }
+    const elementActionMessage = parseSenlerBridgeElementActionMessage(
+      event.data,
+    );
+    if (elementActionMessage) {
+      if (!elementActionHandler) {
+        postToParent(
+          createElementActionResultMessage(elementActionMessage.request_id, {
+            status: 'blocked',
+            error_code: 'handler_unavailable',
+            error_message: 'The application cannot act on interface elements',
+          }),
+        );
+        return;
+      }
+      void Promise.resolve()
+        .then(() => elementActionHandler?.(elementActionMessage.request))
+        .then((rawResult) => {
+          const result = parseSenlerBridgeElementActionResult(rawResult);
+          postToParent(
+            createElementActionResultMessage(
+              elementActionMessage.request_id,
+              result ?? {
+                status: 'failed',
+                error_code: 'invalid_result',
+                error_message: 'The application returned an invalid element action result',
+              },
+            ),
+          );
+        })
+        .catch((error: unknown) => {
+          postToParent(
+            createElementActionResultMessage(elementActionMessage.request_id, {
+              status: 'failed',
+              error_code: 'execution_failed',
+              error_message: toErrorMessage(error),
+            }),
+          );
+        });
       return;
     }
     const requestMessage = parseSenlerBridgeRequestMessage(event.data);
@@ -220,12 +286,24 @@ export function createSenlerBridgeClient(
         if (submitHandler === handler) submitHandler = null;
       };
     },
+    onElementAction(handler) {
+      elementActionHandler = handler;
+      return () => {
+        if (elementActionHandler === handler) elementActionHandler = null;
+      };
+    },
+    onElementHighlightClear(handler) {
+      elementHighlightClearListeners.add(handler);
+      return () => elementHighlightClearListeners.delete(handler);
+    },
     destroy() {
       if (destroyed) return;
       destroyed = true;
       clientWindow.removeEventListener('message', handleMessage);
       contextListeners.clear();
+      elementHighlightClearListeners.clear();
       submitHandler = null;
+      elementActionHandler = null;
       for (const resolver of connectResolvers) {
         clientWindow.clearTimeout(resolver.timeoutId);
         resolver.reject(new Error('Senler Bridge client is destroyed'));

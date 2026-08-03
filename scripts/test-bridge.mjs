@@ -72,6 +72,8 @@ const client = createSenlerBridgeClient({
 });
 
 const observedContexts = [];
+const observedElementActions = [];
+let elementHighlightClearCount = 0;
 client.onContextChange((context) => observedContexts.push(context));
 client.onToolConfiguratorSubmit(() => ({
   title: 'Payment link',
@@ -80,6 +82,17 @@ client.onToolConfiguratorSubmit(() => ({
   private_data_action: 'preserve',
   private_data_required: true,
 }));
+client.onElementAction((request) => {
+  observedElementActions.push(request);
+  return {
+    status: 'success',
+    matched_context_id: request.context_id,
+    matched_count: 1,
+  };
+});
+client.onElementHighlightClear(() => {
+  elementHighlightClearCount += 1;
+});
 
 assert.deepEqual(await client.connect(), initialContext);
 host.setUi({ language: 'en', theme: 'dark' });
@@ -94,6 +107,25 @@ assert.deepEqual(await host.requestToolConfiguratorSubmit(), {
   private_data_action: 'preserve',
   private_data_required: true,
 });
+assert.deepEqual(
+  await host.requestElementAction({
+    context_id: 'app.prodamus.accounts.add',
+    action: 'highlight',
+  }),
+  {
+    status: 'success',
+    matched_context_id: 'app.prodamus.accounts.add',
+    matched_count: 1,
+  },
+);
+assert.deepEqual(observedElementActions, [
+  {
+    context_id: 'app.prodamus.accounts.add',
+    action: 'highlight',
+  },
+]);
+host.clearElementHighlight();
+assert.equal(elementHighlightClearCount, 1);
 
 client.destroy();
 host.destroy();

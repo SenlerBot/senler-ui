@@ -7,6 +7,9 @@ export const SENLER_BRIDGE_MESSAGE = {
   ui: 'senler:bridge:ui',
   request: 'senler:bridge:request',
   response: 'senler:bridge:response',
+  elementAction: 'senler:bridge:element-action',
+  elementActionResult: 'senler:bridge:element-action-result',
+  clearElementHighlight: 'senler:bridge:clear-element-highlight',
 } as const;
 
 export const SENLER_BRIDGE_REQUEST = {
@@ -23,6 +26,7 @@ const MAX_PARAMETER_DESCRIPTION_LENGTH = 500;
 const MAX_CONFIGURED_PARAMETERS = 50;
 const MAX_ALLOWED_VALUES = 100;
 const MAX_ERROR_MESSAGE_LENGTH = 1_000;
+const MAX_CONTEXT_ID_LENGTH = 160;
 const FORBIDDEN_JSON_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 export type SenlerBridgeLanguage = 'ru' | 'en';
@@ -104,6 +108,36 @@ export interface SenlerBridgeToolConfiguratorResult {
   private_data_required?: boolean;
 }
 
+export type SenlerBridgeElementAction =
+  | 'highlight'
+  | 'scroll_to'
+  | 'focus'
+  | 'click'
+  | 'fill'
+  | 'clear'
+  | 'select'
+  | 'toggle';
+
+export type SenlerBridgeElementActionStatus =
+  | 'success'
+  | 'not_found'
+  | 'failed'
+  | 'blocked';
+
+export interface SenlerBridgeElementActionRequest {
+  context_id: string;
+  action: SenlerBridgeElementAction;
+  value?: string;
+}
+
+export interface SenlerBridgeElementActionResult {
+  status: SenlerBridgeElementActionStatus;
+  matched_context_id?: string;
+  matched_count?: number;
+  error_code?: string;
+  error_message?: string;
+}
+
 interface SenlerBridgeReadyMessage {
   source: typeof SENLER_BRIDGE_SOURCE;
   type: typeof SENLER_BRIDGE_MESSAGE.ready;
@@ -150,13 +184,38 @@ interface SenlerBridgeErrorResponseMessage {
   error: string;
 }
 
+interface SenlerBridgeElementActionMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.elementAction;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  request_id: string;
+  request: SenlerBridgeElementActionRequest;
+}
+
+interface SenlerBridgeElementActionResultMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.elementActionResult;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  request_id: string;
+  result: SenlerBridgeElementActionResult;
+}
+
+interface SenlerBridgeClearElementHighlightMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.clearElementHighlight;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+}
+
 export type SenlerBridgeMessage =
   | SenlerBridgeReadyMessage
   | SenlerBridgeInitMessage
   | SenlerBridgeUiMessage
   | SenlerBridgeRequestMessage
   | SenlerBridgeSuccessResponseMessage
-  | SenlerBridgeErrorResponseMessage;
+  | SenlerBridgeErrorResponseMessage
+  | SenlerBridgeElementActionMessage
+  | SenlerBridgeElementActionResultMessage
+  | SenlerBridgeClearElementHighlightMessage;
 
 interface JsonValidationState {
   seen: Set<object>;
@@ -424,6 +483,96 @@ export function parseSenlerBridgeToolConfiguratorResult(
   };
 }
 
+const SENLER_BRIDGE_ELEMENT_ACTIONS: readonly SenlerBridgeElementAction[] = [
+  'highlight',
+  'scroll_to',
+  'focus',
+  'click',
+  'fill',
+  'clear',
+  'select',
+  'toggle',
+];
+
+const SENLER_BRIDGE_ELEMENT_ACTION_STATUSES: readonly SenlerBridgeElementActionStatus[] = [
+  'success',
+  'not_found',
+  'failed',
+  'blocked',
+];
+
+function isElementAction(value: unknown): value is SenlerBridgeElementAction {
+  return (
+    typeof value === 'string' &&
+    SENLER_BRIDGE_ELEMENT_ACTIONS.some((action) => action === value)
+  );
+}
+
+function isElementActionStatus(
+  value: unknown,
+): value is SenlerBridgeElementActionStatus {
+  return (
+    typeof value === 'string' &&
+    SENLER_BRIDGE_ELEMENT_ACTION_STATUSES.some((status) => status === value)
+  );
+}
+
+export function parseSenlerBridgeElementActionRequest(
+  value: unknown,
+): SenlerBridgeElementActionRequest | null {
+  if (
+    !isRecord(value) ||
+    !isNonEmptyString(value.context_id) ||
+    value.context_id.length > MAX_CONTEXT_ID_LENGTH ||
+    !isElementAction(value.action) ||
+    (value.value !== undefined && typeof value.value !== 'string')
+  ) {
+    return null;
+  }
+  return {
+    context_id: value.context_id,
+    action: value.action,
+    ...(typeof value.value === 'string' ? { value: value.value } : {}),
+  };
+}
+
+export function parseSenlerBridgeElementActionResult(
+  value: unknown,
+): SenlerBridgeElementActionResult | null {
+  if (
+    !isRecord(value) ||
+    !isElementActionStatus(value.status) ||
+    (value.matched_context_id !== undefined &&
+      (typeof value.matched_context_id !== 'string' ||
+        value.matched_context_id.length > MAX_CONTEXT_ID_LENGTH)) ||
+    (value.matched_count !== undefined &&
+      (typeof value.matched_count !== 'number' ||
+        !Number.isInteger(value.matched_count) ||
+        value.matched_count < 0)) ||
+    (value.error_code !== undefined && typeof value.error_code !== 'string') ||
+    (value.error_message !== undefined &&
+      (typeof value.error_message !== 'string' ||
+        value.error_message.length > MAX_ERROR_MESSAGE_LENGTH))
+  ) {
+    return null;
+  }
+  return {
+    status: value.status,
+    ...(typeof value.matched_context_id === 'string'
+      ? { matched_context_id: value.matched_context_id }
+      : {}),
+    ...(typeof value.matched_count === 'number'
+      ? { matched_count: value.matched_count }
+      : {}),
+    ...(typeof value.error_code === 'string'
+      ? { error_code: value.error_code }
+      : {}),
+    ...(typeof value.error_message === 'string'
+      ? { error_message: value.error_message }
+      : {}),
+  };
+}
+
 export function isSenlerBridgeReadyMessage(
   value: unknown,
 ): value is SenlerBridgeReadyMessage {
@@ -529,6 +678,61 @@ export function parseSenlerBridgeResponseMessage(
     : null;
 }
 
+export function parseSenlerBridgeElementActionMessage(
+  value: unknown,
+): SenlerBridgeElementActionMessage | null {
+  if (
+    !hasBridgeEnvelope(value) ||
+    value.type !== SENLER_BRIDGE_MESSAGE.elementAction ||
+    !isNonEmptyString(value.request_id) ||
+    value.request_id.length > MAX_REQUEST_ID_LENGTH
+  ) {
+    return null;
+  }
+  const request = parseSenlerBridgeElementActionRequest(value.request);
+  return request
+    ? {
+        source: SENLER_BRIDGE_SOURCE,
+        type: SENLER_BRIDGE_MESSAGE.elementAction,
+        protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+        request_id: value.request_id,
+        request,
+      }
+    : null;
+}
+
+export function parseSenlerBridgeElementActionResultMessage(
+  value: unknown,
+): SenlerBridgeElementActionResultMessage | null {
+  if (
+    !hasBridgeEnvelope(value) ||
+    value.type !== SENLER_BRIDGE_MESSAGE.elementActionResult ||
+    !isNonEmptyString(value.request_id) ||
+    value.request_id.length > MAX_REQUEST_ID_LENGTH
+  ) {
+    return null;
+  }
+  const result = parseSenlerBridgeElementActionResult(value.result);
+  return result
+    ? {
+        source: SENLER_BRIDGE_SOURCE,
+        type: SENLER_BRIDGE_MESSAGE.elementActionResult,
+        protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+        request_id: value.request_id,
+        result,
+      }
+    : null;
+}
+
+export function isSenlerBridgeClearElementHighlightMessage(
+  value: unknown,
+): value is SenlerBridgeClearElementHighlightMessage {
+  return (
+    hasBridgeEnvelope(value) &&
+    value.type === SENLER_BRIDGE_MESSAGE.clearElementHighlight
+  );
+}
+
 export function createReadyMessage(): SenlerBridgeReadyMessage {
   return {
     source: SENLER_BRIDGE_SOURCE,
@@ -568,6 +772,40 @@ export function createSubmitRequestMessage(
     protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
     request_id: requestId,
     method: SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit,
+  };
+}
+
+export function createElementActionMessage(
+  requestId: string,
+  request: SenlerBridgeElementActionRequest,
+): SenlerBridgeElementActionMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.elementAction,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    request_id: requestId,
+    request,
+  };
+}
+
+export function createElementActionResultMessage(
+  requestId: string,
+  result: SenlerBridgeElementActionResult,
+): SenlerBridgeElementActionResultMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.elementActionResult,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    request_id: requestId,
+    result,
+  };
+}
+
+export function createClearElementHighlightMessage(): SenlerBridgeClearElementHighlightMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.clearElementHighlight,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
   };
 }
 

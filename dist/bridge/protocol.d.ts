@@ -6,6 +6,9 @@ export declare const SENLER_BRIDGE_MESSAGE: {
     readonly ui: "senler:bridge:ui";
     readonly request: "senler:bridge:request";
     readonly response: "senler:bridge:response";
+    readonly elementAction: "senler:bridge:element-action";
+    readonly elementActionResult: "senler:bridge:element-action-result";
+    readonly clearElementHighlight: "senler:bridge:clear-element-highlight";
 };
 export declare const SENLER_BRIDGE_REQUEST: {
     readonly toolConfiguratorSubmit: "tool-configurator.submit";
@@ -72,6 +75,20 @@ export interface SenlerBridgeToolConfiguratorResult {
     private_data?: SenlerBridgeJsonObject;
     private_data_required?: boolean;
 }
+export type SenlerBridgeElementAction = 'highlight' | 'scroll_to' | 'focus' | 'click' | 'fill' | 'clear' | 'select' | 'toggle';
+export type SenlerBridgeElementActionStatus = 'success' | 'not_found' | 'failed' | 'blocked';
+export interface SenlerBridgeElementActionRequest {
+    context_id: string;
+    action: SenlerBridgeElementAction;
+    value?: string;
+}
+export interface SenlerBridgeElementActionResult {
+    status: SenlerBridgeElementActionStatus;
+    matched_context_id?: string;
+    matched_count?: number;
+    error_code?: string;
+    error_message?: string;
+}
 interface SenlerBridgeReadyMessage {
     source: typeof SENLER_BRIDGE_SOURCE;
     type: typeof SENLER_BRIDGE_MESSAGE.ready;
@@ -112,19 +129,46 @@ interface SenlerBridgeErrorResponseMessage {
     ok: false;
     error: string;
 }
-export type SenlerBridgeMessage = SenlerBridgeReadyMessage | SenlerBridgeInitMessage | SenlerBridgeUiMessage | SenlerBridgeRequestMessage | SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage;
+interface SenlerBridgeElementActionMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.elementAction;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    request_id: string;
+    request: SenlerBridgeElementActionRequest;
+}
+interface SenlerBridgeElementActionResultMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.elementActionResult;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    request_id: string;
+    result: SenlerBridgeElementActionResult;
+}
+interface SenlerBridgeClearElementHighlightMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.clearElementHighlight;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+}
+export type SenlerBridgeMessage = SenlerBridgeReadyMessage | SenlerBridgeInitMessage | SenlerBridgeUiMessage | SenlerBridgeRequestMessage | SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage | SenlerBridgeElementActionMessage | SenlerBridgeElementActionResultMessage | SenlerBridgeClearElementHighlightMessage;
 export declare function parseSenlerBridgeUiContext(value: unknown): SenlerBridgeUiContext | null;
 export declare function parseSenlerBridgeContext(value: unknown): SenlerBridgeContext | null;
 export declare function parseSenlerBridgeToolConfiguratorResult(value: unknown): SenlerBridgeToolConfiguratorResult | null;
+export declare function parseSenlerBridgeElementActionRequest(value: unknown): SenlerBridgeElementActionRequest | null;
+export declare function parseSenlerBridgeElementActionResult(value: unknown): SenlerBridgeElementActionResult | null;
 export declare function isSenlerBridgeReadyMessage(value: unknown): value is SenlerBridgeReadyMessage;
 export declare function parseSenlerBridgeInitMessage(value: unknown): SenlerBridgeInitMessage | null;
 export declare function parseSenlerBridgeUiMessage(value: unknown): SenlerBridgeUiMessage | null;
 export declare function parseSenlerBridgeRequestMessage(value: unknown): SenlerBridgeRequestMessage | null;
 export declare function parseSenlerBridgeResponseMessage(value: unknown): SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage | null;
+export declare function parseSenlerBridgeElementActionMessage(value: unknown): SenlerBridgeElementActionMessage | null;
+export declare function parseSenlerBridgeElementActionResultMessage(value: unknown): SenlerBridgeElementActionResultMessage | null;
+export declare function isSenlerBridgeClearElementHighlightMessage(value: unknown): value is SenlerBridgeClearElementHighlightMessage;
 export declare function createReadyMessage(): SenlerBridgeReadyMessage;
 export declare function createInitMessage(context: SenlerBridgeContext): SenlerBridgeInitMessage;
 export declare function createUiMessage(ui: SenlerBridgeUiContext): SenlerBridgeUiMessage;
 export declare function createSubmitRequestMessage(requestId: string): SenlerBridgeRequestMessage;
+export declare function createElementActionMessage(requestId: string, request: SenlerBridgeElementActionRequest): SenlerBridgeElementActionMessage;
+export declare function createElementActionResultMessage(requestId: string, result: SenlerBridgeElementActionResult): SenlerBridgeElementActionResultMessage;
+export declare function createClearElementHighlightMessage(): SenlerBridgeClearElementHighlightMessage;
 export declare function createSuccessResponseMessage(requestId: string, result: SenlerBridgeToolConfiguratorResult): SenlerBridgeSuccessResponseMessage;
 export declare function createErrorResponseMessage(requestId: string, error: string): SenlerBridgeErrorResponseMessage;
 export {};
