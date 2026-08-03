@@ -1,6 +1,6 @@
-import { cn as e } from "../lib/utils/cn.js";
-import { literalKeys as t } from "../lib/literal-keys.js";
-import { AI_ACTION as n, AI_KIND as r, getAiLabelFallback as i } from "../lib/ai-auto-attributes.js";
+import { AI_ACTION as e, AI_KIND as t, getAiLabelFallback as n } from "../lib/ai-auto-attributes.js";
+import { cn as r } from "../lib/utils/cn.js";
+import { literalKeys as i } from "../lib/literal-keys.js";
 import { Loader2Icon as a } from "lucide-react";
 import { jsx as o } from "react/jsx-runtime";
 import { cva as s } from "class-variance-authority";
@@ -13,14 +13,14 @@ var l = {
 	secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
 	ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
 	link: "text-primary underline-offset-4 hover:underline"
-}, u = t(l), d = {
+}, u = i(l), d = {
 	default: "h-7 px-2 py-2 gap-1",
 	sm: "h-8 rounded-md gap-1 px-2",
 	lg: "h-10 rounded-md px-3",
 	icon: "size-7",
 	icon_sm: "size-6",
 	none: "p-0 h-auto"
-}, f = t(d), p = [
+}, f = i(d), p = [
 	"button",
 	"submit",
 	"reset"
@@ -41,23 +41,23 @@ var l = {
 		size: m.size
 	}
 });
-function g({ className: t, variant: s, size: l, ref: u, asChild: d = m.asChild, type: f = m.type, loading: p, disabled: g, children: _, "aria-label": v, title: y, name: b, "data-ai-kind": x, "data-ai-label": S, "data-ai-action": C, ...w }) {
-	let T = d ? c : "button", E = i(S, typeof v == "string" ? v : void 0, typeof y == "string" ? y : void 0, void 0, b, _);
+function g({ className: i, variant: s, size: l, ref: u, asChild: d = m.asChild, type: f = m.type, loading: p, disabled: g, children: _, "aria-label": v, title: y, name: b, "data-ai-kind": x, "data-ai-label": S, "data-ai-action": C, ...w }) {
+	let T = d ? c : "button", E = n(S, typeof v == "string" ? v : void 0, typeof y == "string" ? y : void 0, void 0, b, _);
 	return /* @__PURE__ */ o(T, {
 		ref: u,
 		type: f,
 		"data-slot": "button",
-		"data-ai-kind": x ?? r.button,
-		"data-ai-action": C ?? (f === "submit" ? n.save : void 0),
+		"data-ai-kind": x ?? t.button,
+		"data-ai-action": C ?? (f === "submit" ? e.save : void 0),
 		"data-ai-label": E,
 		"aria-label": v,
 		title: y,
 		name: b,
 		disabled: g || p,
-		className: e(h({
+		className: r(h({
 			variant: s,
 			size: l,
-			className: t
+			className: i
 		})),
 		...w,
 		children: p && !d ? /* @__PURE__ */ o(a, { className: "size-4 animate-spin" }) : _

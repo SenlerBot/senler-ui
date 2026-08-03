@@ -10,6 +10,8 @@ export interface AiDataAttributes {
     'data-ai-kb-query'?: string;
     'data-ai-entity-type'?: string;
     'data-ai-entity-id'?: string;
+    'data-ai-reveals-context-id'?: string;
+    'data-ai-reveal-action'?: 'click' | 'hover' | 'focus';
 }
 export declare const AI_KIND: {
     readonly button: "button";

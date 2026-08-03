@@ -1,6 +1,6 @@
-import { cn as e } from "../lib/utils/cn.js";
-import { literalKeys as t } from "../lib/literal-keys.js";
-import { AI_KIND as n, getAiLabelFallback as r } from "../lib/ai-auto-attributes.js";
+import { AI_KIND as e, getAiLabelFallback as t } from "../lib/ai-auto-attributes.js";
+import { cn as n } from "../lib/utils/cn.js";
+import { literalKeys as r } from "../lib/literal-keys.js";
 import * as i from "react";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
 import { cva as s } from "class-variance-authority";
@@ -9,11 +9,11 @@ import * as c from "@radix-ui/react-tabs";
 var l = {
 	default: "gap-[2px] rounded-full bg-muted px-1 py-1",
 	underline: "gap-6 border-b border-border"
-}, u = t(l), d = {
+}, u = r(l), d = {
 	small: "h-6",
 	medium: "h-8",
 	large: "h-8"
-}, f = t(d), p = {
+}, f = r(d), p = {
 	variant: "default",
 	size: "medium"
 }, m = { variant: "default" }, h = {
@@ -32,20 +32,20 @@ var l = {
 	variants: { variant: h },
 	defaultVariants: { variant: m.variant }
 });
-function v({ className: t, ...n }) {
+function v({ className: e, ...t }) {
 	return /* @__PURE__ */ a(c.Root, {
 		"data-slot": "tabs",
-		className: e("flex flex-col", t),
-		...n
+		className: n("flex flex-col", e),
+		...t
 	});
 }
-function y({ variant: t, count: s, className: l, children: u, "data-ai-kind": d, "data-ai-label": f, ...p }) {
-	let h = i.useContext(b), g = t || h?.variant || m.variant, v = r(f, void 0, void 0, void 0, void 0, u);
+function y({ variant: r, count: s, className: l, children: u, "data-ai-kind": d, "data-ai-label": f, ...p }) {
+	let h = i.useContext(b), g = r || h?.variant || m.variant, v = t(f, void 0, void 0, void 0, void 0, u);
 	return /* @__PURE__ */ o(c.Trigger, {
 		"data-slot": "tabs-trigger",
-		"data-ai-kind": d ?? n.tab,
+		"data-ai-kind": d ?? e.tab,
 		"data-ai-label": v,
-		className: e(_({ variant: g }), l),
+		className: n(_({ variant: g }), l),
 		...p,
 		children: [u, s !== void 0 && s > 0 && /* @__PURE__ */ a("span", {
 			className: "text-muted-foreground font-normal",
@@ -53,26 +53,26 @@ function y({ variant: t, count: s, className: l, children: u, "data-ai-kind": d,
 		})]
 	});
 }
-var b = i.createContext(null), x = i.forwardRef(({ size: t = p.size, variant: n = p.variant, className: r, children: i, ...o }, s) => /* @__PURE__ */ a(b.Provider, {
-	value: { variant: n },
+var b = i.createContext(null), x = i.forwardRef(({ size: e = p.size, variant: t = p.variant, className: r, children: i, ...o }, s) => /* @__PURE__ */ a(b.Provider, {
+	value: { variant: t },
 	children: /* @__PURE__ */ a(c.List, {
 		ref: s,
 		"data-slot": "tabs-list",
-		"data-variant": n,
-		className: e(g({
-			size: t,
-			variant: n
+		"data-variant": t,
+		className: n(g({
+			size: e,
+			variant: t
 		}), "w-fit", r),
 		...o,
 		children: i
 	})
 }));
 x.displayName = "TabsList";
-function S({ className: t, ...n }) {
+function S({ className: e, ...t }) {
 	return /* @__PURE__ */ a(c.Content, {
 		"data-slot": "tabs-content",
-		className: e("flex-1 outline-none w-full", t),
-		...n
+		className: n("flex-1 outline-none w-full", e),
+		...t
 	});
 }
 //#endregion
