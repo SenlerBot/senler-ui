@@ -10,14 +10,24 @@ function Accordion({
   return <AccordionPrimitive.Root data-slot='accordion' {...props} />;
 }
 
+type AccordionItemVariant = 'list' | 'card';
+
+type AccordionItemProps = React.ComponentProps<typeof AccordionPrimitive.Item> & {
+  variant?: AccordionItemVariant;
+};
+
 function AccordionItem({
   className,
+  variant = 'list',
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+}: AccordionItemProps) {
   return (
     <AccordionPrimitive.Item
       data-slot='accordion-item'
-      className={cn('border-b', className)}
+      className={cn(
+        variant === 'card' ? 'rounded-lg border' : 'border-b last:border-b-0',
+        className
+      )}
       {...props}
     />
   );
@@ -62,3 +72,4 @@ function AccordionContent({
 }
 
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+export type { AccordionItemProps, AccordionItemVariant };

@@ -10,11 +10,11 @@ function a({ ...e }) {
 		...e
 	});
 }
-function o({ className: n, ...i }) {
+function o({ className: n, variant: i = "list", ...a }) {
 	return /* @__PURE__ */ r(t.Item, {
 		"data-slot": "accordion-item",
-		className: e("border-b", n),
-		...i
+		className: e(i === "card" ? "rounded-lg border" : "border-b last:border-b-0", n),
+		...a
 	});
 }
 function s({ className: a, children: o, ...s }) {
