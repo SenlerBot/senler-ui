@@ -19,9 +19,9 @@ export const tabsListVariantOptions = literalKeys(tabsListVariantClasses);
 export type TabsListVariant = (typeof tabsListVariantOptions)[number];
 
 export const tabsListSizeClasses = {
-  small: 'h-6',
+  small: 'h-7',
   medium: 'h-8',
-  large: 'h-8',
+  large: 'h-10',
 } as const;
 
 export const tabsListSizeOptions = literalKeys(tabsListSizeClasses);
@@ -49,6 +49,12 @@ export const tabsTriggerVariantClasses = {
     'relative pb-3 pt-0 px-0 text-[15px] font-normal text-muted-foreground data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[2px] data-[state=active]:after:bg-primary',
 } as const;
 
+export const tabsTriggerSizeClasses = {
+  small: 'text-xs',
+  medium: 'text-[13px]',
+  large: 'text-sm',
+} as const;
+
 const tabListVariants = cva('inline-flex items-center', {
   variants: {
     variant: tabsListVariantClasses,
@@ -61,13 +67,15 @@ const tabListVariants = cva('inline-flex items-center', {
 });
 
 const tabTriggerVariants = cva(
-  'inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'inline-flex h-full items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: tabsTriggerVariantClasses,
+      size: tabsTriggerSizeClasses,
     },
     defaultVariants: {
       variant: tabsTriggerDefaults.variant,
+      size: tabsListDefaults.size,
     },
   },
 );
@@ -110,6 +118,7 @@ function TabsTrigger({
   const listElement = React.useContext(TabsListContext);
   const effectiveVariant =
     variant || listElement?.variant || tabsTriggerDefaults.variant;
+  const effectiveSize = listElement?.size || tabsListDefaults.size;
   const aiLabel = getAiLabelFallback(
     dataAiLabel,
     undefined,
@@ -125,7 +134,7 @@ function TabsTrigger({
       data-ai-kind={dataAiKind ?? AI_KIND.tab}
       data-ai-label={aiLabel}
       className={cn(
-        tabTriggerVariants({ variant: effectiveVariant }),
+        tabTriggerVariants({ variant: effectiveVariant, size: effectiveSize }),
         className,
       )}
       {...props}
@@ -140,6 +149,7 @@ function TabsTrigger({
 
 const TabsListContext = React.createContext<{
   variant?: TabsListVariant;
+  size?: TabsListSize;
 } | null>(null);
 
 const TabsList = React.forwardRef<
@@ -157,12 +167,16 @@ const TabsList = React.forwardRef<
     ref,
   ) => {
     return (
-      <TabsListContext.Provider value={{ variant }}>
+      <TabsListContext.Provider value={{ variant, size }}>
         <TabsPrimitive.List
           ref={ref}
           data-slot="tabs-list"
           data-variant={variant}
-          className={cn(tabListVariants({ size, variant }), 'w-fit', className)}
+          className={cn(
+            tabListVariants({ size, variant }),
+            'w-fit max-w-full self-start',
+            className,
+          )}
           {...props}
         >
           {children}

@@ -1,0 +1,600 @@
+export const SENLER_BRIDGE_PROTOCOL_VERSION = 1 as const;
+export const SENLER_BRIDGE_SOURCE = 'senler-bridge' as const;
+
+export const SENLER_BRIDGE_MESSAGE = {
+  ready: 'senler:bridge:ready',
+  init: 'senler:bridge:init',
+  ui: 'senler:bridge:ui',
+  request: 'senler:bridge:request',
+  response: 'senler:bridge:response',
+} as const;
+
+export const SENLER_BRIDGE_REQUEST = {
+  toolConfiguratorSubmit: 'tool-configurator.submit',
+} as const;
+
+const MAX_JSON_DEPTH = 20;
+const MAX_JSON_NODES = 5_000;
+const MAX_JSON_BYTES = 64 * 1024;
+const MAX_REQUEST_ID_LENGTH = 128;
+const MAX_TITLE_LENGTH = 160;
+const MAX_PARAMETER_NAME_LENGTH = 64;
+const MAX_PARAMETER_DESCRIPTION_LENGTH = 500;
+const MAX_CONFIGURED_PARAMETERS = 50;
+const MAX_ALLOWED_VALUES = 100;
+const MAX_ERROR_MESSAGE_LENGTH = 1_000;
+const FORBIDDEN_JSON_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+export type SenlerBridgeLanguage = 'ru' | 'en';
+export type SenlerBridgeTheme = 'light' | 'dark';
+
+export type SenlerBridgeJsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | SenlerBridgeJsonValue[]
+  | { [key: string]: SenlerBridgeJsonValue };
+
+export type SenlerBridgeJsonObject = {
+  [key: string]: SenlerBridgeJsonValue;
+};
+
+export interface SenlerBridgeUiContext {
+  language: SenlerBridgeLanguage;
+  theme: SenlerBridgeTheme;
+}
+
+export interface SenlerBridgeConfiguredParameter {
+  name: string;
+  type: 'string' | 'number' | 'boolean';
+  description?: string;
+  required: boolean;
+  allowed_values: Array<string | number | boolean>;
+}
+
+export interface SenlerBridgeToolInstance {
+  id: string;
+  title: string;
+  configuration: SenlerBridgeJsonObject;
+  configured_parameters: SenlerBridgeConfiguredParameter[];
+  has_private_data: boolean;
+  private_data_required: boolean;
+  status: 'active' | 'setup_required';
+}
+
+export interface SenlerBridgeEmbeddedPageLaunch {
+  type: 'embedded_page';
+  app_id: string;
+  project_id: string;
+  installation_id?: string;
+  mode: 'installed' | 'test';
+}
+
+export interface SenlerBridgeToolConfiguratorLaunch {
+  type: 'tool_configurator';
+  app_id: string;
+  project_id: string;
+  installation_id: string;
+  agent_id: string;
+  mode: 'create' | 'edit';
+  tool: {
+    id: string;
+    name: string;
+    description: string;
+  };
+  instance: SenlerBridgeToolInstance | null;
+}
+
+export type SenlerBridgeLaunchContext =
+  | SenlerBridgeEmbeddedPageLaunch
+  | SenlerBridgeToolConfiguratorLaunch;
+
+export interface SenlerBridgeContext {
+  ui: SenlerBridgeUiContext;
+  launch: SenlerBridgeLaunchContext;
+}
+
+export interface SenlerBridgeToolConfiguratorResult {
+  title?: string;
+  configuration: SenlerBridgeJsonObject;
+  configured_parameters: SenlerBridgeConfiguredParameter[];
+  private_data_action?: 'preserve' | 'replace' | 'clear';
+  private_data?: SenlerBridgeJsonObject;
+  private_data_required?: boolean;
+}
+
+interface SenlerBridgeReadyMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.ready;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+}
+
+interface SenlerBridgeInitMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.init;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  context: SenlerBridgeContext;
+}
+
+interface SenlerBridgeUiMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.ui;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  ui: SenlerBridgeUiContext;
+}
+
+interface SenlerBridgeRequestMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.request;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  request_id: string;
+  method: typeof SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit;
+}
+
+interface SenlerBridgeSuccessResponseMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.response;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  request_id: string;
+  ok: true;
+  result: SenlerBridgeToolConfiguratorResult;
+}
+
+interface SenlerBridgeErrorResponseMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.response;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  request_id: string;
+  ok: false;
+  error: string;
+}
+
+export type SenlerBridgeMessage =
+  | SenlerBridgeReadyMessage
+  | SenlerBridgeInitMessage
+  | SenlerBridgeUiMessage
+  | SenlerBridgeRequestMessage
+  | SenlerBridgeSuccessResponseMessage
+  | SenlerBridgeErrorResponseMessage;
+
+interface JsonValidationState {
+  seen: Set<object>;
+  visitedNodes: number;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function hasBridgeEnvelope(
+  value: unknown,
+): value is Record<string, unknown> & {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+} {
+  return (
+    isRecord(value) &&
+    value.source === SENLER_BRIDGE_SOURCE &&
+    value.protocol_version === SENLER_BRIDGE_PROTOCOL_VERSION
+  );
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0;
+}
+
+export function parseSenlerBridgeUiContext(
+  value: unknown,
+): SenlerBridgeUiContext | null {
+  if (
+    isRecord(value) &&
+    (value.language === 'ru' || value.language === 'en') &&
+    (value.theme === 'light' || value.theme === 'dark')
+  ) {
+    return { language: value.language, theme: value.theme };
+  }
+  return null;
+}
+
+function isJsonValue(
+  value: unknown,
+  depth: number,
+  state: JsonValidationState,
+): value is SenlerBridgeJsonValue {
+  if (depth > MAX_JSON_DEPTH) return false;
+  state.visitedNodes += 1;
+  if (state.visitedNodes > MAX_JSON_NODES) return false;
+  if (
+    value === null ||
+    typeof value === 'string' ||
+    typeof value === 'boolean'
+  ) {
+    return typeof value !== 'string' || value.length <= MAX_JSON_BYTES;
+  }
+  if (typeof value === 'number') return Number.isFinite(value);
+  if (typeof value !== 'object' || state.seen.has(value)) return false;
+  state.seen.add(value);
+  if (Array.isArray(value)) {
+    return value.every((item) => isJsonValue(item, depth + 1, state));
+  }
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) return false;
+  return (
+    isRecord(value) &&
+    Object.keys(value).every((key) => !FORBIDDEN_JSON_KEYS.has(key)) &&
+    Object.values(value).every((item) =>
+      isJsonValue(item, depth + 1, state),
+    )
+  );
+}
+
+function isJsonObject(value: unknown): value is SenlerBridgeJsonObject {
+  if (!isRecord(value)) return false;
+  const state = { seen: new Set<object>(), visitedNodes: 0 };
+  if (!isJsonValue(value, 0, state)) return false;
+  return new TextEncoder().encode(JSON.stringify(value)).byteLength <= MAX_JSON_BYTES;
+}
+
+function parseConfiguredParameter(
+  value: unknown,
+): SenlerBridgeConfiguredParameter | null {
+  if (
+    !isRecord(value) ||
+    !isNonEmptyString(value.name) ||
+    value.name.length > MAX_PARAMETER_NAME_LENGTH ||
+    (value.type !== 'string' &&
+      value.type !== 'number' &&
+      value.type !== 'boolean') ||
+    (value.description !== undefined &&
+      (typeof value.description !== 'string' ||
+        value.description.length > MAX_PARAMETER_DESCRIPTION_LENGTH)) ||
+    typeof value.required !== 'boolean' ||
+    !Array.isArray(value.allowed_values) ||
+    value.allowed_values.length > MAX_ALLOWED_VALUES
+  ) {
+    return null;
+  }
+  const parameterType = value.type;
+  const allowedValues = value.allowed_values.filter(
+    (allowedValue) => typeof allowedValue === parameterType,
+  );
+  if (allowedValues.length !== value.allowed_values.length) return null;
+  return {
+    name: value.name,
+    type: parameterType,
+    ...(typeof value.description === 'string'
+      ? { description: value.description }
+      : {}),
+    required: value.required,
+    allowed_values: allowedValues,
+  };
+}
+
+function parseConfiguredParameters(
+  value: unknown,
+): SenlerBridgeConfiguredParameter[] | null {
+  if (!Array.isArray(value) || value.length > MAX_CONFIGURED_PARAMETERS) {
+    return null;
+  }
+  const parameters = value.map(parseConfiguredParameter);
+  if (parameters.some((parameter) => parameter === null)) return null;
+  return parameters.filter(
+    (parameter): parameter is SenlerBridgeConfiguredParameter =>
+      parameter !== null,
+  );
+}
+
+function parseToolInstance(value: unknown): SenlerBridgeToolInstance | null {
+  if (
+    !isRecord(value) ||
+    !isNonEmptyString(value.id) ||
+    typeof value.title !== 'string' ||
+    !isJsonObject(value.configuration) ||
+    typeof value.has_private_data !== 'boolean' ||
+    typeof value.private_data_required !== 'boolean' ||
+    (value.status !== 'active' && value.status !== 'setup_required')
+  ) {
+    return null;
+  }
+  const configuredParameters = parseConfiguredParameters(
+    value.configured_parameters,
+  );
+  if (!configuredParameters) return null;
+  return {
+    id: value.id,
+    title: value.title,
+    configuration: value.configuration,
+    configured_parameters: configuredParameters,
+    has_private_data: value.has_private_data,
+    private_data_required: value.private_data_required,
+    status: value.status,
+  };
+}
+
+function parseLaunchContext(value: unknown): SenlerBridgeLaunchContext | null {
+  if (
+    !isRecord(value) ||
+    !isNonEmptyString(value.app_id) ||
+    !isNonEmptyString(value.project_id)
+  ) {
+    return null;
+  }
+  if (value.type === 'embedded_page') {
+    if (
+      (value.mode !== 'installed' && value.mode !== 'test') ||
+      (value.installation_id !== undefined &&
+        !isNonEmptyString(value.installation_id))
+    ) {
+      return null;
+    }
+    return {
+      type: 'embedded_page',
+      app_id: value.app_id,
+      project_id: value.project_id,
+      ...(typeof value.installation_id === 'string'
+        ? { installation_id: value.installation_id }
+        : {}),
+      mode: value.mode,
+    };
+  }
+  if (
+    value.type !== 'tool_configurator' ||
+    !isNonEmptyString(value.installation_id) ||
+    !isNonEmptyString(value.agent_id) ||
+    (value.mode !== 'create' && value.mode !== 'edit') ||
+    !isRecord(value.tool) ||
+    !isNonEmptyString(value.tool.id) ||
+    !isNonEmptyString(value.tool.name) ||
+    typeof value.tool.description !== 'string'
+  ) {
+    return null;
+  }
+  const instance = value.instance === null ? null : parseToolInstance(value.instance);
+  if (value.instance !== null && !instance) return null;
+  return {
+    type: 'tool_configurator',
+    app_id: value.app_id,
+    project_id: value.project_id,
+    installation_id: value.installation_id,
+    agent_id: value.agent_id,
+    mode: value.mode,
+    tool: {
+      id: value.tool.id,
+      name: value.tool.name,
+      description: value.tool.description,
+    },
+    instance,
+  };
+}
+
+export function parseSenlerBridgeContext(
+  value: unknown,
+): SenlerBridgeContext | null {
+  if (!isRecord(value)) return null;
+  const ui = parseSenlerBridgeUiContext(value.ui);
+  if (!ui) return null;
+  const launch = parseLaunchContext(value.launch);
+  return launch ? { ui, launch } : null;
+}
+
+export function parseSenlerBridgeToolConfiguratorResult(
+  value: unknown,
+): SenlerBridgeToolConfiguratorResult | null {
+  if (
+    !isRecord(value) ||
+    (value.title !== undefined &&
+      (typeof value.title !== 'string' || value.title.length > MAX_TITLE_LENGTH)) ||
+    !isJsonObject(value.configuration) ||
+    (value.private_data_action !== undefined &&
+      value.private_data_action !== 'preserve' &&
+      value.private_data_action !== 'replace' &&
+      value.private_data_action !== 'clear') ||
+    (value.private_data !== undefined && !isJsonObject(value.private_data)) ||
+    (value.private_data_required !== undefined &&
+      typeof value.private_data_required !== 'boolean')
+  ) {
+    return null;
+  }
+  if (
+    (value.private_data_action === 'replace' && value.private_data === undefined) ||
+    (value.private_data !== undefined && value.private_data_action !== 'replace')
+  ) {
+    return null;
+  }
+  const configuredParameters = parseConfiguredParameters(
+    value.configured_parameters,
+  );
+  if (!configuredParameters) return null;
+  return {
+    ...(typeof value.title === 'string' ? { title: value.title } : {}),
+    configuration: value.configuration,
+    configured_parameters: configuredParameters,
+    ...(value.private_data_action === 'preserve' ||
+    value.private_data_action === 'replace' ||
+    value.private_data_action === 'clear'
+      ? { private_data_action: value.private_data_action }
+      : {}),
+    ...(value.private_data !== undefined
+      ? { private_data: value.private_data }
+      : {}),
+    ...(typeof value.private_data_required === 'boolean'
+      ? { private_data_required: value.private_data_required }
+      : {}),
+  };
+}
+
+export function isSenlerBridgeReadyMessage(
+  value: unknown,
+): value is SenlerBridgeReadyMessage {
+  return hasBridgeEnvelope(value) && value.type === SENLER_BRIDGE_MESSAGE.ready;
+}
+
+export function parseSenlerBridgeInitMessage(
+  value: unknown,
+): SenlerBridgeInitMessage | null {
+  if (!hasBridgeEnvelope(value) || value.type !== SENLER_BRIDGE_MESSAGE.init) {
+    return null;
+  }
+  const context = parseSenlerBridgeContext(value.context);
+  return context
+    ? {
+        source: SENLER_BRIDGE_SOURCE,
+        type: SENLER_BRIDGE_MESSAGE.init,
+        protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+        context,
+      }
+    : null;
+}
+
+export function parseSenlerBridgeUiMessage(
+  value: unknown,
+): SenlerBridgeUiMessage | null {
+  if (!hasBridgeEnvelope(value) || value.type !== SENLER_BRIDGE_MESSAGE.ui) {
+    return null;
+  }
+  const ui = parseSenlerBridgeUiContext(value.ui);
+  if (
+    !ui
+  ) {
+    return null;
+  }
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.ui,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    ui,
+  };
+}
+
+export function parseSenlerBridgeRequestMessage(
+  value: unknown,
+): SenlerBridgeRequestMessage | null {
+  if (
+    !hasBridgeEnvelope(value) ||
+    value.type !== SENLER_BRIDGE_MESSAGE.request ||
+    value.method !== SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit ||
+    !isNonEmptyString(value.request_id) ||
+    value.request_id.length > MAX_REQUEST_ID_LENGTH
+  ) {
+    return null;
+  }
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.request,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    request_id: value.request_id,
+    method: SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit,
+  };
+}
+
+export function parseSenlerBridgeResponseMessage(
+  value: unknown,
+): SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage | null {
+  if (
+    !hasBridgeEnvelope(value) ||
+    value.type !== SENLER_BRIDGE_MESSAGE.response ||
+    !isNonEmptyString(value.request_id) ||
+    value.request_id.length > MAX_REQUEST_ID_LENGTH
+  ) {
+    return null;
+  }
+  if (value.ok === false) {
+    if (
+      !isNonEmptyString(value.error) ||
+      value.error.length > MAX_ERROR_MESSAGE_LENGTH
+    ) {
+      return null;
+    }
+    return {
+      source: SENLER_BRIDGE_SOURCE,
+      type: SENLER_BRIDGE_MESSAGE.response,
+      protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+      request_id: value.request_id,
+      ok: false,
+      error: value.error.trim(),
+    };
+  }
+  if (value.ok !== true) return null;
+  const result = parseSenlerBridgeToolConfiguratorResult(value.result);
+  return result
+    ? {
+        source: SENLER_BRIDGE_SOURCE,
+        type: SENLER_BRIDGE_MESSAGE.response,
+        protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+        request_id: value.request_id,
+        ok: true,
+        result,
+      }
+    : null;
+}
+
+export function createReadyMessage(): SenlerBridgeReadyMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.ready,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+  };
+}
+
+export function createInitMessage(
+  context: SenlerBridgeContext,
+): SenlerBridgeInitMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.init,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    context,
+  };
+}
+
+export function createUiMessage(
+  ui: SenlerBridgeUiContext,
+): SenlerBridgeUiMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.ui,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    ui,
+  };
+}
+
+export function createSubmitRequestMessage(
+  requestId: string,
+): SenlerBridgeRequestMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.request,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    request_id: requestId,
+    method: SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit,
+  };
+}
+
+export function createSuccessResponseMessage(
+  requestId: string,
+  result: SenlerBridgeToolConfiguratorResult,
+): SenlerBridgeSuccessResponseMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.response,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    request_id: requestId,
+    ok: true,
+    result,
+  };
+}
+
+export function createErrorResponseMessage(
+  requestId: string,
+  error: string,
+): SenlerBridgeErrorResponseMessage {
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.response,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    request_id: requestId,
+    ok: false,
+    error: error.slice(0, MAX_ERROR_MESSAGE_LENGTH),
+  };
+}

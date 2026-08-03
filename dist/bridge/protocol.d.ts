@@ -1,0 +1,130 @@
+export declare const SENLER_BRIDGE_PROTOCOL_VERSION: 1;
+export declare const SENLER_BRIDGE_SOURCE: "senler-bridge";
+export declare const SENLER_BRIDGE_MESSAGE: {
+    readonly ready: "senler:bridge:ready";
+    readonly init: "senler:bridge:init";
+    readonly ui: "senler:bridge:ui";
+    readonly request: "senler:bridge:request";
+    readonly response: "senler:bridge:response";
+};
+export declare const SENLER_BRIDGE_REQUEST: {
+    readonly toolConfiguratorSubmit: "tool-configurator.submit";
+};
+export type SenlerBridgeLanguage = 'ru' | 'en';
+export type SenlerBridgeTheme = 'light' | 'dark';
+export type SenlerBridgeJsonValue = string | number | boolean | null | SenlerBridgeJsonValue[] | {
+    [key: string]: SenlerBridgeJsonValue;
+};
+export type SenlerBridgeJsonObject = {
+    [key: string]: SenlerBridgeJsonValue;
+};
+export interface SenlerBridgeUiContext {
+    language: SenlerBridgeLanguage;
+    theme: SenlerBridgeTheme;
+}
+export interface SenlerBridgeConfiguredParameter {
+    name: string;
+    type: 'string' | 'number' | 'boolean';
+    description?: string;
+    required: boolean;
+    allowed_values: Array<string | number | boolean>;
+}
+export interface SenlerBridgeToolInstance {
+    id: string;
+    title: string;
+    configuration: SenlerBridgeJsonObject;
+    configured_parameters: SenlerBridgeConfiguredParameter[];
+    has_private_data: boolean;
+    private_data_required: boolean;
+    status: 'active' | 'setup_required';
+}
+export interface SenlerBridgeEmbeddedPageLaunch {
+    type: 'embedded_page';
+    app_id: string;
+    project_id: string;
+    installation_id?: string;
+    mode: 'installed' | 'test';
+}
+export interface SenlerBridgeToolConfiguratorLaunch {
+    type: 'tool_configurator';
+    app_id: string;
+    project_id: string;
+    installation_id: string;
+    agent_id: string;
+    mode: 'create' | 'edit';
+    tool: {
+        id: string;
+        name: string;
+        description: string;
+    };
+    instance: SenlerBridgeToolInstance | null;
+}
+export type SenlerBridgeLaunchContext = SenlerBridgeEmbeddedPageLaunch | SenlerBridgeToolConfiguratorLaunch;
+export interface SenlerBridgeContext {
+    ui: SenlerBridgeUiContext;
+    launch: SenlerBridgeLaunchContext;
+}
+export interface SenlerBridgeToolConfiguratorResult {
+    title?: string;
+    configuration: SenlerBridgeJsonObject;
+    configured_parameters: SenlerBridgeConfiguredParameter[];
+    private_data_action?: 'preserve' | 'replace' | 'clear';
+    private_data?: SenlerBridgeJsonObject;
+    private_data_required?: boolean;
+}
+interface SenlerBridgeReadyMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.ready;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+}
+interface SenlerBridgeInitMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.init;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    context: SenlerBridgeContext;
+}
+interface SenlerBridgeUiMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.ui;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    ui: SenlerBridgeUiContext;
+}
+interface SenlerBridgeRequestMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.request;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    request_id: string;
+    method: typeof SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit;
+}
+interface SenlerBridgeSuccessResponseMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.response;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    request_id: string;
+    ok: true;
+    result: SenlerBridgeToolConfiguratorResult;
+}
+interface SenlerBridgeErrorResponseMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.response;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    request_id: string;
+    ok: false;
+    error: string;
+}
+export type SenlerBridgeMessage = SenlerBridgeReadyMessage | SenlerBridgeInitMessage | SenlerBridgeUiMessage | SenlerBridgeRequestMessage | SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage;
+export declare function parseSenlerBridgeUiContext(value: unknown): SenlerBridgeUiContext | null;
+export declare function parseSenlerBridgeContext(value: unknown): SenlerBridgeContext | null;
+export declare function parseSenlerBridgeToolConfiguratorResult(value: unknown): SenlerBridgeToolConfiguratorResult | null;
+export declare function isSenlerBridgeReadyMessage(value: unknown): value is SenlerBridgeReadyMessage;
+export declare function parseSenlerBridgeInitMessage(value: unknown): SenlerBridgeInitMessage | null;
+export declare function parseSenlerBridgeUiMessage(value: unknown): SenlerBridgeUiMessage | null;
+export declare function parseSenlerBridgeRequestMessage(value: unknown): SenlerBridgeRequestMessage | null;
+export declare function parseSenlerBridgeResponseMessage(value: unknown): SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage | null;
+export declare function createReadyMessage(): SenlerBridgeReadyMessage;
+export declare function createInitMessage(context: SenlerBridgeContext): SenlerBridgeInitMessage;
+export declare function createUiMessage(ui: SenlerBridgeUiContext): SenlerBridgeUiMessage;
+export declare function createSubmitRequestMessage(requestId: string): SenlerBridgeRequestMessage;
+export declare function createSuccessResponseMessage(requestId: string, result: SenlerBridgeToolConfiguratorResult): SenlerBridgeSuccessResponseMessage;
+export declare function createErrorResponseMessage(requestId: string, error: string): SenlerBridgeErrorResponseMessage;
+export {};

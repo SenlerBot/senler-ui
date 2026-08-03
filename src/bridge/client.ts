@@ -1,0 +1,236 @@
+import {
+  createErrorResponseMessage,
+  createReadyMessage,
+  createSuccessResponseMessage,
+  parseSenlerBridgeInitMessage,
+  parseSenlerBridgeRequestMessage,
+  parseSenlerBridgeToolConfiguratorResult,
+  parseSenlerBridgeUiMessage,
+  type SenlerBridgeContext,
+  type SenlerBridgeLanguage,
+  type SenlerBridgeToolConfiguratorResult,
+  type SenlerBridgeUiContext,
+} from './protocol';
+
+export interface SenlerBridgeClientOptions {
+  parentOrigin: string;
+  clientWindow?: Window;
+  syncDocument?: boolean;
+  connectTimeoutMs?: number;
+}
+
+export interface SenlerBridgeClient {
+  connect(): Promise<SenlerBridgeContext>;
+  getContext(): SenlerBridgeContext | null;
+  onContextChange(
+    listener: (context: SenlerBridgeContext) => void,
+  ): () => void;
+  onToolConfiguratorSubmit(
+    handler: () =>
+      | SenlerBridgeToolConfiguratorResult
+      | Promise<SenlerBridgeToolConfiguratorResult>,
+  ): () => void;
+  destroy(): void;
+}
+
+function normalizeOrigin(origin: string): string {
+  const normalized = new URL(origin).origin;
+  if (normalized === 'null') throw new Error('Senler Bridge parentOrigin is invalid');
+  return normalized;
+}
+
+function toErrorMessage(error: unknown): string {
+  return error instanceof Error && error.message.trim()
+    ? error.message.trim()
+    : 'Unable to save tool settings';
+}
+
+const DEFAULT_CONNECT_TIMEOUT_MS = 20_000;
+
+export function normalizeSenlerBridgeLanguage(
+  language: string,
+): SenlerBridgeLanguage {
+  return language.toLowerCase().startsWith('en') ? 'en' : 'ru';
+}
+
+export function resolveSenlerBridgeBootstrapUi(
+  search: string,
+  fallbackLanguage: string,
+  prefersDark: boolean,
+): SenlerBridgeUiContext {
+  const params = new URLSearchParams(search);
+  const theme = params.get('senler_theme');
+  const language = params.get('senler_language');
+  return {
+    language:
+      language === 'ru' || language === 'en'
+        ? language
+        : normalizeSenlerBridgeLanguage(fallbackLanguage),
+    theme:
+      theme === 'light' || theme === 'dark'
+        ? theme
+        : prefersDark
+          ? 'dark'
+          : 'light',
+  };
+}
+
+export function applySenlerBridgeUiContext(
+  ui: SenlerBridgeUiContext,
+  root: HTMLElement = document.documentElement,
+): void {
+  root.lang = ui.language;
+  root.classList.toggle('dark', ui.theme === 'dark');
+  root.style.colorScheme = ui.theme;
+}
+
+export function createSenlerBridgeClient(
+  options: SenlerBridgeClientOptions,
+): SenlerBridgeClient {
+  const clientWindow = options.clientWindow ?? window;
+  const parentOrigin = normalizeOrigin(options.parentOrigin);
+  const syncDocument = options.syncDocument !== false;
+  const connectTimeoutMs =
+    options.connectTimeoutMs ?? DEFAULT_CONNECT_TIMEOUT_MS;
+  if (!Number.isFinite(connectTimeoutMs) || connectTimeoutMs <= 0) {
+    throw new Error('Senler Bridge connectTimeoutMs must be positive');
+  }
+  let context: SenlerBridgeContext | null = null;
+  let destroyed = false;
+  let submitHandler:
+    | (() =>
+        | SenlerBridgeToolConfiguratorResult
+        | Promise<SenlerBridgeToolConfiguratorResult>)
+    | null = null;
+  const contextListeners = new Set<(value: SenlerBridgeContext) => void>();
+  const connectResolvers = new Set<{
+    resolve: (value: SenlerBridgeContext) => void;
+    reject: (reason: Error) => void;
+    timeoutId: number;
+  }>();
+
+  const postToParent = (message: unknown) => {
+    if (destroyed || clientWindow.parent === clientWindow) return;
+    clientWindow.parent.postMessage(message, parentOrigin);
+  };
+
+  const publishContext = (nextContext: SenlerBridgeContext) => {
+    context = nextContext;
+    if (syncDocument) applySenlerBridgeUiContext(nextContext.ui);
+    for (const listener of contextListeners) listener(nextContext);
+    for (const resolver of connectResolvers) {
+      clientWindow.clearTimeout(resolver.timeoutId);
+      resolver.resolve(nextContext);
+    }
+    connectResolvers.clear();
+  };
+
+  const handleMessage = (event: MessageEvent<unknown>) => {
+    if (
+      destroyed ||
+      event.origin !== parentOrigin ||
+      event.source !== clientWindow.parent
+    ) {
+      return;
+    }
+    const initMessage = parseSenlerBridgeInitMessage(event.data);
+    if (initMessage) {
+      publishContext(initMessage.context);
+      return;
+    }
+    const uiMessage = parseSenlerBridgeUiMessage(event.data);
+    if (uiMessage && context) {
+      publishContext({ ...context, ui: uiMessage.ui });
+      return;
+    }
+    const requestMessage = parseSenlerBridgeRequestMessage(event.data);
+    if (!requestMessage) return;
+    if (!submitHandler) {
+      postToParent(
+        createErrorResponseMessage(
+          requestMessage.request_id,
+          context?.ui.language === 'ru'
+            ? 'Приложение ещё не готово сохранить настройки'
+            : 'The application is not ready to save settings yet',
+        ),
+      );
+      return;
+    }
+    void Promise.resolve()
+      .then(() => submitHandler?.())
+      .then((rawResult) => {
+        const result = parseSenlerBridgeToolConfiguratorResult(rawResult);
+        if (!result) {
+          throw new Error(
+            context?.ui.language === 'ru'
+              ? 'Приложение вернуло некорректные настройки'
+              : 'The application returned invalid settings',
+          );
+        }
+        postToParent(
+          createSuccessResponseMessage(requestMessage.request_id, result),
+        );
+      })
+      .catch((error: unknown) => {
+        postToParent(
+          createErrorResponseMessage(
+            requestMessage.request_id,
+            toErrorMessage(error),
+          ),
+        );
+      });
+  };
+
+  clientWindow.addEventListener('message', handleMessage);
+
+  return {
+    connect() {
+      if (destroyed) {
+        return Promise.reject(new Error('Senler Bridge client is destroyed'));
+      }
+      if (context) {
+        postToParent(createReadyMessage());
+        return Promise.resolve(context);
+      }
+      const promise = new Promise<SenlerBridgeContext>((resolve, reject) => {
+        const resolver = {
+          resolve,
+          reject,
+          timeoutId: clientWindow.setTimeout(() => {
+            connectResolvers.delete(resolver);
+            reject(new Error('Senler Bridge connection timed out'));
+          }, connectTimeoutMs),
+        };
+        connectResolvers.add(resolver);
+      });
+      postToParent(createReadyMessage());
+      return promise;
+    },
+    getContext() {
+      return context;
+    },
+    onContextChange(listener) {
+      contextListeners.add(listener);
+      if (context) listener(context);
+      return () => contextListeners.delete(listener);
+    },
+    onToolConfiguratorSubmit(handler) {
+      submitHandler = handler;
+      return () => {
+        if (submitHandler === handler) submitHandler = null;
+      };
+    },
+    destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      clientWindow.removeEventListener('message', handleMessage);
+      contextListeners.clear();
+      submitHandler = null;
+      for (const resolver of connectResolvers) {
+        clientWindow.clearTimeout(resolver.timeoutId);
+        resolver.reject(new Error('Senler Bridge client is destroyed'));
+      }
+      connectResolvers.clear();
+    },
+  };
+}

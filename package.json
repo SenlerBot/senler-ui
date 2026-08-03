@@ -1,6 +1,6 @@
 {
   "name": "@senler/ui",
-  "version": "0.5.26",
+  "version": "0.5.27",
   "private": false,
   "type": "module",
   "description": "Senler React 19 UI component library with shared styles, atoms, layout primitives, forms, and overlays",
@@ -56,6 +56,11 @@
       "import": "./dist/browser-support.js",
       "default": "./dist/browser-support.js"
     },
+    "./bridge": {
+      "types": "./dist/bridge.d.ts",
+      "import": "./dist/bridge.js",
+      "default": "./dist/bridge.js"
+    },
     "./vite-browser-compat": {
       "types": "./dist/vite-browser-compat.d.ts",
       "import": "./dist/vite-browser-compat.js",
@@ -107,7 +112,7 @@
     "normalize:dist": "chmod -R a+rX dist",
     "test": "npm run test:source",
     "test:source": "node scripts/test-css-compat.mjs --source",
-    "test:dist": "node scripts/test-css-compat.mjs --dist && node scripts/test-package.mjs && node scripts/test-frontend-release.mjs",
+    "test:dist": "node scripts/test-css-compat.mjs --dist && node scripts/test-package.mjs && node scripts/test-bridge.mjs && node scripts/test-frontend-release.mjs",
     "type-check": "tsc -p tsconfig.json --noEmit --incremental --tsBuildInfoFile .cache/tsconfig.type-check.tsbuildinfo",
     "type-check:configs": "tsc -p tsconfig.configs.json --noEmit",
     "package:state:write": "node scripts/package-state.mjs --write",

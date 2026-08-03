@@ -30,11 +30,12 @@ source, so `npm publish` does not repeat the full workflow.
 - Application shell: `AppShell`, `AppSidebar`, `AppHeader` from `@senler/ui/app-shell`.
 - Optional code highlighting: `CodeBlock` from `@senler/ui/code`.
 - Browser compatibility helpers: `@senler/ui/browser-compat` and `@senler/ui/vite-browser-compat`.
+- Typed iframe integration for Senler applications via `@senler/ui/bridge`.
 
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.26.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.27.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -118,6 +119,36 @@ export function Example() {
   );
 }
 ```
+
+## Senler Bridge
+
+Applications opened inside Senler use the typed bridge instead of calling
+`window.postMessage` directly. The bridge validates the parent origin, applies
+the initial language and theme, and receives their live updates without
+reloading the iframe:
+
+```ts
+import { createSenlerBridgeClient } from '@senler/ui/bridge';
+
+const bridge = createSenlerBridgeClient({
+  parentOrigin: 'https://senler.io',
+});
+
+bridge.onContextChange(({ ui, launch }) => {
+  // ui: { language: 'ru' | 'en', theme: 'light' | 'dark' }
+  // launch identifies an embedded page or a tool configurator.
+});
+
+bridge.onToolConfiguratorSubmit(() => ({
+  configuration: {},
+  configured_parameters: [],
+}));
+
+await bridge.connect();
+```
+
+OAuth and signed launch sessions remain the authentication boundary. Do not
+send Senler access tokens or application secrets through the bridge.
 
 Subpath imports are also available when a project wants narrower imports:
 

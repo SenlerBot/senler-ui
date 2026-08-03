@@ -29,8 +29,15 @@ for (const [exportName, exportValue] of Object.entries(packageJson.exports)) {
 }
 
 const ui = await import('../dist/index.js')
+const bridge = await import('../dist/bridge.js')
 assert.ok(ui.Button, 'Button must be exported from the package root')
 assert.ok(ui.Input, 'Input must be exported from the package root')
+assert.equal(typeof bridge.createSenlerBridgeClient, 'function')
+assert.equal(typeof bridge.createSenlerBridgeHost, 'function')
+assert.deepEqual(
+  bridge.resolveSenlerBridgeBootstrapUi('?senler_theme=dark&senler_language=en', 'ru', false),
+  { language: 'en', theme: 'dark' },
+)
 
 const buttonHtml = renderToStaticMarkup(createElement(ui.Button, null, 'Save'))
 assert.match(buttonHtml, /^<button/u)
