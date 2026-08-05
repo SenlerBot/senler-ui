@@ -18,7 +18,7 @@ var l = {
 	size: "medium"
 }, m = { variant: "default" }, h = {
 	default: "data-[state=active]:bg-background box-border rounded-full px-[6px] py-1 text-[13px] font-medium leading-4 tracking-[-0.0325px] text-foreground",
-	underline: "relative pb-3 pt-0 px-0 text-[15px] font-normal text-muted-foreground data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[2px] data-[state=active]:after:bg-primary"
+	underline: "relative h-full pb-3 pt-0 px-0 text-[15px] font-normal text-muted-foreground data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[2px] data-[state=active]:after:bg-primary"
 }, g = {
 	small: "text-xs",
 	medium: "text-[13px]",
@@ -32,11 +32,28 @@ var l = {
 		variant: p.variant,
 		size: p.size
 	}
-}), v = s("inline-flex h-full items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0", {
+}), v = s("inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0", {
 	variants: {
 		variant: h,
 		size: g
 	},
+	compoundVariants: [
+		{
+			variant: "default",
+			size: "small",
+			className: "h-5"
+		},
+		{
+			variant: "default",
+			size: "medium",
+			className: "h-6"
+		},
+		{
+			variant: "default",
+			size: "large",
+			className: "h-8"
+		}
+	],
 	defaultVariants: {
 		variant: m.variant,
 		size: p.size
