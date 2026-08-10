@@ -3,5 +3,5 @@ import { Highlight } from 'prism-react-renderer';
 interface CodeBlockProps extends Partial<React.ComponentProps<typeof Highlight>> {
     formatData?: (value: string) => void;
 }
-declare function CodeBlock({ theme, language, code, ...props }: CodeBlockProps): import("react/jsx-runtime").JSX.Element;
+declare function CodeBlock({ theme, language, code, ...props }: CodeBlockProps): React.JSX.Element;
 export { CodeBlock };

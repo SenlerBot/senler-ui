@@ -63,7 +63,7 @@ function d(e, t = "", n = "/") {
 	let r = JSON.stringify({
 		version: e,
 		...t ? { release: t } : {}
-	}, null, 2), i = u(n), a = new Set(["/version.json"]);
+	}, null, 2), i = u(n), a = /* @__PURE__ */ new Set(["/version.json"]);
 	return i && a.add(`${i}/version.json`), {
 		name: "senler-frontend-version-manifest",
 		configureServer(e) {

@@ -39,12 +39,12 @@ export type AvatarRootProps = React.ComponentProps<typeof AvatarPrimitive.Root> 
     size?: AvatarSize;
     shape?: AvatarShape;
 };
-declare function AvatarRoot({ className, size, shape, ...props }: AvatarRootProps): import("react/jsx-runtime").JSX.Element;
+declare function AvatarRoot({ className, size, shape, ...props }: AvatarRootProps): React.JSX.Element;
 export type AvatarImageProps = Omit<React.ComponentProps<typeof AvatarPrimitive.Image>, 'src'> & {
     src?: string | null;
 };
-declare function AvatarImage({ className, src, alt, referrerPolicy, loading, ...props }: AvatarImageProps): import("react/jsx-runtime").JSX.Element;
-declare function AvatarFallback({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Fallback>): import("react/jsx-runtime").JSX.Element;
+declare function AvatarImage({ className, src, alt, referrerPolicy, loading, ...props }: AvatarImageProps): React.JSX.Element;
+declare function AvatarFallback({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Fallback>): React.JSX.Element;
 export interface AvatarProps extends Omit<AvatarRootProps, 'children'> {
     src?: string | null;
     alt?: string | null;
@@ -59,5 +59,5 @@ export interface AvatarProps extends Omit<AvatarRootProps, 'children'> {
     badgeClassName?: string;
     badgePosition?: AvatarBadgePosition;
 }
-declare function Avatar({ src, alt, name, colorKey, fallback, fallbackIcon, imageClassName, fallbackClassName, wrapperClassName, badge, badgeClassName, badgePosition, size, shape, className, title, ...props }: AvatarProps): import("react/jsx-runtime").JSX.Element;
+declare function Avatar({ src, alt, name, colorKey, fallback, fallbackIcon, imageClassName, fallbackClassName, wrapperClassName, badge, badgeClassName, badgePosition, size, shape, className, title, ...props }: AvatarProps): React.JSX.Element;
 export { Avatar, AvatarImage, AvatarFallback, AvatarRoot };

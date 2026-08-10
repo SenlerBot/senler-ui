@@ -4,6 +4,6 @@ import { Button } from './button';
 type CalendarProps = React.ComponentProps<typeof DayPicker> & {
     buttonVariant?: React.ComponentProps<typeof Button>['variant'];
 };
-declare function Calendar({ className, classNames, showOutsideDays, captionLayout, buttonVariant, formatters, components, locale, ...props }: CalendarProps): import("react/jsx-runtime").JSX.Element;
-declare function CalendarDayButton({ className, day, modifiers, ...props }: React.ComponentProps<typeof DayButton>): import("react/jsx-runtime").JSX.Element;
+declare function Calendar({ className, classNames, showOutsideDays, captionLayout, buttonVariant, formatters, components, locale, ...props }: CalendarProps): React.JSX.Element;
+declare function CalendarDayButton({ className, day, modifiers, ...props }: React.ComponentProps<typeof DayButton>): React.JSX.Element;
 export { Calendar, CalendarDayButton };

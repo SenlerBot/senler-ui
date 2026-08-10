@@ -39,35 +39,35 @@ function y({ item: t, currentPath: r, renderLink: i, onNavigate: a, depth: o = 0
 			className: "ml-auto max-w-16 rounded-full px-1.5 py-0 text-[11px]",
 			children: t.badge
 		})
-	] });
+	] }), b = t.href && !t.disabled ? i({
+		item: t,
+		href: t.href,
+		className: m,
+		children: h,
+		title: c,
+		onClick: (e) => {
+			if (t.disabled) {
+				e.preventDefault();
+				return;
+			}
+			v(t, a);
+		},
+		"aria-current": s ? "page" : void 0
+	}) : /* @__PURE__ */ f("button", {
+		type: "button",
+		className: m,
+		disabled: t.disabled,
+		"aria-current": s ? "page" : void 0,
+		"aria-disabled": t.disabled || void 0,
+		title: c,
+		onClick: () => {
+			t.disabled || v(t, a);
+		},
+		children: h
+	});
 	return /* @__PURE__ */ p("li", {
 		className: "min-w-0",
-		children: [t.href && !t.disabled ? i({
-			item: t,
-			href: t.href,
-			className: m,
-			children: h,
-			title: c,
-			onClick: (e) => {
-				if (t.disabled) {
-					e.preventDefault();
-					return;
-				}
-				v(t, a);
-			},
-			"aria-current": s ? "page" : void 0
-		}) : /* @__PURE__ */ f("button", {
-			type: "button",
-			className: m,
-			disabled: t.disabled,
-			"aria-current": s ? "page" : void 0,
-			"aria-disabled": t.disabled || void 0,
-			title: c,
-			onClick: () => {
-				t.disabled || v(t, a);
-			},
-			children: h
-		}), u ? /* @__PURE__ */ f("ul", {
+		children: [b, u ? /* @__PURE__ */ f("ul", {
 			className: "mt-1 grid gap-1 border-l border-sidebar-border pl-3",
 			children: t.items?.map((e) => /* @__PURE__ */ f(y, {
 				item: e,

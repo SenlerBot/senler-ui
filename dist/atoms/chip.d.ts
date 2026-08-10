@@ -13,5 +13,5 @@ export interface ChipProps extends VariantProps<typeof chipVariants> {
     className?: string;
     icon?: ReactNode;
 }
-declare function Chip({ label, color, size, variant, className, icon, }: ChipProps): import("react/jsx-runtime").JSX.Element;
+declare function Chip({ label, color, size, variant, className, icon, }: ChipProps): import("react").JSX.Element;
 export { Chip, chipVariants };

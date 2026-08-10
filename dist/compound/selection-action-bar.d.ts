@@ -15,5 +15,5 @@ export interface SelectionActionBarProps {
     toolbarClassName?: string;
     actionsClassName?: string;
 }
-declare function SelectionActionBar({ selectedCount, selectedCountLabel, selectAllChecked, selectAllLabel, clearLabel, onSelectAllChange, onClear, actions, children, controlsDisabled, minTop, className, toolbarClassName, actionsClassName, }: SelectionActionBarProps): import("react/jsx-runtime").JSX.Element;
+declare function SelectionActionBar({ selectedCount, selectedCountLabel, selectAllChecked, selectAllLabel, clearLabel, onSelectAllChange, onClear, actions, children, controlsDisabled, minTop, className, toolbarClassName, actionsClassName, }: SelectionActionBarProps): React.JSX.Element;
 export { SelectionActionBar };

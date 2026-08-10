@@ -28,5 +28,5 @@ declare const badgeVariants: (props?: ({
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
     variant?: BadgeVariant;
 }
-declare function Badge({ className, variant, ...props }: BadgeProps): import("react/jsx-runtime").JSX.Element;
+declare function Badge({ className, variant, ...props }: BadgeProps): React.JSX.Element;
 export { Badge, badgeVariants };

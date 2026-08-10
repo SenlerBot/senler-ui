@@ -5,7 +5,7 @@ var t = {
 	field: "field",
 	tab: "tab",
 	listItem: "list-item"
-}, n = { save: "save" }, r = new Map([
+}, n = { save: "save" }, r = /* @__PURE__ */ new Map([
 	["ArrowLeft", "Назад / back"],
 	["ArrowRight", "Вперед / next"],
 	["Check", "Подтвердить / confirm"],

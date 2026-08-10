@@ -12,7 +12,7 @@ function p({ items: p, columns: m, getItemId: h, selection: g, onRowClick: _, is
 		h,
 		p,
 		g
-	]), N = M.filter((e) => j.has(e)), P = M.length > 0 && N.length === M.length ? !0 : N.length > 0 ? "indeterminate" : !1, F = P === !0 && g?.deselectAllLabel ? g.deselectAllLabel : g?.selectAllLabel, I = (e) => {
+	]), N = M.filter((e) => j.has(e)), P = M.length > 0 && N.length === M.length || N.length > 0 && "indeterminate", F = P === !0 && g?.deselectAllLabel ? g.deselectAllLabel : g?.selectAllLabel, I = (e) => {
 		g?.onSelectedIdsChange(e);
 	}, L = (e) => {
 		if (!g) return;
@@ -75,7 +75,7 @@ function p({ items: p, columns: m, getItemId: h, selection: g, onRowClick: _, is
 						role: p ? "button" : void 0,
 						onClick: () => z(n, s, a, l),
 						onKeyDown: (e) => {
-							e.target === e.currentTarget && (e.key !== "Enter" && e.key !== " " || (e.preventDefault(), z(n, s, a, l)));
+							e.target === e.currentTarget && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), z(n, s, a, l));
 						},
 						...y?.(n),
 						children: [k ? /* @__PURE__ */ u(i, {

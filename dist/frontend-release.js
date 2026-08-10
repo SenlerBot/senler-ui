@@ -1,6 +1,6 @@
 import { useCallback as e, useEffect as t, useState as n, useSyncExternalStore as r } from "react";
 //#region src/frontend-release.ts
-var i = 6e4, a = 10800 * 1e3, o = null, s = f(), c = null, l = /* @__PURE__ */ new Set(), u = /* @__PURE__ */ new Map();
+var i = 6e4, a = 108e5, o = null, s = f(), c = null, l = /* @__PURE__ */ new Set(), u = /* @__PURE__ */ new Map();
 function d(e) {
 	return typeof e == "string" && e.trim() ? e.trim() : null;
 }
@@ -90,7 +90,7 @@ async function S(e = {}) {
 	}), c;
 }
 async function C(e) {
-	return e === "ApiValidationError" ? (await S()).state === "outdated" : !1;
+	return e === "ApiValidationError" && (await S()).state === "outdated";
 }
 function w(e = i) {
 	let n = r(y, x, x);

@@ -7,5 +7,5 @@ declare const svgVariants: (props?: ({
 export interface SvgIconProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'>, VariantProps<typeof svgVariants> {
     children: React.ReactNode;
 }
-declare function SvgIcon({ className, color, size, children, ...props }: SvgIconProps): import("react/jsx-runtime").JSX.Element;
+declare function SvgIcon({ className, color, size, children, ...props }: SvgIconProps): React.JSX.Element;
 export { SvgIcon };

@@ -7,6 +7,6 @@ export declare function mergeAiRevealContextIds(explicitValue: string | undefine
 export declare function AiRevealContextProvider({ children, contextIds, }: {
     children: React.ReactNode;
     contextIds?: string[];
-}): import("react/jsx-runtime").JSX.Element;
+}): React.JSX.Element;
 export declare function useAiRevealAttributes(explicitContextIds: string | undefined, explicitAction: AiRevealAction | undefined, additionalContextIds?: string[]): AiRevealAttributes;
 export {};

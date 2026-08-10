@@ -5,5 +5,5 @@ interface CheckBoxProps extends React.ComponentProps<typeof CheckboxPrimitive.Ro
     label?: React.ReactNode;
     tooltip?: React.ReactNode;
 }
-declare function CheckBox({ className, label, tooltip, id, 'aria-label': ariaLabel, title, name, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: CheckBoxProps): import("react/jsx-runtime").JSX.Element;
+declare function CheckBox({ className, label, tooltip, id, 'aria-label': ariaLabel, title, name, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: CheckBoxProps): React.JSX.Element;
 export { CheckBox };

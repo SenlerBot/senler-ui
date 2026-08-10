@@ -5,5 +5,5 @@ export interface PageListLayoutProps extends React.HTMLAttributes<HTMLDivElement
     toolbarContentClassName?: string;
     contentClassName?: string;
 }
-declare function PageListLayout({ toolbar, toolbarClassName, toolbarContentClassName, contentClassName, className, children, ...props }: PageListLayoutProps): import("react/jsx-runtime").JSX.Element;
+declare function PageListLayout({ toolbar, toolbarClassName, toolbarContentClassName, contentClassName, className, children, ...props }: PageListLayoutProps): React.JSX.Element;
 export { PageListLayout };

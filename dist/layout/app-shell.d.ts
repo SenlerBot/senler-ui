@@ -82,6 +82,6 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
     headerClassName?: string;
     mainClassName?: string;
 }
-export declare function AppSidebar({ className, mobile, ...props }: AppSidebarProps): import("react/jsx-runtime").JSX.Element;
-export declare function AppHeader({ title, breadcrumbs, actions, renderLink, labels, onSidebarOpen, className, ...props }: AppHeaderProps): import("react/jsx-runtime").JSX.Element;
-export declare function AppShell({ navigation, currentPath, renderLink, brand, sidebarHeaderActions, sidebarTop, sidebarFooter, headerTitle, headerBreadcrumbs, headerActions, children, closeMobileOnPathChange, labels, sidebarClassName, headerClassName, mainClassName, className, ...props }: AppShellProps): import("react/jsx-runtime").JSX.Element;
+export declare function AppSidebar({ className, mobile, ...props }: AppSidebarProps): React.JSX.Element;
+export declare function AppHeader({ title, breadcrumbs, actions, renderLink, labels, onSidebarOpen, className, ...props }: AppHeaderProps): React.JSX.Element;
+export declare function AppShell({ navigation, currentPath, renderLink, brand, sidebarHeaderActions, sidebarTop, sidebarFooter, headerTitle, headerBreadcrumbs, headerActions, children, closeMobileOnPathChange, labels, sidebarClassName, headerClassName, mainClassName, className, ...props }: AppShellProps): React.JSX.Element;

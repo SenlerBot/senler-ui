@@ -1,6 +1,7 @@
 import { createClearElementHighlightMessage as e, createElementActionMessage as t, createInitMessage as n, createSubmitRequestMessage as r, createUiMessage as i, isSenlerBridgeReadyMessage as a, parseSenlerBridgeContext as o, parseSenlerBridgeElementActionRequest as s, parseSenlerBridgeElementActionResultMessage as c, parseSenlerBridgeResponseMessage as l, parseSenlerBridgeUiContext as u } from "./protocol.js";
 //#region src/bridge/host.ts
 var d = 2e4, f = class extends Error {
+	code;
 	constructor(e, t) {
 		super(t), this.code = e, this.name = "SenlerBridgeHostError";
 	}

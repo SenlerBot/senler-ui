@@ -8,7 +8,7 @@ var e = 1, t = "senler-bridge", n = {
 	elementAction: "senler:bridge:element-action",
 	elementActionResult: "senler:bridge:element-action-result",
 	clearElementHighlight: "senler:bridge:clear-element-highlight"
-}, r = { toolConfiguratorSubmit: "tool-configurator.submit" }, i = 20, a = 5e3, o = 64 * 1024, s = 128, c = 160, l = 64, u = 500, d = 50, f = 100, p = 1e3, m = 160, h = new Set([
+}, r = { toolConfiguratorSubmit: "tool-configurator.submit" }, i = 20, a = 5e3, o = 65536, s = 128, c = 160, l = 64, u = 500, d = 50, f = 100, p = 1e3, m = 160, h = /* @__PURE__ */ new Set([
 	"__proto__",
 	"constructor",
 	"prototype"

@@ -35,7 +35,7 @@ declare const tabListVariants: (props?: ({
     variant?: "default" | "underline" | null | undefined;
     size?: "small" | "medium" | "large" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
-declare function TabsRoot({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>): import("react/jsx-runtime").JSX.Element;
+declare function TabsRoot({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>): React.JSX.Element;
 type TabsListProps = React.ComponentProps<typeof TabsPrimitive.List> & VariantProps<typeof tabListVariants> & {
     variant?: TabsListVariant;
     size?: TabsListSize;
@@ -44,7 +44,7 @@ type TabsTriggerProps = React.ComponentProps<typeof TabsPrimitive.Trigger> & AiD
     variant?: TabsListVariant;
     count?: number;
 };
-declare function TabsTrigger({ variant, count, className, children, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: TabsTriggerProps): import("react/jsx-runtime").JSX.Element;
+declare function TabsTrigger({ variant, count, className, children, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: TabsTriggerProps): React.JSX.Element;
 declare const TabsList: React.ForwardRefExoticComponent<Omit<TabsListProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
-declare function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>): import("react/jsx-runtime").JSX.Element;
+declare function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>): React.JSX.Element;
 export { TabsRoot, TabsList, TabsTrigger, TabsContent };

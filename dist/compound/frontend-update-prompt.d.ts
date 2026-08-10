@@ -14,5 +14,5 @@ interface FrontendUpdatePromptProps {
     onRemindLater: () => void;
     onRefresh: () => void;
 }
-export declare function FrontendUpdatePrompt({ open, currentVersion, latestVersion, labels, onRemindLater, onRefresh, }: FrontendUpdatePromptProps): import("react/jsx-runtime").JSX.Element;
+export declare function FrontendUpdatePrompt({ open, currentVersion, latestVersion, labels, onRemindLater, onRefresh, }: FrontendUpdatePromptProps): import("react").JSX.Element;
 export {};

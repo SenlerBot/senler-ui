@@ -44,5 +44,5 @@ export interface DataTableProps<TItem> {
     selectionHeadCellClassName?: string;
     selectionCellClassName?: DataTableClassName<TItem>;
 }
-declare function DataTable<TItem>({ items, columns, getItemId, selection, onRowClick, isRowInteractive, getRowDataAttributes, containerClassName, tableClassName, headClassName, bodyClassName, rowClassName, selectedRowClassName, selectionHeadCellClassName, selectionCellClassName, }: DataTableProps<TItem>): import("react/jsx-runtime").JSX.Element;
+declare function DataTable<TItem>({ items, columns, getItemId, selection, onRowClick, isRowInteractive, getRowDataAttributes, containerClassName, tableClassName, headClassName, bodyClassName, rowClassName, selectedRowClassName, selectionHeadCellClassName, selectionCellClassName, }: DataTableProps<TItem>): React.JSX.Element;
 export { DataTable };

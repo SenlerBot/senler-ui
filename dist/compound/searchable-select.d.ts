@@ -16,6 +16,6 @@ type SearchableSelectOwnProps = {
 };
 export type SearchableSelectProps<OptionType, IsMulti extends boolean = false> = ReactSelectProps<OptionType, IsMulti, GroupBase<OptionType>> & SearchableSelectOwnProps;
 export type AsyncSearchableSelectProps<OptionType, IsMulti extends boolean = false> = ReactAsyncSelectProps<OptionType, IsMulti, GroupBase<OptionType>> & SearchableSelectOwnProps;
-export declare function SearchableSelect<OptionType, IsMulti extends boolean = false>({ classNames, components, dropdownIndicator, error, helperText, inputId, label, loadingMessage, noOptionsMessage, placeholder, unstyled, wrapperProps, ...props }: SearchableSelectProps<OptionType, IsMulti>): import("react/jsx-runtime").JSX.Element;
-export declare function AsyncSearchableSelect<OptionType, IsMulti extends boolean = false>({ classNames, components, dropdownIndicator, error, helperText, inputId, label, loadingMessage, noOptionsMessage, placeholder, unstyled, wrapperProps, ...props }: AsyncSearchableSelectProps<OptionType, IsMulti>): import("react/jsx-runtime").JSX.Element;
+export declare function SearchableSelect<OptionType, IsMulti extends boolean = false>({ classNames, components, dropdownIndicator, error, helperText, inputId, label, loadingMessage, noOptionsMessage, placeholder, unstyled, wrapperProps, ...props }: SearchableSelectProps<OptionType, IsMulti>): import("react").JSX.Element;
+export declare function AsyncSearchableSelect<OptionType, IsMulti extends boolean = false>({ classNames, components, dropdownIndicator, error, helperText, inputId, label, loadingMessage, noOptionsMessage, placeholder, unstyled, wrapperProps, ...props }: AsyncSearchableSelectProps<OptionType, IsMulti>): import("react").JSX.Element;
 export {};

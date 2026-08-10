@@ -42,5 +42,5 @@ export interface ButtonProps extends ComponentProps<'button'>, VariantProps<type
     asChild?: boolean;
     loading?: boolean;
 }
-declare function Button({ className, variant, size, ref, asChild, type, loading, disabled, children, 'aria-label': ariaLabel, title, name, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, 'data-ai-action': dataAiAction, ...props }: ButtonProps): import("react/jsx-runtime").JSX.Element;
+declare function Button({ className, variant, size, ref, asChild, type, loading, disabled, children, 'aria-label': ariaLabel, title, name, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, 'data-ai-action': dataAiAction, ...props }: ButtonProps): import("react").JSX.Element;
 export { Button, buttonVariants, };

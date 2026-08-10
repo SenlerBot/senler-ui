@@ -5,5 +5,5 @@ declare const announceVariants: (props?: ({
     color?: "error" | "grey" | null | undefined;
     size?: "small" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
-declare function Announce({ className, color, size, asChild, ...props }: React.ComponentProps<typeof ReactAnnounce.Root> & VariantProps<typeof announceVariants>): import("react/jsx-runtime").JSX.Element;
+declare function Announce({ className, color, size, asChild, ...props }: React.ComponentProps<typeof ReactAnnounce.Root> & VariantProps<typeof announceVariants>): React.JSX.Element;
 export { Announce, announceVariants, };
