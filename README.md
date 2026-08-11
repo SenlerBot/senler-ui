@@ -35,7 +35,7 @@ source, so `npm publish` does not repeat the full workflow.
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.28.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.29.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
