@@ -118,7 +118,7 @@
     "package:state:write": "node scripts/package-state.mjs --write",
     "package:state:check": "node scripts/package-state.mjs --check",
     "check:fast": "sh scripts/development/run-heavy-task.sh --repo senler-ui --task check-fast -- npm run check:fast:internal",
-    "check:fast:internal": "node scripts/development/run-npm-sequence.mjs type-check type-check:configs",
+    "check:fast:internal": "node scripts/development/run-fast-verification.mjs type-check type-check:configs",
     "check:full": "sh scripts/development/run-heavy-task.sh --repo senler-ui --task check-full -- npm run check:full:internal",
     "check:full:internal": "npm run check:fast && npm run test:source",
     "prepack": "npm run package:state:check"
