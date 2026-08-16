@@ -1,6 +1,7 @@
 import { type ComponentProps, type ReactNode } from 'react';
 import { type GroupBase, type Props as ReactSelectProps } from 'react-select';
 import { type AsyncProps as ReactAsyncSelectProps } from 'react-select/async';
+import type { AiDataAttributes } from '../lib/ai-auto-attributes';
 export declare const searchableSelectDefaults: {
     readonly dropdownIndicator: true;
     readonly loadingMessage: "Loading...";
@@ -12,7 +13,7 @@ type SearchableSelectOwnProps = {
     error?: boolean;
     helperText?: ReactNode;
     label?: ReactNode;
-    wrapperProps?: ComponentProps<'div'>;
+    wrapperProps?: ComponentProps<'div'> & AiDataAttributes;
 };
 export type SearchableSelectProps<OptionType, IsMulti extends boolean = false> = ReactSelectProps<OptionType, IsMulti, GroupBase<OptionType>> & SearchableSelectOwnProps;
 export type AsyncSearchableSelectProps<OptionType, IsMulti extends boolean = false> = ReactAsyncSelectProps<OptionType, IsMulti, GroupBase<OptionType>> & SearchableSelectOwnProps;

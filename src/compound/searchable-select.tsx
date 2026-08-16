@@ -18,6 +18,7 @@ import {
   overlayLayerClassName,
   overlaySolidSurfaceClassName,
 } from '../lib/overlay-styles';
+import type { AiDataAttributes } from '../lib/ai-auto-attributes';
 import { cn } from '../lib/utils';
 
 export const searchableSelectDefaults = {
@@ -40,7 +41,7 @@ type SearchableSelectOwnProps = {
   error?: boolean;
   helperText?: ReactNode;
   label?: ReactNode;
-  wrapperProps?: ComponentProps<'div'>;
+  wrapperProps?: ComponentProps<'div'> & AiDataAttributes;
 };
 
 export type SearchableSelectProps<
