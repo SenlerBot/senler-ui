@@ -14,6 +14,7 @@ export const SENLER_BRIDGE_MESSAGE = {
 
 export const SENLER_BRIDGE_REQUEST = {
   toolConfiguratorSubmit: 'tool-configurator.submit',
+  automationStepConfiguratorSubmit: 'automation-step-configurator.submit',
 } as const;
 
 const MAX_JSON_DEPTH = 20;
@@ -27,6 +28,10 @@ const MAX_CONFIGURED_PARAMETERS = 50;
 const MAX_ALLOWED_VALUES = 100;
 const MAX_ERROR_MESSAGE_LENGTH = 1_000;
 const MAX_CONTEXT_ID_LENGTH = 160;
+const MAX_AUTOMATION_BRANCHES = 20;
+const AUTOMATION_BRANCH_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
+const UUID_PATTERN =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
 const FORBIDDEN_JSON_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 export type SenlerBridgeLanguage = 'ru' | 'en';
@@ -90,9 +95,35 @@ export interface SenlerBridgeToolConfiguratorLaunch {
   instance: SenlerBridgeToolInstance | null;
 }
 
+export interface SenlerBridgeAutomationStepBranch {
+  branch_id: string;
+  key: string;
+  title: string;
+}
+
+export interface SenlerBridgeAutomationStepConfiguratorLaunch {
+  type: 'automation_step_configurator';
+  app_id: string;
+  project_id: string;
+  installation_id: string;
+  automation_id: string;
+  node_id: string;
+  mode: 'create' | 'edit';
+  step: {
+    id: string;
+    name: string;
+    title: string;
+    description: string;
+    continuation_mode: 'next' | 'fixed' | 'configured';
+  };
+  configuration: SenlerBridgeJsonObject;
+  branches: SenlerBridgeAutomationStepBranch[];
+}
+
 export type SenlerBridgeLaunchContext =
   | SenlerBridgeEmbeddedPageLaunch
-  | SenlerBridgeToolConfiguratorLaunch;
+  | SenlerBridgeToolConfiguratorLaunch
+  | SenlerBridgeAutomationStepConfiguratorLaunch;
 
 export interface SenlerBridgeContext {
   ui: SenlerBridgeUiContext;
@@ -107,6 +138,16 @@ export interface SenlerBridgeToolConfiguratorResult {
   private_data?: SenlerBridgeJsonObject;
   private_data_required?: boolean;
 }
+
+export interface SenlerBridgeAutomationStepConfiguratorResult {
+  kind: 'automation_step_configurator';
+  configuration: SenlerBridgeJsonObject;
+  branches: SenlerBridgeAutomationStepBranch[];
+}
+
+export type SenlerBridgeSubmitResult =
+  | SenlerBridgeToolConfiguratorResult
+  | SenlerBridgeAutomationStepConfiguratorResult;
 
 export type SenlerBridgeElementAction =
   | 'highlight'
@@ -163,7 +204,9 @@ interface SenlerBridgeRequestMessage {
   type: typeof SENLER_BRIDGE_MESSAGE.request;
   protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
   request_id: string;
-  method: typeof SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit;
+  method:
+    | typeof SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit
+    | typeof SENLER_BRIDGE_REQUEST.automationStepConfiguratorSubmit;
 }
 
 interface SenlerBridgeSuccessResponseMessage {
@@ -172,7 +215,7 @@ interface SenlerBridgeSuccessResponseMessage {
   protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
   request_id: string;
   ok: true;
-  result: SenlerBridgeToolConfiguratorResult;
+  result: SenlerBridgeSubmitResult;
 }
 
 interface SenlerBridgeErrorResponseMessage {
@@ -295,6 +338,12 @@ function isJsonObject(value: unknown): value is SenlerBridgeJsonObject {
   return new TextEncoder().encode(JSON.stringify(value)).byteLength <= MAX_JSON_BYTES;
 }
 
+export function parseSenlerBridgeJsonObject(
+  value: unknown,
+): SenlerBridgeJsonObject | null {
+  return isJsonObject(value) ? value : null;
+}
+
 function parseConfiguredParameter(
   value: unknown,
 ): SenlerBridgeConfiguredParameter | null {
@@ -371,6 +420,38 @@ function parseToolInstance(value: unknown): SenlerBridgeToolInstance | null {
   };
 }
 
+function parseAutomationStepBranches(
+  value: unknown,
+): SenlerBridgeAutomationStepBranch[] | null {
+  if (!Array.isArray(value) || value.length > MAX_AUTOMATION_BRANCHES) return null;
+  const branches = value.flatMap((branch) => {
+    if (
+      !isRecord(branch) ||
+      !isNonEmptyString(branch.branch_id) ||
+      !UUID_PATTERN.test(branch.branch_id) ||
+      !isNonEmptyString(branch.key) ||
+      !AUTOMATION_BRANCH_KEY_PATTERN.test(branch.key) ||
+      !isNonEmptyString(branch.title) ||
+      branch.title.length > MAX_TITLE_LENGTH
+    ) {
+      return [];
+    }
+    return [
+      {
+        branch_id: branch.branch_id,
+        key: branch.key,
+        title: branch.title,
+      },
+    ];
+  });
+  if (branches.length !== value.length) return null;
+  const branchIds = new Set(branches.map((branch) => branch.branch_id));
+  const branchKeys = new Set(branches.map((branch) => branch.key));
+  return branchIds.size === branches.length && branchKeys.size === branches.length
+    ? branches
+    : null;
+}
+
 function parseLaunchContext(value: unknown): SenlerBridgeLaunchContext | null {
   if (
     !isRecord(value) ||
@@ -395,6 +476,45 @@ function parseLaunchContext(value: unknown): SenlerBridgeLaunchContext | null {
         ? { installation_id: value.installation_id }
         : {}),
       mode: value.mode,
+    };
+  }
+  if (value.type === 'automation_step_configurator') {
+    if (
+      !isNonEmptyString(value.installation_id) ||
+      !isNonEmptyString(value.automation_id) ||
+      !isNonEmptyString(value.node_id) ||
+      (value.mode !== 'create' && value.mode !== 'edit') ||
+      !isRecord(value.step) ||
+      !isNonEmptyString(value.step.id) ||
+      !isNonEmptyString(value.step.name) ||
+      !isNonEmptyString(value.step.title) ||
+      typeof value.step.description !== 'string' ||
+      (value.step.continuation_mode !== 'next' &&
+        value.step.continuation_mode !== 'fixed' &&
+        value.step.continuation_mode !== 'configured') ||
+      !isJsonObject(value.configuration)
+    ) {
+      return null;
+    }
+    const branches = parseAutomationStepBranches(value.branches);
+    if (!branches) return null;
+    return {
+      type: 'automation_step_configurator',
+      app_id: value.app_id,
+      project_id: value.project_id,
+      installation_id: value.installation_id,
+      automation_id: value.automation_id,
+      node_id: value.node_id,
+      mode: value.mode,
+      step: {
+        id: value.step.id,
+        name: value.step.name,
+        title: value.step.title,
+        description: value.step.description,
+        continuation_mode: value.step.continuation_mode,
+      },
+      configuration: value.configuration,
+      branches,
     };
   }
   if (
@@ -481,6 +601,26 @@ export function parseSenlerBridgeToolConfiguratorResult(
       ? { private_data_required: value.private_data_required }
       : {}),
   };
+}
+
+export function parseSenlerBridgeAutomationStepConfiguratorResult(
+  value: unknown,
+): SenlerBridgeAutomationStepConfiguratorResult | null {
+  if (
+    !isRecord(value) ||
+    value.kind !== 'automation_step_configurator' ||
+    !isJsonObject(value.configuration)
+  ) {
+    return null;
+  }
+  const branches = parseAutomationStepBranches(value.branches);
+  return branches
+    ? {
+        kind: 'automation_step_configurator',
+        configuration: value.configuration,
+        branches,
+      }
+    : null;
 }
 
 const SENLER_BRIDGE_ELEMENT_ACTIONS: readonly SenlerBridgeElementAction[] = [
@@ -622,7 +762,8 @@ export function parseSenlerBridgeRequestMessage(
   if (
     !hasBridgeEnvelope(value) ||
     value.type !== SENLER_BRIDGE_MESSAGE.request ||
-    value.method !== SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit ||
+    (value.method !== SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit &&
+      value.method !== SENLER_BRIDGE_REQUEST.automationStepConfiguratorSubmit) ||
     !isNonEmptyString(value.request_id) ||
     value.request_id.length > MAX_REQUEST_ID_LENGTH
   ) {
@@ -633,7 +774,7 @@ export function parseSenlerBridgeRequestMessage(
     type: SENLER_BRIDGE_MESSAGE.request,
     protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
     request_id: value.request_id,
-    method: SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit,
+    method: value.method,
   };
 }
 
@@ -665,7 +806,9 @@ export function parseSenlerBridgeResponseMessage(
     };
   }
   if (value.ok !== true) return null;
-  const result = parseSenlerBridgeToolConfiguratorResult(value.result);
+  const result =
+    parseSenlerBridgeAutomationStepConfiguratorResult(value.result) ??
+    parseSenlerBridgeToolConfiguratorResult(value.result);
   return result
     ? {
         source: SENLER_BRIDGE_SOURCE,
@@ -765,13 +908,16 @@ export function createUiMessage(
 
 export function createSubmitRequestMessage(
   requestId: string,
+  method:
+    | typeof SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit
+    | typeof SENLER_BRIDGE_REQUEST.automationStepConfiguratorSubmit = SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit,
 ): SenlerBridgeRequestMessage {
   return {
     source: SENLER_BRIDGE_SOURCE,
     type: SENLER_BRIDGE_MESSAGE.request,
     protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
     request_id: requestId,
-    method: SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit,
+    method,
   };
 }
 
@@ -811,7 +957,7 @@ export function createClearElementHighlightMessage(): SenlerBridgeClearElementHi
 
 export function createSuccessResponseMessage(
   requestId: string,
-  result: SenlerBridgeToolConfiguratorResult,
+  result: SenlerBridgeSubmitResult,
 ): SenlerBridgeSuccessResponseMessage {
   return {
     source: SENLER_BRIDGE_SOURCE,

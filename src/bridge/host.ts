@@ -4,6 +4,7 @@ import {
   createInitMessage,
   createSubmitRequestMessage,
   createUiMessage,
+  SENLER_BRIDGE_REQUEST,
   isSenlerBridgeReadyMessage,
   parseSenlerBridgeContext,
   parseSenlerBridgeElementActionRequest,
@@ -13,6 +14,8 @@ import {
   type SenlerBridgeContext,
   type SenlerBridgeElementActionRequest,
   type SenlerBridgeElementActionResult,
+  type SenlerBridgeAutomationStepConfiguratorResult,
+  type SenlerBridgeSubmitResult,
   type SenlerBridgeToolConfiguratorResult,
   type SenlerBridgeUiContext,
 } from './protocol';
@@ -32,6 +35,7 @@ export interface SenlerBridgeHost {
   setContext(context: SenlerBridgeContext): void;
   setUi(ui: SenlerBridgeUiContext): void;
   requestToolConfiguratorSubmit(): Promise<SenlerBridgeToolConfiguratorResult>;
+  requestAutomationStepConfiguratorSubmit(): Promise<SenlerBridgeAutomationStepConfiguratorResult>;
   requestElementAction(
     request: SenlerBridgeElementActionRequest,
   ): Promise<SenlerBridgeElementActionResult>;
@@ -58,7 +62,7 @@ export class SenlerBridgeHostError extends Error {
 }
 
 interface PendingRequest {
-  resolve: (result: SenlerBridgeToolConfiguratorResult) => void;
+  resolve: (result: SenlerBridgeSubmitResult) => void;
   reject: (error: Error) => void;
   timeoutId: number;
 }
@@ -148,6 +152,44 @@ export function createSenlerBridgeHost(
 
   hostWindow.addEventListener('message', handleMessage);
 
+  const requestSubmit = (
+    method:
+      | typeof SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit
+      | typeof SENLER_BRIDGE_REQUEST.automationStepConfiguratorSubmit,
+  ): Promise<SenlerBridgeSubmitResult> => {
+    if (destroyed) {
+      return Promise.reject(
+        new SenlerBridgeHostError(
+          'destroyed',
+          'Senler Bridge host is destroyed',
+        ),
+      );
+    }
+    const requestId = createRequestId(hostWindow);
+    return new Promise<SenlerBridgeSubmitResult>((resolve, reject) => {
+      const timeoutId = hostWindow.setTimeout(() => {
+        pendingRequests.delete(requestId);
+        reject(
+          new SenlerBridgeHostError(
+            'request_timeout',
+            'The embedded application did not respond in time',
+          ),
+        );
+      }, requestTimeoutMs);
+      pendingRequests.set(requestId, { resolve, reject, timeoutId });
+      if (!postToFrame(createSubmitRequestMessage(requestId, method))) {
+        hostWindow.clearTimeout(timeoutId);
+        pendingRequests.delete(requestId);
+        reject(
+          new SenlerBridgeHostError(
+            'frame_unavailable',
+            'The embedded application is unavailable',
+          ),
+        );
+      }
+    });
+  };
+
   return {
     notifyFrameLoaded() {
       connected = true;
@@ -176,11 +218,6 @@ export function createSenlerBridgeHost(
       if (connected) postToFrame(createUiMessage(parsedUi));
     },
     requestToolConfiguratorSubmit() {
-      if (destroyed) {
-        return Promise.reject(
-          new SenlerBridgeHostError('destroyed', 'Senler Bridge host is destroyed'),
-        );
-      }
       if (context.launch.type !== 'tool_configurator') {
         return Promise.reject(
           new SenlerBridgeHostError(
@@ -189,28 +226,37 @@ export function createSenlerBridgeHost(
           ),
         );
       }
-      const requestId = createRequestId(hostWindow);
-      return new Promise<SenlerBridgeToolConfiguratorResult>((resolve, reject) => {
-        const timeoutId = hostWindow.setTimeout(() => {
-          pendingRequests.delete(requestId);
-          reject(
-            new SenlerBridgeHostError(
-              'request_timeout',
-              'The embedded application did not respond in time',
-            ),
-          );
-        }, requestTimeoutMs);
-        pendingRequests.set(requestId, { resolve, reject, timeoutId });
-        if (!postToFrame(createSubmitRequestMessage(requestId))) {
-          hostWindow.clearTimeout(timeoutId);
-          pendingRequests.delete(requestId);
-          reject(
-            new SenlerBridgeHostError(
-              'frame_unavailable',
-              'The embedded application is unavailable',
-            ),
+      return requestSubmit(SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit).then(
+        (result) => {
+          if ('kind' in result) {
+            throw new SenlerBridgeHostError(
+              'remote_error',
+              'Embedded application returned an automation step result',
+            );
+          }
+          return result;
+        },
+      );
+    },
+    requestAutomationStepConfiguratorSubmit() {
+      if (context.launch.type !== 'automation_step_configurator') {
+        return Promise.reject(
+          new SenlerBridgeHostError(
+            'invalid_launch',
+            'Automation step configurator is unavailable for this iframe',
+          ),
+        );
+      }
+      return requestSubmit(
+        SENLER_BRIDGE_REQUEST.automationStepConfiguratorSubmit,
+      ).then((result) => {
+        if (!('kind' in result)) {
+          throw new SenlerBridgeHostError(
+            'remote_error',
+            'Embedded application returned a tool configuration result',
           );
         }
+        return result;
       });
     },
     requestElementAction(request) {

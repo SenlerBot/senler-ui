@@ -1,4 +1,4 @@
-import { type SenlerBridgeContext, type SenlerBridgeElementActionRequest, type SenlerBridgeElementActionResult, type SenlerBridgeToolConfiguratorResult, type SenlerBridgeUiContext } from './protocol';
+import { type SenlerBridgeContext, type SenlerBridgeElementActionRequest, type SenlerBridgeElementActionResult, type SenlerBridgeAutomationStepConfiguratorResult, type SenlerBridgeToolConfiguratorResult, type SenlerBridgeUiContext } from './protocol';
 export interface SenlerBridgeHostOptions {
     targetOrigin: string;
     getTargetWindow: () => Window | null;
@@ -11,6 +11,7 @@ export interface SenlerBridgeHost {
     setContext(context: SenlerBridgeContext): void;
     setUi(ui: SenlerBridgeUiContext): void;
     requestToolConfiguratorSubmit(): Promise<SenlerBridgeToolConfiguratorResult>;
+    requestAutomationStepConfiguratorSubmit(): Promise<SenlerBridgeAutomationStepConfiguratorResult>;
     requestElementAction(request: SenlerBridgeElementActionRequest): Promise<SenlerBridgeElementActionResult>;
     clearElementHighlight(): void;
     destroy(): void;

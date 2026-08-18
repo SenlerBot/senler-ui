@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {
   createSenlerBridgeClient,
   createSenlerBridgeHost,
+  parseSenlerBridgeAutomationStepConfiguratorResult,
   parseSenlerBridgeContext,
   parseSenlerBridgeToolConfiguratorResult,
 } from '../dist/bridge.js';
@@ -107,6 +108,50 @@ assert.deepEqual(await host.requestToolConfiguratorSubmit(), {
   private_data_action: 'preserve',
   private_data_required: true,
 });
+const automationContext = {
+  ui: { language: 'en', theme: 'dark' },
+  launch: {
+    type: 'automation_step_configurator',
+    app_id: 'app-1',
+    project_id: 'project-1',
+    installation_id: 'installation-1',
+    automation_id: 'automation-1',
+    node_id: 'node-1',
+    mode: 'create',
+    step: {
+      id: 'step-1',
+      name: 'check_payment',
+      title: 'Check payment',
+      description: '',
+      continuation_mode: 'configured',
+    },
+    configuration: {},
+    branches: [],
+  },
+};
+host.setContext(automationContext);
+client.onAutomationStepConfiguratorSubmit(() => ({
+  kind: 'automation_step_configurator',
+  configuration: { account_id: 'account-1' },
+  branches: [
+    {
+      branch_id: '73f56c65-2e70-45d1-9487-d213206e9318',
+      key: 'paid',
+      title: 'Paid',
+    },
+  ],
+}));
+assert.deepEqual(await host.requestAutomationStepConfiguratorSubmit(), {
+  kind: 'automation_step_configurator',
+  configuration: { account_id: 'account-1' },
+  branches: [
+    {
+      branch_id: '73f56c65-2e70-45d1-9487-d213206e9318',
+      key: 'paid',
+      title: 'Paid',
+    },
+  ],
+});
 assert.deepEqual(
   await host.requestElementAction({
     context_id: 'app.prodamus.accounts.add',
@@ -141,6 +186,20 @@ assert.equal(
   parseSenlerBridgeToolConfiguratorResult({
     configuration: { constructor: { polluted: true } },
     configured_parameters: [],
+  }),
+  null,
+);
+assert.equal(
+  parseSenlerBridgeAutomationStepConfiguratorResult({
+    kind: 'automation_step_configurator',
+    configuration: {},
+    branches: [
+      {
+        branch_id: '73f56c65-2e70-45d1-9487-d213206e9318',
+        key: 'not valid',
+        title: 'Invalid',
+      },
+    ],
   }),
   null,
 );
