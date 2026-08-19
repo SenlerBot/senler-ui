@@ -1,5 +1,16 @@
 export const SENLER_BRIDGE_PROTOCOL_VERSION = 1 as const;
 export const SENLER_BRIDGE_SOURCE = 'senler-bridge' as const;
+export const SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION = '2' as const;
+
+export const SENLER_BRIDGE_BOOTSTRAP_MODE = {
+  installed: 'installed',
+  test: 'test',
+  toolConfigurator: 'tool_configurator',
+  automationStepConfigurator: 'automation_step_configurator',
+} as const;
+
+export type SenlerBridgeBootstrapMode =
+  (typeof SENLER_BRIDGE_BOOTSTRAP_MODE)[keyof typeof SENLER_BRIDGE_BOOTSTRAP_MODE];
 
 export const SENLER_BRIDGE_MESSAGE = {
   ready: 'senler:bridge:ready',
@@ -108,12 +119,9 @@ export interface SenlerBridgeAutomationStepConfiguratorLaunch {
   installation_id: string;
   automation_id: string;
   node_id: string;
-  mode: 'create' | 'edit';
   step: {
     id: string;
     name: string;
-    title: string;
-    description: string;
     continuation_mode: 'next' | 'fixed' | 'configured';
   };
   configuration: SenlerBridgeJsonObject;
@@ -483,12 +491,9 @@ function parseLaunchContext(value: unknown): SenlerBridgeLaunchContext | null {
       !isNonEmptyString(value.installation_id) ||
       !isNonEmptyString(value.automation_id) ||
       !isNonEmptyString(value.node_id) ||
-      (value.mode !== 'create' && value.mode !== 'edit') ||
       !isRecord(value.step) ||
       !isNonEmptyString(value.step.id) ||
       !isNonEmptyString(value.step.name) ||
-      !isNonEmptyString(value.step.title) ||
-      typeof value.step.description !== 'string' ||
       (value.step.continuation_mode !== 'next' &&
         value.step.continuation_mode !== 'fixed' &&
         value.step.continuation_mode !== 'configured') ||
@@ -505,12 +510,9 @@ function parseLaunchContext(value: unknown): SenlerBridgeLaunchContext | null {
       installation_id: value.installation_id,
       automation_id: value.automation_id,
       node_id: value.node_id,
-      mode: value.mode,
       step: {
         id: value.step.id,
         name: value.step.name,
-        title: value.step.title,
-        description: value.step.description,
         continuation_mode: value.step.continuation_mode,
       },
       configuration: value.configuration,

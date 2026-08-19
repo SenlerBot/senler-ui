@@ -128,7 +128,17 @@ the initial language and theme, and receives their live updates without
 reloading the iframe:
 
 ```ts
-import { createSenlerBridgeClient } from '@senler/ui/bridge';
+import {
+  createSenlerBridgeClient,
+  resolveSenlerBridgeBootstrapContext,
+} from '@senler/ui/bridge';
+
+const bootstrap = resolveSenlerBridgeBootstrapContext(
+  location.search,
+  navigator.language,
+  matchMedia('(prefers-color-scheme: dark)').matches,
+);
+// bootstrap.mode identifies the surface before Bridge connects.
 
 const bridge = createSenlerBridgeClient({
   parentOrigin: 'https://senler.io',
@@ -136,7 +146,7 @@ const bridge = createSenlerBridgeClient({
 
 bridge.onContextChange(({ ui, launch }) => {
   // ui: { language: 'ru' | 'en', theme: 'light' | 'dark' }
-  // launch identifies an embedded page or a tool configurator.
+  // launch identifies an embedded page, tool configurator, or automation step.
 });
 
 bridge.onToolConfiguratorSubmit(() => ({

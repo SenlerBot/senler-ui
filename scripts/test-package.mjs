@@ -38,6 +38,18 @@ assert.deepEqual(
   bridge.resolveSenlerBridgeBootstrapUi('?senler_theme=dark&senler_language=en', 'ru', false),
   { language: 'en', theme: 'dark' },
 )
+assert.deepEqual(
+  bridge.resolveSenlerBridgeBootstrapContext(
+    '?senler_context_version=2&senler_mode=tool_configurator&senler_theme=dark&senler_language=en',
+    'ru',
+    false,
+  ),
+  {
+    context_version: '2',
+    mode: 'tool_configurator',
+    ui: { language: 'en', theme: 'dark' },
+  },
+)
 
 const buttonHtml = renderToStaticMarkup(createElement(ui.Button, null, 'Save'))
 assert.match(buttonHtml, /^<button/u)

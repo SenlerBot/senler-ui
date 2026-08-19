@@ -1,5 +1,13 @@
 export declare const SENLER_BRIDGE_PROTOCOL_VERSION: 1;
 export declare const SENLER_BRIDGE_SOURCE: "senler-bridge";
+export declare const SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION: "2";
+export declare const SENLER_BRIDGE_BOOTSTRAP_MODE: {
+    readonly installed: "installed";
+    readonly test: "test";
+    readonly toolConfigurator: "tool_configurator";
+    readonly automationStepConfigurator: "automation_step_configurator";
+};
+export type SenlerBridgeBootstrapMode = (typeof SENLER_BRIDGE_BOOTSTRAP_MODE)[keyof typeof SENLER_BRIDGE_BOOTSTRAP_MODE];
 export declare const SENLER_BRIDGE_MESSAGE: {
     readonly ready: "senler:bridge:ready";
     readonly init: "senler:bridge:init";
@@ -75,12 +83,9 @@ export interface SenlerBridgeAutomationStepConfiguratorLaunch {
     installation_id: string;
     automation_id: string;
     node_id: string;
-    mode: 'create' | 'edit';
     step: {
         id: string;
         name: string;
-        title: string;
-        description: string;
         continuation_mode: 'next' | 'fixed' | 'configured';
     };
     configuration: SenlerBridgeJsonObject;

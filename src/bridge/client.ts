@@ -11,8 +11,11 @@ import {
   parseSenlerBridgeRequestMessage,
   parseSenlerBridgeToolConfiguratorResult,
   parseSenlerBridgeUiMessage,
+  SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION,
+  SENLER_BRIDGE_BOOTSTRAP_MODE,
   SENLER_BRIDGE_REQUEST,
   type SenlerBridgeAutomationStepConfiguratorResult,
+  type SenlerBridgeBootstrapMode,
   type SenlerBridgeContext,
   type SenlerBridgeElementActionRequest,
   type SenlerBridgeElementActionResult,
@@ -20,6 +23,12 @@ import {
   type SenlerBridgeToolConfiguratorResult,
   type SenlerBridgeUiContext,
 } from './protocol';
+
+export interface SenlerBridgeBootstrapContext {
+  context_version: typeof SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION | null;
+  mode: SenlerBridgeBootstrapMode | null;
+  ui: SenlerBridgeUiContext;
+}
 
 export interface SenlerBridgeClientOptions {
   parentOrigin: string;
@@ -94,6 +103,32 @@ export function resolveSenlerBridgeBootstrapUi(
         : prefersDark
           ? 'dark'
           : 'light',
+  };
+}
+
+export function resolveSenlerBridgeBootstrapContext(
+  search: string,
+  fallbackLanguage: string,
+  prefersDark: boolean,
+): SenlerBridgeBootstrapContext {
+  const params = new URLSearchParams(search);
+  const rawMode = params.get('senler_mode');
+  const modes = Object.values(SENLER_BRIDGE_BOOTSTRAP_MODE);
+  return {
+    context_version:
+      params.get('senler_context_version') ===
+      SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION
+        ? SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION
+        : null,
+    mode:
+      rawMode && modes.some((mode) => mode === rawMode)
+        ? (rawMode as SenlerBridgeBootstrapMode)
+        : null,
+    ui: resolveSenlerBridgeBootstrapUi(
+      search,
+      fallbackLanguage,
+      prefersDark,
+    ),
   };
 }
 

@@ -117,12 +117,9 @@ const automationContext = {
     installation_id: 'installation-1',
     automation_id: 'automation-1',
     node_id: 'node-1',
-    mode: 'create',
     step: {
       id: 'step-1',
       name: 'check_payment',
-      title: 'Check payment',
-      description: '',
       continuation_mode: 'configured',
     },
     configuration: {},
