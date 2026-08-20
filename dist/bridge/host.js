@@ -1,117 +1,122 @@
-import { SENLER_BRIDGE_REQUEST as e, createClearElementHighlightMessage as t, createElementActionMessage as n, createInitMessage as r, createSubmitRequestMessage as i, createUiMessage as a, isSenlerBridgeReadyMessage as o, parseSenlerBridgeContext as s, parseSenlerBridgeElementActionRequest as c, parseSenlerBridgeElementActionResultMessage as l, parseSenlerBridgeResponseMessage as u, parseSenlerBridgeUiContext as d } from "./protocol.js";
+import { SENLER_BRIDGE_REQUEST as e, createClearElementHighlightMessage as t, createElementActionMessage as n, createInitMessage as r, createSubmitRequestMessage as i, createUiMessage as a, isSenlerBridgeReadyMessage as o, parseSenlerBridgeContext as s, parseSenlerBridgeElementActionRequest as c, parseSenlerBridgeElementActionResultMessage as l, parseSenlerBridgeFrameSizeMessage as u, parseSenlerBridgeResponseMessage as d, parseSenlerBridgeUiContext as f } from "./protocol.js";
 //#region src/bridge/host.ts
-var f = 2e4, p = class extends Error {
+var p = 2e4, m = class extends Error {
 	code;
 	constructor(e, t) {
 		super(t), this.code = e, this.name = "SenlerBridgeHostError";
 	}
 };
-function m(e) {
+function h(e) {
 	let t = new URL(e).origin;
 	if (t === "null") throw Error("Senler Bridge targetOrigin is invalid");
 	return t;
 }
-function h(e) {
+function g(e) {
 	return typeof e.crypto?.randomUUID == "function" ? e.crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
-function g(g) {
-	let _ = g.hostWindow ?? window, v = m(g.targetOrigin), y = g.requestTimeoutMs ?? f, b = s(g.context);
-	if (!b) throw new p("invalid_context", "Senler Bridge context is invalid");
-	let x = b, S = !1, C = !1, w = /* @__PURE__ */ new Map(), T = /* @__PURE__ */ new Map(), E = (e) => {
-		if (C) return !1;
-		let t = g.getTargetWindow();
-		return t ? (t.postMessage(e, v), !0) : !1;
-	}, D = () => E(r(x)), O = (e) => {
-		if (C || e.origin !== v || e.source !== g.getTargetWindow()) return;
+function _(_) {
+	let v = _.hostWindow ?? window, y = h(_.targetOrigin), b = _.requestTimeoutMs ?? p, x = s(_.context);
+	if (!x) throw new m("invalid_context", "Senler Bridge context is invalid");
+	let S = x, C = !1, w = !1, T = /* @__PURE__ */ new Map(), E = /* @__PURE__ */ new Map(), D = (e) => {
+		if (w) return !1;
+		let t = _.getTargetWindow();
+		return t ? (t.postMessage(e, y), !0) : !1;
+	}, O = () => D(r(S)), k = (e) => {
+		if (w || e.origin !== y || e.source !== _.getTargetWindow()) return;
 		if (o(e.data)) {
-			S = !0, D();
+			C = !0, O();
 			return;
 		}
-		let t = l(e.data);
+		let t = u(e.data);
 		if (t) {
-			let e = T.get(t.request_id);
-			if (!e) return;
-			_.clearTimeout(e.timeoutId), T.delete(t.request_id), e.resolve(t.result);
+			_.onFrameSizeChange?.(t.height);
 			return;
 		}
-		let n = u(e.data);
-		if (!n) return;
-		let r = w.get(n.request_id);
-		r && (_.clearTimeout(r.timeoutId), w.delete(n.request_id), n.ok ? r.resolve(n.result) : r.reject(new p("remote_error", n.error)));
+		let n = l(e.data);
+		if (n) {
+			let e = E.get(n.request_id);
+			if (!e) return;
+			v.clearTimeout(e.timeoutId), E.delete(n.request_id), e.resolve(n.result);
+			return;
+		}
+		let r = d(e.data);
+		if (!r) return;
+		let i = T.get(r.request_id);
+		i && (v.clearTimeout(i.timeoutId), T.delete(r.request_id), r.ok ? i.resolve(r.result) : i.reject(new m("remote_error", r.error)));
 	};
-	_.addEventListener("message", O);
-	let k = (e) => {
-		if (C) return Promise.reject(new p("destroyed", "Senler Bridge host is destroyed"));
-		let t = h(_);
+	v.addEventListener("message", k);
+	let A = (e) => {
+		if (w) return Promise.reject(new m("destroyed", "Senler Bridge host is destroyed"));
+		let t = g(v);
 		return new Promise((n, r) => {
-			let a = _.setTimeout(() => {
-				w.delete(t), r(new p("request_timeout", "The embedded application did not respond in time"));
-			}, y);
-			w.set(t, {
+			let a = v.setTimeout(() => {
+				T.delete(t), r(new m("request_timeout", "The embedded application did not respond in time"));
+			}, b);
+			T.set(t, {
 				resolve: n,
 				reject: r,
 				timeoutId: a
-			}), E(i(t, e)) || (_.clearTimeout(a), w.delete(t), r(new p("frame_unavailable", "The embedded application is unavailable")));
+			}), D(i(t, e)) || (v.clearTimeout(a), T.delete(t), r(new m("frame_unavailable", "The embedded application is unavailable")));
 		});
 	};
 	return {
 		notifyFrameLoaded() {
-			S = !0, D();
+			C = !0, O();
 		},
 		setContext(e) {
 			let t = s(e);
-			if (!t) throw new p("invalid_context", "Senler Bridge context is invalid");
-			x = t, S && D();
+			if (!t) throw new m("invalid_context", "Senler Bridge context is invalid");
+			S = t, C && O();
 		},
 		setUi(e) {
-			let t = d(e);
-			if (!t) throw new p("invalid_context", "Senler Bridge UI context is invalid");
-			x = {
-				...x,
+			let t = f(e);
+			if (!t) throw new m("invalid_context", "Senler Bridge UI context is invalid");
+			S = {
+				...S,
 				ui: t
-			}, S && E(a(t));
+			}, C && D(a(t));
 		},
 		requestToolConfiguratorSubmit() {
-			return x.launch.type === "tool_configurator" ? k(e.toolConfiguratorSubmit).then((e) => {
-				if ("kind" in e) throw new p("remote_error", "Embedded application returned an automation step result");
+			return S.launch.type === "tool_configurator" ? A(e.toolConfiguratorSubmit).then((e) => {
+				if ("kind" in e) throw new m("remote_error", "Embedded application returned an automation step result");
 				return e;
-			}) : Promise.reject(new p("invalid_launch", "Tool configurator is unavailable for this iframe"));
+			}) : Promise.reject(new m("invalid_launch", "Tool configurator is unavailable for this iframe"));
 		},
 		requestAutomationStepConfiguratorSubmit() {
-			return x.launch.type === "automation_step_configurator" ? k(e.automationStepConfiguratorSubmit).then((e) => {
-				if (!("kind" in e)) throw new p("remote_error", "Embedded application returned a tool configuration result");
+			return S.launch.type === "automation_step_configurator" ? A(e.automationStepConfiguratorSubmit).then((e) => {
+				if (!("kind" in e)) throw new m("remote_error", "Embedded application returned a tool configuration result");
 				return e;
-			}) : Promise.reject(new p("invalid_launch", "Automation step configurator is unavailable for this iframe"));
+			}) : Promise.reject(new m("invalid_launch", "Automation step configurator is unavailable for this iframe"));
 		},
 		requestElementAction(e) {
-			if (C) return Promise.reject(new p("destroyed", "Senler Bridge host is destroyed"));
+			if (w) return Promise.reject(new m("destroyed", "Senler Bridge host is destroyed"));
 			let t = c(e);
-			if (!t) return Promise.reject(new p("invalid_context", "Senler Bridge element action is invalid"));
-			let r = h(_);
+			if (!t) return Promise.reject(new m("invalid_context", "Senler Bridge element action is invalid"));
+			let r = g(v);
 			return new Promise((e, i) => {
-				let a = _.setTimeout(() => {
-					T.delete(r), i(new p("request_timeout", "The embedded application did not respond in time"));
-				}, y);
-				T.set(r, {
+				let a = v.setTimeout(() => {
+					E.delete(r), i(new m("request_timeout", "The embedded application did not respond in time"));
+				}, b);
+				E.set(r, {
 					resolve: e,
 					reject: i,
 					timeoutId: a
-				}), E(n(r, t)) || (_.clearTimeout(a), T.delete(r), i(new p("frame_unavailable", "The embedded application is unavailable")));
+				}), D(n(r, t)) || (v.clearTimeout(a), E.delete(r), i(new m("frame_unavailable", "The embedded application is unavailable")));
 			});
 		},
 		clearElementHighlight() {
-			E(t());
+			D(t());
 		},
 		destroy() {
-			if (!C) {
-				C = !0, _.removeEventListener("message", O);
-				for (let e of w.values()) _.clearTimeout(e.timeoutId), e.reject(new p("destroyed", "Senler Bridge host is destroyed"));
-				w.clear();
-				for (let e of T.values()) _.clearTimeout(e.timeoutId), e.reject(new p("destroyed", "Senler Bridge host is destroyed"));
+			if (!w) {
+				w = !0, v.removeEventListener("message", k);
+				for (let e of T.values()) v.clearTimeout(e.timeoutId), e.reject(new m("destroyed", "Senler Bridge host is destroyed"));
 				T.clear();
+				for (let e of E.values()) v.clearTimeout(e.timeoutId), e.reject(new m("destroyed", "Senler Bridge host is destroyed"));
+				E.clear();
 			}
 		}
 	};
 }
 //#endregion
-export { p as SenlerBridgeHostError, g as createSenlerBridgeHost };
+export { m as SenlerBridgeHostError, _ as createSenlerBridgeHost };

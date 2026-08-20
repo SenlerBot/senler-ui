@@ -2,6 +2,7 @@ import {
   createElementActionResultMessage,
   createErrorResponseMessage,
   createReadyMessage,
+  createSenlerBridgeFrameSizeMessage,
   createSuccessResponseMessage,
   isSenlerBridgeClearElementHighlightMessage,
   parseSenlerBridgeElementActionMessage,
@@ -35,6 +36,11 @@ export interface SenlerBridgeClientOptions {
   clientWindow?: Window;
   syncDocument?: boolean;
   connectTimeoutMs?: number;
+}
+
+interface SenlerBridgeClientWindow extends Window {
+  ResizeObserver?: typeof ResizeObserver;
+  MutationObserver?: typeof MutationObserver;
 }
 
 export interface SenlerBridgeClient {
@@ -144,7 +150,7 @@ export function applySenlerBridgeUiContext(
 export function createSenlerBridgeClient(
   options: SenlerBridgeClientOptions,
 ): SenlerBridgeClient {
-  const clientWindow = options.clientWindow ?? window;
+  const clientWindow = (options.clientWindow ?? window) as SenlerBridgeClientWindow;
   const parentOrigin = normalizeOrigin(options.parentOrigin);
   const syncDocument = options.syncDocument !== false;
   const connectTimeoutMs =
@@ -184,9 +190,94 @@ export function createSenlerBridgeClient(
     clientWindow.parent.postMessage(message, parentOrigin);
   };
 
+  let frameResizeObserver: ResizeObserver | null = null;
+  let frameMutationObserver: MutationObserver | null = null;
+  let frameAnimationId: number | null = null;
+  let frameTimeoutId: number | null = null;
+  let lastFrameHeight: number | null = null;
+  let frameSizeSyncActive = false;
+
+  const publishFrameSize = () => {
+    frameAnimationId = null;
+    frameTimeoutId = null;
+    const document = clientWindow.document;
+    const root = document?.documentElement;
+    if (!root) return;
+    const body = document.body;
+    const measuredElement = body ?? root;
+    const height = Math.ceil(
+      Math.max(
+        measuredElement.scrollHeight,
+        measuredElement.offsetHeight,
+        measuredElement.getBoundingClientRect().height,
+      ),
+    );
+    if (height < 1 || height === lastFrameHeight) return;
+    lastFrameHeight = height;
+    postToParent(createSenlerBridgeFrameSizeMessage(height));
+  };
+
+  const scheduleFrameSize = () => {
+    if (destroyed || frameAnimationId !== null || frameTimeoutId !== null) {
+      return;
+    }
+    if (typeof clientWindow.requestAnimationFrame === 'function') {
+      frameAnimationId = clientWindow.requestAnimationFrame(publishFrameSize);
+      return;
+    }
+    frameTimeoutId = clientWindow.setTimeout(publishFrameSize, 0);
+  };
+
+  const stopFrameSizeSync = () => {
+    if (!frameSizeSyncActive) return;
+    frameSizeSyncActive = false;
+    lastFrameHeight = null;
+    frameResizeObserver?.disconnect();
+    frameMutationObserver?.disconnect();
+    frameResizeObserver = null;
+    frameMutationObserver = null;
+    if (frameAnimationId !== null) {
+      clientWindow.cancelAnimationFrame(frameAnimationId);
+      frameAnimationId = null;
+    }
+    if (frameTimeoutId !== null) {
+      clientWindow.clearTimeout(frameTimeoutId);
+      frameTimeoutId = null;
+    }
+    clientWindow.removeEventListener('load', scheduleFrameSize);
+    clientWindow.removeEventListener('resize', scheduleFrameSize);
+  };
+
+  const startFrameSizeSync = () => {
+    if (frameSizeSyncActive || !clientWindow.document?.documentElement) return;
+    frameSizeSyncActive = true;
+    const root = clientWindow.document.documentElement;
+    const body = clientWindow.document.body;
+    if (typeof clientWindow.ResizeObserver === 'function') {
+      const observer = new clientWindow.ResizeObserver(scheduleFrameSize);
+      frameResizeObserver = observer;
+      observer.observe(root);
+      if (body) observer.observe(body);
+    }
+    if (typeof clientWindow.MutationObserver === 'function') {
+      const observer = new clientWindow.MutationObserver(scheduleFrameSize);
+      frameMutationObserver = observer;
+      observer.observe(root, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      });
+    }
+    clientWindow.addEventListener('load', scheduleFrameSize);
+    clientWindow.addEventListener('resize', scheduleFrameSize);
+    scheduleFrameSize();
+  };
+
   const publishContext = (nextContext: SenlerBridgeContext) => {
     context = nextContext;
     if (syncDocument) applySenlerBridgeUiContext(nextContext.ui);
+    if (nextContext.frame_size_sync === true) startFrameSizeSync();
+    else stopFrameSizeSync();
     for (const listener of contextListeners) listener(nextContext);
     for (const resolver of connectResolvers) {
       clientWindow.clearTimeout(resolver.timeoutId);
@@ -360,6 +451,7 @@ export function createSenlerBridgeClient(
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      stopFrameSizeSync();
       clientWindow.removeEventListener('message', handleMessage);
       contextListeners.clear();
       elementHighlightClearListeners.clear();

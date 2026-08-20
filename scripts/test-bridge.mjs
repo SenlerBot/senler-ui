@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import {
   createSenlerBridgeClient,
   createSenlerBridgeHost,
+  createSenlerBridgeFrameSizeMessage,
   parseSenlerBridgeAutomationStepConfiguratorResult,
   parseSenlerBridgeContext,
+  parseSenlerBridgeFrameSizeMessage,
   parseSenlerBridgeToolConfiguratorResult,
 } from '../dist/bridge.js';
 
@@ -11,6 +13,46 @@ const parentOrigin = 'https://senler.example';
 const appOrigin = 'https://app.example';
 const parentWindow = new EventTarget();
 const appWindow = new EventTarget();
+let frameBodyHeight = 480;
+let frameResizeCallback = () => undefined;
+let frameResizeObserverStarts = 0;
+let frameResizeObserverStops = 0;
+
+const frameRoot = {
+  scrollHeight: 900,
+  offsetHeight: 900,
+  getBoundingClientRect: () => ({ height: 900 }),
+};
+const frameBody = {
+  get scrollHeight() {
+    return frameBodyHeight;
+  },
+  get offsetHeight() {
+    return frameBodyHeight;
+  },
+  getBoundingClientRect: () => ({ height: frameBodyHeight }),
+};
+
+class TestResizeObserver {
+  constructor(callback) {
+    frameResizeCallback = callback;
+    frameResizeObserverStarts += 1;
+  }
+
+  observe() {}
+
+  disconnect() {
+    frameResizeObserverStops += 1;
+  }
+}
+
+class TestMutationObserver {
+  constructor() {}
+
+  observe() {}
+
+  disconnect() {}
+}
 
 function createWindowMessageEvent(data, origin, source) {
   const event = new Event('message');
@@ -36,6 +78,12 @@ Object.assign(parentWindow, {
 
 Object.assign(appWindow, {
   parent: parentWindow,
+  document: { documentElement: frameRoot, body: frameBody },
+  ResizeObserver: TestResizeObserver,
+  MutationObserver: TestMutationObserver,
+  requestAnimationFrame: (callback) =>
+    setTimeout(() => callback(Date.now()), 0),
+  cancelAnimationFrame: clearTimeout,
   setTimeout,
   clearTimeout,
   postMessage(data, targetOrigin) {
@@ -60,11 +108,13 @@ const initialContext = {
   },
 };
 
+const observedFrameHeights = [];
 const host = createSenlerBridgeHost({
   hostWindow: parentWindow,
   targetOrigin: appOrigin,
   getTargetWindow: () => appWindow,
   context: initialContext,
+  onFrameSizeChange: (height) => observedFrameHeights.push(height),
 });
 const client = createSenlerBridgeClient({
   clientWindow: appWindow,
@@ -96,6 +146,29 @@ client.onElementHighlightClear(() => {
 });
 
 assert.deepEqual(await client.connect(), initialContext);
+assert.equal(frameResizeObserverStarts, 0);
+parentWindow.postMessage(
+  createSenlerBridgeFrameSizeMessage(720.2),
+  parentOrigin,
+);
+assert.deepEqual(observedFrameHeights, [721]);
+assert.equal(
+  parseSenlerBridgeFrameSizeMessage({
+    ...createSenlerBridgeFrameSizeMessage(720),
+    height: 0,
+  }),
+  null,
+);
+host.setContext({ ...initialContext, frame_size_sync: true });
+await new Promise((resolve) => setTimeout(resolve, 0));
+assert.equal(frameResizeObserverStarts, 1);
+assert.deepEqual(observedFrameHeights, [721, 480]);
+frameBodyHeight = 240;
+frameResizeCallback();
+await new Promise((resolve) => setTimeout(resolve, 0));
+assert.deepEqual(observedFrameHeights, [721, 480, 240]);
+host.setContext(initialContext);
+assert.equal(frameResizeObserverStops, 1);
 host.setUi({ language: 'en', theme: 'dark' });
 assert.deepEqual(observedContexts.at(-1)?.ui, {
   language: 'en',
@@ -176,6 +249,13 @@ assert.equal(
   parseSenlerBridgeContext({
     ...initialContext,
     launch: { ...initialContext.launch, project_id: '' },
+  }),
+  null,
+);
+assert.equal(
+  parseSenlerBridgeContext({
+    ...initialContext,
+    frame_size_sync: 'yes',
   }),
   null,
 );

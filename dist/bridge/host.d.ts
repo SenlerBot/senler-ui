@@ -5,6 +5,7 @@ export interface SenlerBridgeHostOptions {
     context: SenlerBridgeContext;
     hostWindow?: Window;
     requestTimeoutMs?: number;
+    onFrameSizeChange?: (height: number) => void;
 }
 export interface SenlerBridgeHost {
     notifyFrameLoaded(): void;

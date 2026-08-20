@@ -10,52 +10,53 @@ var e = 1, t = "senler-bridge", n = "2", r = {
 	ui: "senler:bridge:ui",
 	request: "senler:bridge:request",
 	response: "senler:bridge:response",
+	frameSize: "senler:bridge:frame-size",
 	elementAction: "senler:bridge:element-action",
 	elementActionResult: "senler:bridge:element-action-result",
 	clearElementHighlight: "senler:bridge:clear-element-highlight"
 }, a = {
 	toolConfiguratorSubmit: "tool-configurator.submit",
 	automationStepConfiguratorSubmit: "automation-step-configurator.submit"
-}, o = 20, s = 5e3, c = 65536, l = 128, u = 160, d = 64, f = 500, ee = 50, p = 100, m = 1e3, h = 160, g = 20, _ = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/, v = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/, y = /* @__PURE__ */ new Set([
+}, o = 20, s = 5e3, c = 65536, l = 128, u = 160, d = 64, f = 500, p = 50, ee = 100, m = 1e3, h = 1e5, g = 160, _ = 20, v = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/, y = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/, b = /* @__PURE__ */ new Set([
 	"__proto__",
 	"constructor",
 	"prototype"
 ]);
-function b(e) {
+function x(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function x(e) {
-	return b(e) && e.source === "senler-bridge" && e.protocol_version === 1;
-}
 function S(e) {
-	return typeof e == "string" && e.length > 0;
+	return x(e) && e.source === "senler-bridge" && e.protocol_version === 1;
 }
 function C(e) {
-	return b(e) && (e.language === "ru" || e.language === "en") && (e.theme === "light" || e.theme === "dark") ? {
+	return typeof e == "string" && e.length > 0;
+}
+function w(e) {
+	return x(e) && (e.language === "ru" || e.language === "en") && (e.theme === "light" || e.theme === "dark") ? {
 		language: e.language,
 		theme: e.theme
 	} : null;
 }
-function w(e, t, n) {
+function T(e, t, n) {
 	if (t > o || (n.visitedNodes += 1, n.visitedNodes > s)) return !1;
 	if (e === null || typeof e == "string" || typeof e == "boolean") return typeof e != "string" || e.length <= c;
 	if (typeof e == "number") return Number.isFinite(e);
 	if (typeof e != "object" || n.seen.has(e)) return !1;
-	if (n.seen.add(e), Array.isArray(e)) return e.every((e) => w(e, t + 1, n));
+	if (n.seen.add(e), Array.isArray(e)) return e.every((e) => T(e, t + 1, n));
 	let r = Object.getPrototypeOf(e);
-	return r !== Object.prototype && r !== null ? !1 : b(e) && Object.keys(e).every((e) => !y.has(e)) && Object.values(e).every((e) => w(e, t + 1, n));
+	return r !== Object.prototype && r !== null ? !1 : x(e) && Object.keys(e).every((e) => !b.has(e)) && Object.values(e).every((e) => T(e, t + 1, n));
 }
-function T(e) {
-	return !b(e) || !w(e, 0, {
+function E(e) {
+	return !x(e) || !T(e, 0, {
 		seen: /* @__PURE__ */ new Set(),
 		visitedNodes: 0
 	}) ? !1 : new TextEncoder().encode(JSON.stringify(e)).byteLength <= c;
 }
-function E(e) {
-	return T(e) ? e : null;
-}
 function D(e) {
-	if (!b(e) || !S(e.name) || e.name.length > d || e.type !== "string" && e.type !== "number" && e.type !== "boolean" || e.description !== void 0 && (typeof e.description != "string" || e.description.length > f) || typeof e.required != "boolean" || !Array.isArray(e.allowed_values) || e.allowed_values.length > p) return null;
+	return E(e) ? e : null;
+}
+function O(e) {
+	if (!x(e) || !C(e.name) || e.name.length > d || e.type !== "string" && e.type !== "number" && e.type !== "boolean" || e.description !== void 0 && (typeof e.description != "string" || e.description.length > f) || typeof e.required != "boolean" || !Array.isArray(e.allowed_values) || e.allowed_values.length > ee) return null;
 	let t = e.type, n = e.allowed_values.filter((e) => typeof e === t);
 	return n.length === e.allowed_values.length ? {
 		name: e.name,
@@ -65,14 +66,14 @@ function D(e) {
 		allowed_values: n
 	} : null;
 }
-function O(e) {
-	if (!Array.isArray(e) || e.length > ee) return null;
-	let t = e.map(D);
+function k(e) {
+	if (!Array.isArray(e) || e.length > p) return null;
+	let t = e.map(O);
 	return t.some((e) => e === null) ? null : t.filter((e) => e !== null);
 }
-function k(e) {
-	if (!b(e) || !S(e.id) || typeof e.title != "string" || !T(e.configuration) || typeof e.has_private_data != "boolean" || typeof e.private_data_required != "boolean" || e.status !== "active" && e.status !== "setup_required") return null;
-	let t = O(e.configured_parameters);
+function A(e) {
+	if (!x(e) || !C(e.id) || typeof e.title != "string" || !E(e.configuration) || typeof e.has_private_data != "boolean" || typeof e.private_data_required != "boolean" || e.status !== "active" && e.status !== "setup_required") return null;
+	let t = k(e.configured_parameters);
 	return t ? {
 		id: e.id,
 		title: e.title,
@@ -83,9 +84,9 @@ function k(e) {
 		status: e.status
 	} : null;
 }
-function A(e) {
-	if (!Array.isArray(e) || e.length > g) return null;
-	let t = e.flatMap((e) => !b(e) || !S(e.branch_id) || !v.test(e.branch_id) || !S(e.key) || !_.test(e.key) || !S(e.title) || e.title.length > u ? [] : [{
+function j(e) {
+	if (!Array.isArray(e) || e.length > _) return null;
+	let t = e.flatMap((e) => !x(e) || !C(e.branch_id) || !y.test(e.branch_id) || !C(e.key) || !v.test(e.key) || !C(e.title) || e.title.length > u ? [] : [{
 		branch_id: e.branch_id,
 		key: e.key,
 		title: e.title
@@ -94,9 +95,9 @@ function A(e) {
 	let n = new Set(t.map((e) => e.branch_id)), r = new Set(t.map((e) => e.key));
 	return n.size === t.length && r.size === t.length ? t : null;
 }
-function j(e) {
-	if (!b(e) || !S(e.app_id) || !S(e.project_id)) return null;
-	if (e.type === "embedded_page") return e.mode !== "installed" && e.mode !== "test" || e.installation_id !== void 0 && !S(e.installation_id) ? null : {
+function M(e) {
+	if (!x(e) || !C(e.app_id) || !C(e.project_id)) return null;
+	if (e.type === "embedded_page") return e.mode !== "installed" && e.mode !== "test" || e.installation_id !== void 0 && !C(e.installation_id) ? null : {
 		type: "embedded_page",
 		app_id: e.app_id,
 		project_id: e.project_id,
@@ -104,8 +105,8 @@ function j(e) {
 		mode: e.mode
 	};
 	if (e.type === "automation_step_configurator") {
-		if (!S(e.installation_id) || !S(e.automation_id) || !S(e.node_id) || !b(e.step) || !S(e.step.id) || !S(e.step.name) || e.step.continuation_mode !== "next" && e.step.continuation_mode !== "fixed" && e.step.continuation_mode !== "configured" || !T(e.configuration)) return null;
-		let t = A(e.branches);
+		if (!C(e.installation_id) || !C(e.automation_id) || !C(e.node_id) || !x(e.step) || !C(e.step.id) || !C(e.step.name) || e.step.continuation_mode !== "next" && e.step.continuation_mode !== "fixed" && e.step.continuation_mode !== "configured" || !E(e.configuration)) return null;
+		let t = j(e.branches);
 		return t ? {
 			type: "automation_step_configurator",
 			app_id: e.app_id,
@@ -122,8 +123,8 @@ function j(e) {
 			branches: t
 		} : null;
 	}
-	if (e.type !== "tool_configurator" || !S(e.installation_id) || !S(e.agent_id) || e.mode !== "create" && e.mode !== "edit" || !b(e.tool) || !S(e.tool.id) || !S(e.tool.name) || typeof e.tool.description != "string") return null;
-	let t = e.instance === null ? null : k(e.instance);
+	if (e.type !== "tool_configurator" || !C(e.installation_id) || !C(e.agent_id) || e.mode !== "create" && e.mode !== "edit" || !x(e.tool) || !C(e.tool.id) || !C(e.tool.name) || typeof e.tool.description != "string") return null;
+	let t = e.instance === null ? null : A(e.instance);
 	return e.instance !== null && !t ? null : {
 		type: "tool_configurator",
 		app_id: e.app_id,
@@ -139,19 +140,20 @@ function j(e) {
 		instance: t
 	};
 }
-function M(e) {
-	if (!b(e)) return null;
-	let t = C(e.ui);
+function N(e) {
+	if (!x(e) || e.frame_size_sync !== void 0 && typeof e.frame_size_sync != "boolean") return null;
+	let t = w(e.ui);
 	if (!t) return null;
-	let n = j(e.launch);
+	let n = M(e.launch);
 	return n ? {
 		ui: t,
-		launch: n
+		launch: n,
+		...typeof e.frame_size_sync == "boolean" ? { frame_size_sync: e.frame_size_sync } : {}
 	} : null;
 }
-function N(e) {
-	if (!b(e) || e.title !== void 0 && (typeof e.title != "string" || e.title.length > u) || !T(e.configuration) || e.private_data_action !== void 0 && e.private_data_action !== "preserve" && e.private_data_action !== "replace" && e.private_data_action !== "clear" || e.private_data !== void 0 && !T(e.private_data) || e.private_data_required !== void 0 && typeof e.private_data_required != "boolean" || e.private_data_action === "replace" && e.private_data === void 0 || e.private_data !== void 0 && e.private_data_action !== "replace") return null;
-	let t = O(e.configured_parameters);
+function P(e) {
+	if (!x(e) || e.title !== void 0 && (typeof e.title != "string" || e.title.length > u) || !E(e.configuration) || e.private_data_action !== void 0 && e.private_data_action !== "preserve" && e.private_data_action !== "replace" && e.private_data_action !== "clear" || e.private_data !== void 0 && !E(e.private_data) || e.private_data_required !== void 0 && typeof e.private_data_required != "boolean" || e.private_data_action === "replace" && e.private_data === void 0 || e.private_data !== void 0 && e.private_data_action !== "replace") return null;
+	let t = k(e.configured_parameters);
 	return t ? {
 		...typeof e.title == "string" ? { title: e.title } : {},
 		configuration: e.configuration,
@@ -161,16 +163,16 @@ function N(e) {
 		...typeof e.private_data_required == "boolean" ? { private_data_required: e.private_data_required } : {}
 	} : null;
 }
-function P(e) {
-	if (!b(e) || e.kind !== "automation_step_configurator" || !T(e.configuration)) return null;
-	let t = A(e.branches);
+function F(e) {
+	if (!x(e) || e.kind !== "automation_step_configurator" || !E(e.configuration)) return null;
+	let t = j(e.branches);
 	return t ? {
 		kind: "automation_step_configurator",
 		configuration: e.configuration,
 		branches: t
 	} : null;
 }
-var F = [
+var I = [
 	"highlight",
 	"scroll_to",
 	"focus",
@@ -179,27 +181,27 @@ var F = [
 	"clear",
 	"select",
 	"toggle"
-], I = [
+], L = [
 	"success",
 	"not_found",
 	"failed",
 	"blocked"
 ];
-function L(e) {
-	return typeof e == "string" && F.some((t) => t === e);
-}
 function R(e) {
 	return typeof e == "string" && I.some((t) => t === e);
 }
 function z(e) {
-	return !b(e) || !S(e.context_id) || e.context_id.length > h || !L(e.action) || e.value !== void 0 && typeof e.value != "string" ? null : {
+	return typeof e == "string" && L.some((t) => t === e);
+}
+function B(e) {
+	return !x(e) || !C(e.context_id) || e.context_id.length > g || !R(e.action) || e.value !== void 0 && typeof e.value != "string" ? null : {
 		context_id: e.context_id,
 		action: e.action,
 		...typeof e.value == "string" ? { value: e.value } : {}
 	};
 }
-function B(e) {
-	return !b(e) || !R(e.status) || e.matched_context_id !== void 0 && (typeof e.matched_context_id != "string" || e.matched_context_id.length > h) || e.matched_count !== void 0 && (typeof e.matched_count != "number" || !Number.isInteger(e.matched_count) || e.matched_count < 0) || e.error_code !== void 0 && typeof e.error_code != "string" || e.error_message !== void 0 && (typeof e.error_message != "string" || e.error_message.length > m) ? null : {
+function V(e) {
+	return !x(e) || !z(e.status) || e.matched_context_id !== void 0 && (typeof e.matched_context_id != "string" || e.matched_context_id.length > g) || e.matched_count !== void 0 && (typeof e.matched_count != "number" || !Number.isInteger(e.matched_count) || e.matched_count < 0) || e.error_code !== void 0 && typeof e.error_code != "string" || e.error_message !== void 0 && (typeof e.error_message != "string" || e.error_message.length > m) ? null : {
 		status: e.status,
 		...typeof e.matched_context_id == "string" ? { matched_context_id: e.matched_context_id } : {},
 		...typeof e.matched_count == "number" ? { matched_count: e.matched_count } : {},
@@ -207,12 +209,12 @@ function B(e) {
 		...typeof e.error_message == "string" ? { error_message: e.error_message } : {}
 	};
 }
-function V(e) {
-	return x(e) && e.type === i.ready;
-}
 function H(e) {
-	if (!x(e) || e.type !== i.init) return null;
-	let n = M(e.context);
+	return S(e) && e.type === i.ready;
+}
+function U(e) {
+	if (!S(e) || e.type !== i.init) return null;
+	let n = N(e.context);
 	return n ? {
 		source: t,
 		type: i.init,
@@ -220,9 +222,9 @@ function H(e) {
 		context: n
 	} : null;
 }
-function U(e) {
-	if (!x(e) || e.type !== i.ui) return null;
-	let n = C(e.ui);
+function W(e) {
+	if (!S(e) || e.type !== i.ui) return null;
+	let n = w(e.ui);
 	return n ? {
 		source: t,
 		type: i.ui,
@@ -230,8 +232,16 @@ function U(e) {
 		ui: n
 	} : null;
 }
-function W(e) {
-	return !x(e) || e.type !== i.request || e.method !== a.toolConfiguratorSubmit && e.method !== a.automationStepConfiguratorSubmit || !S(e.request_id) || e.request_id.length > l ? null : {
+function G(e) {
+	return !S(e) || e.type !== i.frameSize || typeof e.height != "number" || !Number.isInteger(e.height) || e.height < 1 || e.height > h ? null : {
+		source: t,
+		type: i.frameSize,
+		protocol_version: 1,
+		height: e.height
+	};
+}
+function K(e) {
+	return !S(e) || e.type !== i.request || e.method !== a.toolConfiguratorSubmit && e.method !== a.automationStepConfiguratorSubmit || !C(e.request_id) || e.request_id.length > l ? null : {
 		source: t,
 		type: i.request,
 		protocol_version: 1,
@@ -239,9 +249,9 @@ function W(e) {
 		method: e.method
 	};
 }
-function G(e) {
-	if (!x(e) || e.type !== i.response || !S(e.request_id) || e.request_id.length > l) return null;
-	if (e.ok === !1) return !S(e.error) || e.error.length > m ? null : {
+function q(e) {
+	if (!S(e) || e.type !== i.response || !C(e.request_id) || e.request_id.length > l) return null;
+	if (e.ok === !1) return !C(e.error) || e.error.length > m ? null : {
 		source: t,
 		type: i.response,
 		protocol_version: 1,
@@ -250,7 +260,7 @@ function G(e) {
 		error: e.error.trim()
 	};
 	if (e.ok !== !0) return null;
-	let n = P(e.result) ?? N(e.result);
+	let n = F(e.result) ?? P(e.result);
 	return n ? {
 		source: t,
 		type: i.response,
@@ -260,9 +270,9 @@ function G(e) {
 		result: n
 	} : null;
 }
-function K(e) {
-	if (!x(e) || e.type !== i.elementAction || !S(e.request_id) || e.request_id.length > l) return null;
-	let n = z(e.request);
+function J(e) {
+	if (!S(e) || e.type !== i.elementAction || !C(e.request_id) || e.request_id.length > l) return null;
+	let n = B(e.request);
 	return n ? {
 		source: t,
 		type: i.elementAction,
@@ -271,9 +281,9 @@ function K(e) {
 		request: n
 	} : null;
 }
-function q(e) {
-	if (!x(e) || e.type !== i.elementActionResult || !S(e.request_id) || e.request_id.length > l) return null;
-	let n = B(e.result);
+function Y(e) {
+	if (!S(e) || e.type !== i.elementActionResult || !C(e.request_id) || e.request_id.length > l) return null;
+	let n = V(e.result);
 	return n ? {
 		source: t,
 		type: i.elementActionResult,
@@ -282,17 +292,17 @@ function q(e) {
 		result: n
 	} : null;
 }
-function J(e) {
-	return x(e) && e.type === i.clearElementHighlight;
+function X(e) {
+	return S(e) && e.type === i.clearElementHighlight;
 }
-function Y() {
+function Z() {
 	return {
 		source: t,
 		type: i.ready,
 		protocol_version: 1
 	};
 }
-function X(e) {
+function Q(e) {
 	return {
 		source: t,
 		type: i.init,
@@ -300,7 +310,7 @@ function X(e) {
 		context: e
 	};
 }
-function Z(e) {
+function $(e) {
 	return {
 		source: t,
 		type: i.ui,
@@ -308,7 +318,17 @@ function Z(e) {
 		ui: e
 	};
 }
-function Q(e, n = a.toolConfiguratorSubmit) {
+function te(e) {
+	let n = Math.ceil(e);
+	if (!Number.isFinite(n) || n < 1 || n > h) throw Error("Senler Bridge frame height is invalid");
+	return {
+		source: t,
+		type: i.frameSize,
+		protocol_version: 1,
+		height: n
+	};
+}
+function ne(e, n = a.toolConfiguratorSubmit) {
 	return {
 		source: t,
 		type: i.request,
@@ -317,7 +337,7 @@ function Q(e, n = a.toolConfiguratorSubmit) {
 		method: n
 	};
 }
-function $(e, n) {
+function re(e, n) {
 	return {
 		source: t,
 		type: i.elementAction,
@@ -326,7 +346,7 @@ function $(e, n) {
 		request: n
 	};
 }
-function te(e, n) {
+function ie(e, n) {
 	return {
 		source: t,
 		type: i.elementActionResult,
@@ -335,14 +355,14 @@ function te(e, n) {
 		result: n
 	};
 }
-function ne() {
+function ae() {
 	return {
 		source: t,
 		type: i.clearElementHighlight,
 		protocol_version: 1
 	};
 }
-function re(e, n) {
+function oe(e, n) {
 	return {
 		source: t,
 		type: i.response,
@@ -352,7 +372,7 @@ function re(e, n) {
 		result: n
 	};
 }
-function ie(e, n) {
+function se(e, n) {
 	return {
 		source: t,
 		type: i.response,
@@ -363,4 +383,4 @@ function ie(e, n) {
 	};
 }
 //#endregion
-export { n as SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION, r as SENLER_BRIDGE_BOOTSTRAP_MODE, i as SENLER_BRIDGE_MESSAGE, e as SENLER_BRIDGE_PROTOCOL_VERSION, a as SENLER_BRIDGE_REQUEST, t as SENLER_BRIDGE_SOURCE, ne as createClearElementHighlightMessage, $ as createElementActionMessage, te as createElementActionResultMessage, ie as createErrorResponseMessage, X as createInitMessage, Y as createReadyMessage, Q as createSubmitRequestMessage, re as createSuccessResponseMessage, Z as createUiMessage, J as isSenlerBridgeClearElementHighlightMessage, V as isSenlerBridgeReadyMessage, P as parseSenlerBridgeAutomationStepConfiguratorResult, M as parseSenlerBridgeContext, K as parseSenlerBridgeElementActionMessage, z as parseSenlerBridgeElementActionRequest, B as parseSenlerBridgeElementActionResult, q as parseSenlerBridgeElementActionResultMessage, H as parseSenlerBridgeInitMessage, E as parseSenlerBridgeJsonObject, W as parseSenlerBridgeRequestMessage, G as parseSenlerBridgeResponseMessage, N as parseSenlerBridgeToolConfiguratorResult, C as parseSenlerBridgeUiContext, U as parseSenlerBridgeUiMessage };
+export { n as SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION, r as SENLER_BRIDGE_BOOTSTRAP_MODE, i as SENLER_BRIDGE_MESSAGE, e as SENLER_BRIDGE_PROTOCOL_VERSION, a as SENLER_BRIDGE_REQUEST, t as SENLER_BRIDGE_SOURCE, ae as createClearElementHighlightMessage, re as createElementActionMessage, ie as createElementActionResultMessage, se as createErrorResponseMessage, Q as createInitMessage, Z as createReadyMessage, te as createSenlerBridgeFrameSizeMessage, ne as createSubmitRequestMessage, oe as createSuccessResponseMessage, $ as createUiMessage, X as isSenlerBridgeClearElementHighlightMessage, H as isSenlerBridgeReadyMessage, F as parseSenlerBridgeAutomationStepConfiguratorResult, N as parseSenlerBridgeContext, J as parseSenlerBridgeElementActionMessage, B as parseSenlerBridgeElementActionRequest, V as parseSenlerBridgeElementActionResult, Y as parseSenlerBridgeElementActionResultMessage, G as parseSenlerBridgeFrameSizeMessage, U as parseSenlerBridgeInitMessage, D as parseSenlerBridgeJsonObject, K as parseSenlerBridgeRequestMessage, q as parseSenlerBridgeResponseMessage, P as parseSenlerBridgeToolConfiguratorResult, w as parseSenlerBridgeUiContext, W as parseSenlerBridgeUiMessage };

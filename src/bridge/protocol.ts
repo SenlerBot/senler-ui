@@ -18,6 +18,7 @@ export const SENLER_BRIDGE_MESSAGE = {
   ui: 'senler:bridge:ui',
   request: 'senler:bridge:request',
   response: 'senler:bridge:response',
+  frameSize: 'senler:bridge:frame-size',
   elementAction: 'senler:bridge:element-action',
   elementActionResult: 'senler:bridge:element-action-result',
   clearElementHighlight: 'senler:bridge:clear-element-highlight',
@@ -38,6 +39,7 @@ const MAX_PARAMETER_DESCRIPTION_LENGTH = 500;
 const MAX_CONFIGURED_PARAMETERS = 50;
 const MAX_ALLOWED_VALUES = 100;
 const MAX_ERROR_MESSAGE_LENGTH = 1_000;
+const MAX_FRAME_HEIGHT = 100_000;
 const MAX_CONTEXT_ID_LENGTH = 160;
 const MAX_AUTOMATION_BRANCHES = 20;
 const AUTOMATION_BRANCH_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
@@ -136,6 +138,7 @@ export type SenlerBridgeLaunchContext =
 export interface SenlerBridgeContext {
   ui: SenlerBridgeUiContext;
   launch: SenlerBridgeLaunchContext;
+  frame_size_sync?: boolean;
 }
 
 export interface SenlerBridgeToolConfiguratorResult {
@@ -207,6 +210,13 @@ interface SenlerBridgeUiMessage {
   ui: SenlerBridgeUiContext;
 }
 
+interface SenlerBridgeFrameSizeMessage {
+  source: typeof SENLER_BRIDGE_SOURCE;
+  type: typeof SENLER_BRIDGE_MESSAGE.frameSize;
+  protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+  height: number;
+}
+
 interface SenlerBridgeRequestMessage {
   source: typeof SENLER_BRIDGE_SOURCE;
   type: typeof SENLER_BRIDGE_MESSAGE.request;
@@ -261,6 +271,7 @@ export type SenlerBridgeMessage =
   | SenlerBridgeReadyMessage
   | SenlerBridgeInitMessage
   | SenlerBridgeUiMessage
+  | SenlerBridgeFrameSizeMessage
   | SenlerBridgeRequestMessage
   | SenlerBridgeSuccessResponseMessage
   | SenlerBridgeErrorResponseMessage
@@ -552,11 +563,25 @@ function parseLaunchContext(value: unknown): SenlerBridgeLaunchContext | null {
 export function parseSenlerBridgeContext(
   value: unknown,
 ): SenlerBridgeContext | null {
-  if (!isRecord(value)) return null;
+  if (
+    !isRecord(value) ||
+    (value.frame_size_sync !== undefined &&
+      typeof value.frame_size_sync !== 'boolean')
+  ) {
+    return null;
+  }
   const ui = parseSenlerBridgeUiContext(value.ui);
   if (!ui) return null;
   const launch = parseLaunchContext(value.launch);
-  return launch ? { ui, launch } : null;
+  return launch
+    ? {
+        ui,
+        launch,
+        ...(typeof value.frame_size_sync === 'boolean'
+          ? { frame_size_sync: value.frame_size_sync }
+          : {}),
+      }
+    : null;
 }
 
 export function parseSenlerBridgeToolConfiguratorResult(
@@ -758,6 +783,27 @@ export function parseSenlerBridgeUiMessage(
   };
 }
 
+export function parseSenlerBridgeFrameSizeMessage(
+  value: unknown,
+): SenlerBridgeFrameSizeMessage | null {
+  if (
+    !hasBridgeEnvelope(value) ||
+    value.type !== SENLER_BRIDGE_MESSAGE.frameSize ||
+    typeof value.height !== 'number' ||
+    !Number.isInteger(value.height) ||
+    value.height < 1 ||
+    value.height > MAX_FRAME_HEIGHT
+  ) {
+    return null;
+  }
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.frameSize,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    height: value.height,
+  };
+}
+
 export function parseSenlerBridgeRequestMessage(
   value: unknown,
 ): SenlerBridgeRequestMessage | null {
@@ -905,6 +951,25 @@ export function createUiMessage(
     type: SENLER_BRIDGE_MESSAGE.ui,
     protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
     ui,
+  };
+}
+
+export function createSenlerBridgeFrameSizeMessage(
+  height: number,
+): SenlerBridgeFrameSizeMessage {
+  const normalizedHeight = Math.ceil(height);
+  if (
+    !Number.isFinite(normalizedHeight) ||
+    normalizedHeight < 1 ||
+    normalizedHeight > MAX_FRAME_HEIGHT
+  ) {
+    throw new Error('Senler Bridge frame height is invalid');
+  }
+  return {
+    source: SENLER_BRIDGE_SOURCE,
+    type: SENLER_BRIDGE_MESSAGE.frameSize,
+    protocol_version: SENLER_BRIDGE_PROTOCOL_VERSION,
+    height: normalizedHeight,
   };
 }
 

@@ -14,6 +14,7 @@ export declare const SENLER_BRIDGE_MESSAGE: {
     readonly ui: "senler:bridge:ui";
     readonly request: "senler:bridge:request";
     readonly response: "senler:bridge:response";
+    readonly frameSize: "senler:bridge:frame-size";
     readonly elementAction: "senler:bridge:element-action";
     readonly elementActionResult: "senler:bridge:element-action-result";
     readonly clearElementHighlight: "senler:bridge:clear-element-highlight";
@@ -95,6 +96,7 @@ export type SenlerBridgeLaunchContext = SenlerBridgeEmbeddedPageLaunch | SenlerB
 export interface SenlerBridgeContext {
     ui: SenlerBridgeUiContext;
     launch: SenlerBridgeLaunchContext;
+    frame_size_sync?: boolean;
 }
 export interface SenlerBridgeToolConfiguratorResult {
     title?: string;
@@ -141,6 +143,12 @@ interface SenlerBridgeUiMessage {
     protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
     ui: SenlerBridgeUiContext;
 }
+interface SenlerBridgeFrameSizeMessage {
+    source: typeof SENLER_BRIDGE_SOURCE;
+    type: typeof SENLER_BRIDGE_MESSAGE.frameSize;
+    protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
+    height: number;
+}
 interface SenlerBridgeRequestMessage {
     source: typeof SENLER_BRIDGE_SOURCE;
     type: typeof SENLER_BRIDGE_MESSAGE.request;
@@ -183,7 +191,7 @@ interface SenlerBridgeClearElementHighlightMessage {
     type: typeof SENLER_BRIDGE_MESSAGE.clearElementHighlight;
     protocol_version: typeof SENLER_BRIDGE_PROTOCOL_VERSION;
 }
-export type SenlerBridgeMessage = SenlerBridgeReadyMessage | SenlerBridgeInitMessage | SenlerBridgeUiMessage | SenlerBridgeRequestMessage | SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage | SenlerBridgeElementActionMessage | SenlerBridgeElementActionResultMessage | SenlerBridgeClearElementHighlightMessage;
+export type SenlerBridgeMessage = SenlerBridgeReadyMessage | SenlerBridgeInitMessage | SenlerBridgeUiMessage | SenlerBridgeFrameSizeMessage | SenlerBridgeRequestMessage | SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage | SenlerBridgeElementActionMessage | SenlerBridgeElementActionResultMessage | SenlerBridgeClearElementHighlightMessage;
 export declare function parseSenlerBridgeUiContext(value: unknown): SenlerBridgeUiContext | null;
 export declare function parseSenlerBridgeJsonObject(value: unknown): SenlerBridgeJsonObject | null;
 export declare function parseSenlerBridgeContext(value: unknown): SenlerBridgeContext | null;
@@ -194,6 +202,7 @@ export declare function parseSenlerBridgeElementActionResult(value: unknown): Se
 export declare function isSenlerBridgeReadyMessage(value: unknown): value is SenlerBridgeReadyMessage;
 export declare function parseSenlerBridgeInitMessage(value: unknown): SenlerBridgeInitMessage | null;
 export declare function parseSenlerBridgeUiMessage(value: unknown): SenlerBridgeUiMessage | null;
+export declare function parseSenlerBridgeFrameSizeMessage(value: unknown): SenlerBridgeFrameSizeMessage | null;
 export declare function parseSenlerBridgeRequestMessage(value: unknown): SenlerBridgeRequestMessage | null;
 export declare function parseSenlerBridgeResponseMessage(value: unknown): SenlerBridgeSuccessResponseMessage | SenlerBridgeErrorResponseMessage | null;
 export declare function parseSenlerBridgeElementActionMessage(value: unknown): SenlerBridgeElementActionMessage | null;
@@ -202,6 +211,7 @@ export declare function isSenlerBridgeClearElementHighlightMessage(value: unknow
 export declare function createReadyMessage(): SenlerBridgeReadyMessage;
 export declare function createInitMessage(context: SenlerBridgeContext): SenlerBridgeInitMessage;
 export declare function createUiMessage(ui: SenlerBridgeUiContext): SenlerBridgeUiMessage;
+export declare function createSenlerBridgeFrameSizeMessage(height: number): SenlerBridgeFrameSizeMessage;
 export declare function createSubmitRequestMessage(requestId: string, method?: typeof SENLER_BRIDGE_REQUEST.toolConfiguratorSubmit | typeof SENLER_BRIDGE_REQUEST.automationStepConfiguratorSubmit): SenlerBridgeRequestMessage;
 export declare function createElementActionMessage(requestId: string, request: SenlerBridgeElementActionRequest): SenlerBridgeElementActionMessage;
 export declare function createElementActionResultMessage(requestId: string, result: SenlerBridgeElementActionResult): SenlerBridgeElementActionResultMessage;

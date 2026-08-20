@@ -9,6 +9,7 @@ import {
   parseSenlerBridgeContext,
   parseSenlerBridgeElementActionRequest,
   parseSenlerBridgeElementActionResultMessage,
+  parseSenlerBridgeFrameSizeMessage,
   parseSenlerBridgeResponseMessage,
   parseSenlerBridgeUiContext,
   type SenlerBridgeContext,
@@ -28,6 +29,7 @@ export interface SenlerBridgeHostOptions {
   context: SenlerBridgeContext;
   hostWindow?: Window;
   requestTimeoutMs?: number;
+  onFrameSizeChange?: (height: number) => void;
 }
 
 export interface SenlerBridgeHost {
@@ -127,6 +129,11 @@ export function createSenlerBridgeHost(
     if (isSenlerBridgeReadyMessage(event.data)) {
       connected = true;
       sendInit();
+      return;
+    }
+    const frameSize = parseSenlerBridgeFrameSizeMessage(event.data);
+    if (frameSize) {
+      options.onFrameSizeChange?.(frameSize.height);
       return;
     }
     const elementActionResult = parseSenlerBridgeElementActionResultMessage(
