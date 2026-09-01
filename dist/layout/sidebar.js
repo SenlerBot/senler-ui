@@ -104,53 +104,52 @@ function w({ defaultOpen: t = !0, open: n, onOpenChange: r, defaultMobileOpen: i
 		})
 	});
 }
-function T({ side: t = "left", variant: n = "sidebar", collapsible: r = "offcanvas", desktopPosition: l = "viewport", innerClassName: u, mobileForceMount: d, labels: f, className: p, children: m, ...h }) {
-	let { isMobile: v, state: y, openMobile: b, setOpenMobile: x, labels: C } = S(), w = {
-		...C,
-		...f
+function T({ side: t = "left", variant: n = "sidebar", collapsible: r = "offcanvas", desktopPosition: l = "viewport", innerClassName: u, labels: d, className: f, children: p, ...m }) {
+	let { isMobile: h, state: v, openMobile: y, setOpenMobile: b, labels: x } = S(), C = {
+		...x,
+		...d
 	};
 	return r === "none" ? /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar",
-		className: e("flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground", u, p),
-		...h,
-		children: m
-	}) : v ? /* @__PURE__ */ g(i, {
-		open: b,
-		onOpenChange: x,
+		className: e("flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground", u, f),
+		...m,
+		children: p
+	}) : h ? /* @__PURE__ */ g(i, {
+		open: y,
+		onOpenChange: b,
 		children: /* @__PURE__ */ _(a, {
 			"data-sidebar": "sidebar",
 			"data-slot": "sidebar",
 			"data-mobile": "true",
-			forceMount: d,
-			className: e("w-(--sidebar-width-mobile) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden", u, p),
+			className: e("w-(--sidebar-width-mobile) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden", u, f),
 			side: t,
-			...h,
+			...m,
 			children: [/* @__PURE__ */ _(s, {
 				className: "sr-only",
-				children: [/* @__PURE__ */ g(c, { children: w.title }), /* @__PURE__ */ g(o, { children: w.description })]
+				children: [/* @__PURE__ */ g(c, { children: C.title }), /* @__PURE__ */ g(o, { children: C.description })]
 			}), /* @__PURE__ */ g("div", {
 				className: "flex h-full w-full flex-col",
-				children: m
+				children: p
 			})]
 		})
 	}) : l === "container" ? /* @__PURE__ */ g("div", {
 		"data-sidebar": "sidebar",
 		"data-slot": "sidebar",
-		"data-state": y,
-		"data-collapsible": y === "collapsed" ? r : "",
+		"data-state": v,
+		"data-collapsible": v === "collapsed" ? r : "",
 		"data-variant": n,
 		"data-side": t,
-		className: e("group peer hidden h-full w-(--sidebar-width) shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear md:flex", "data-[collapsible=offcanvas]:w-0 data-[collapsible=offcanvas]:overflow-hidden", "data-[collapsible=icon]:w-(--sidebar-width-icon)", n === "floating" || n === "inset" ? "m-2 rounded-lg border border-sidebar-border shadow-sm" : t === "left" ? "border-r border-sidebar-border" : "border-l border-sidebar-border", p),
-		...h,
+		className: e("group peer hidden h-full w-(--sidebar-width) shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear md:flex", "data-[collapsible=offcanvas]:w-0 data-[collapsible=offcanvas]:overflow-hidden", "data-[collapsible=icon]:w-(--sidebar-width-icon)", n === "floating" || n === "inset" ? "m-2 rounded-lg border border-sidebar-border shadow-sm" : t === "left" ? "border-r border-sidebar-border" : "border-l border-sidebar-border", f),
+		...m,
 		children: /* @__PURE__ */ g("div", {
 			"data-slot": "sidebar-inner",
 			className: e("flex h-full w-full flex-col", u),
-			children: m
+			children: p
 		})
 	}) : /* @__PURE__ */ _("div", {
 		className: "group peer hidden text-sidebar-foreground md:block",
-		"data-state": y,
-		"data-collapsible": y === "collapsed" ? r : "",
+		"data-state": v,
+		"data-collapsible": v === "collapsed" ? r : "",
 		"data-variant": n,
 		"data-side": t,
 		"data-slot": "sidebar",
@@ -159,13 +158,13 @@ function T({ side: t = "left", variant: n = "sidebar", collapsible: r = "offcanv
 			className: e("relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear", "group-data-[collapsible=offcanvas]:w-0", "group-data-[side=right]:rotate-180", n === "floating" || n === "inset" ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)")
 		}), /* @__PURE__ */ g("div", {
 			"data-slot": "sidebar-container",
-			className: e("fixed inset-y-0 z-10 hidden h-dvh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex", t === "left" ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]" : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]", n === "floating" || n === "inset" ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l", p),
-			...h,
+			className: e("fixed inset-y-0 z-10 hidden h-dvh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex", t === "left" ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]" : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]", n === "floating" || n === "inset" ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l", f),
+			...m,
 			children: /* @__PURE__ */ g("div", {
 				"data-sidebar": "sidebar",
 				"data-slot": "sidebar-inner",
 				className: e("flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm", u),
-				children: m
+				children: p
 			})
 		})]
 	});

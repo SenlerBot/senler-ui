@@ -336,6 +336,20 @@ try {
   })
   assert.equal(container.querySelector('[data-slot="sidebar"]').getAttribute('data-state'), 'expanded')
 
+  const renderClosedSheet = () => React.createElement(
+    loaded.ui.Sheet,
+    { open: false },
+    React.createElement(
+      loaded.ui.SheetContent,
+      { 'data-testid': 'closed-sheet' },
+      React.createElement(loaded.ui.SheetTitle, null, 'Navigation'),
+      React.createElement(loaded.ui.SheetDescription, null, 'Application navigation'),
+      React.createElement('div', null, 'Sheet content'),
+    ),
+  )
+  await act(async () => root.render(renderClosedSheet()))
+  assert.equal(document.querySelector('[data-testid="closed-sheet"]'), null)
+
   await act(async () => {
     root.render(React.createElement(
       loaded.ui.SelectionActionBar,

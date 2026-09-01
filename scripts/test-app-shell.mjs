@@ -105,6 +105,33 @@ try {
   assert.match(standardMarkup, /Active agents/u)
   assert.match(standardMarkup, /data-ai-context-id="cabinet\.agents\.active"/u)
 
+  const attributedMarkup = renderSidebar(loaded.appShell, {
+    id: 'product-navigation',
+    'aria-label': 'Product navigation',
+    'data-testid': 'product-navigation',
+  })
+  assert.match(attributedMarkup, /id="product-navigation"/u)
+  assert.match(attributedMarkup, /aria-label="Product navigation"/u)
+  assert.match(attributedMarkup, /data-testid="product-navigation"/u)
+
+  const substringMatchMarkup = renderSidebar(loaded.appShell, {
+    navigation: [{
+      id: 'substring-match',
+      items: [{
+        id: 'ports',
+        label: 'Ports',
+        href: '/ports',
+        match: 'ports',
+      }],
+    }],
+    currentPath: '/reports',
+  })
+  assert.doesNotMatch(
+    substringMatchMarkup,
+    /aria-current="page"/u,
+    'String route matching must use path boundaries instead of arbitrary substrings',
+  )
+
   const comfortableMarkup = renderSidebar(loaded.appShell, {
     density: 'comfortable',
     groupTriggerBehavior: 'toggle',

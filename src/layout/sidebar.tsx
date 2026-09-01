@@ -245,7 +245,6 @@ export interface SidebarProps extends React.ComponentProps<'div'> {
   collapsible?: 'offcanvas' | 'icon' | 'none';
   desktopPosition?: 'viewport' | 'container';
   innerClassName?: string;
-  mobileForceMount?: true;
   labels?: Pick<SidebarLabels, 'title' | 'description'>;
 }
 
@@ -255,7 +254,6 @@ export function Sidebar({
   collapsible = 'offcanvas',
   desktopPosition = 'viewport',
   innerClassName,
-  mobileForceMount,
   labels,
   className,
   children,
@@ -293,7 +291,6 @@ export function Sidebar({
           data-sidebar='sidebar'
           data-slot='sidebar'
           data-mobile='true'
-          forceMount={mobileForceMount}
           className={cn(
             'w-(--sidebar-width-mobile) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden',
             innerClassName,

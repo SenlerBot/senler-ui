@@ -35,7 +35,7 @@ source, so `npm publish` does not repeat the full workflow.
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.6.0.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.6.1.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -266,6 +266,11 @@ const navigation = [{
   }],
 }];
 ```
+
+String `match` values use exact or path-segment-prefix matching. Use a
+`(currentPath) => boolean` matcher for query-aware or product-specific active
+states. `AppSidebar` forwards ordinary `id`, `aria-*`, `data-*`, and event
+attributes to its sidebar element.
 
 The default `select` behavior treats parent rows as ordinary navigation
 controls. Use `groupTriggerBehavior="toggle"` on `AppSidebar` (or the

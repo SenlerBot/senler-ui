@@ -46,10 +46,9 @@ export interface SidebarProps extends React.ComponentProps<'div'> {
     collapsible?: 'offcanvas' | 'icon' | 'none';
     desktopPosition?: 'viewport' | 'container';
     innerClassName?: string;
-    mobileForceMount?: true;
     labels?: Pick<SidebarLabels, 'title' | 'description'>;
 }
-export declare function Sidebar({ side, variant, collapsible, desktopPosition, innerClassName, mobileForceMount, labels, className, children, ...props }: SidebarProps): React.JSX.Element;
+export declare function Sidebar({ side, variant, collapsible, desktopPosition, innerClassName, labels, className, children, ...props }: SidebarProps): React.JSX.Element;
 export declare function SidebarTrigger({ className, onClick, children, type, 'aria-label': ariaLabel, title, ...props }: React.ComponentProps<typeof Button>): React.JSX.Element;
 export declare function SidebarRail({ className, type, 'aria-label': ariaLabel, title, onClick, ...props }: React.ComponentProps<typeof Button>): React.JSX.Element;
 export declare function SidebarInset({ className, ...props }: React.ComponentProps<'main'>): React.JSX.Element;

@@ -34,23 +34,27 @@ function c({ ...e }) {
 function l({ className: t, ...r }) {
 	return /* @__PURE__ */ n(i.Overlay, {
 		"data-slot": "sheet-overlay",
-		className: e("data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50", t),
+		className: e("data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:pointer-events-none fixed inset-0 z-50 bg-black/50", t),
 		...r
 	});
 }
-function u({ className: a, children: o, side: s = "right", showCloseButton: u = !0, ...d }) {
-	return /* @__PURE__ */ r(c, { children: [/* @__PURE__ */ n(l, {}), /* @__PURE__ */ r(i.Content, {
-		"data-slot": "sheet-content",
-		className: e("bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg overflow-y-auto transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500", s === "right" && "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm", s === "left" && "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm", s === "top" && "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b", s === "bottom" && "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t", a),
-		...d,
-		children: [o, u && /* @__PURE__ */ r(i.Close, {
-			className: "ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none",
-			children: [/* @__PURE__ */ n(t, { className: "size-4" }), /* @__PURE__ */ n("span", {
-				className: "sr-only",
-				children: "Close"
+function u({ className: a, children: o, side: s = "right", showCloseButton: u = !0, forceMount: d, ...f }) {
+	return /* @__PURE__ */ r(c, {
+		forceMount: d,
+		children: [/* @__PURE__ */ n(l, { forceMount: d }), /* @__PURE__ */ r(i.Content, {
+			forceMount: d,
+			"data-slot": "sheet-content",
+			className: e("bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:pointer-events-none fixed z-50 flex flex-col gap-4 shadow-lg overflow-y-auto transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500", s === "right" && "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm", s === "left" && "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm", s === "top" && "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b", s === "bottom" && "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t", a),
+			...f,
+			children: [o, u && /* @__PURE__ */ r(i.Close, {
+				className: "ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none",
+				children: [/* @__PURE__ */ n(t, { className: "size-4" }), /* @__PURE__ */ n("span", {
+					className: "sr-only",
+					children: "Close"
+				})]
 			})]
 		})]
-	})] });
+	});
 }
 function d({ className: t, ...r }) {
 	return /* @__PURE__ */ n("div", {

@@ -100,7 +100,10 @@ export interface AppShellLabels {
   collapseNavigationGroup?: string;
 }
 
-export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
+export interface AppSidebarProps extends Omit<
+  React.HTMLAttributes<HTMLElement>,
+  'children' | 'dangerouslySetInnerHTML'
+> {
   navigation: AppShellNavigationGroup[];
   currentPath: string;
   renderLink: AppShellRenderLink;
@@ -205,7 +208,7 @@ function isItemActive(item: AppShellNavigationItem, currentPath: string): boolea
       : [];
 
   if (
-    matches.some((match) => currentPath === match || currentPath.startsWith(`${match}/`) || currentPath.includes(match))
+    matches.some((match) => currentPath === match || currentPath.startsWith(`${match}/`))
   ) {
     return true;
   }
@@ -536,18 +539,37 @@ function AppSidebarContent({
   );
 }
 
+type AppSidebarPanelProps = Omit<AppSidebarProps, 'width' | 'mobileWidth'>;
+
 function AppSidebarPanel({
+  navigation,
+  currentPath,
+  renderLink,
+  brand,
+  headerActions,
+  top,
+  footer,
   className,
   density = 'standard',
   mobile = false,
   style,
   labels,
-  ...props
-}: AppSidebarProps) {
+  onNavigate,
+  headerClassName,
+  topClassName,
+  navigationClassName,
+  groupClassName,
+  groupLabelClassName,
+  footerClassName,
+  itemClassName,
+  groupTriggerBehavior = 'select',
+  ...elementProps
+}: AppSidebarPanelProps) {
   const resolvedLabels = getLabels(labels);
 
   return (
     <SidebarPrimitive
+      {...elementProps}
       data-slot='app-sidebar'
       data-mobile={mobile || undefined}
       data-density={density}
@@ -560,7 +582,26 @@ function AppSidebarPanel({
       className={className}
       style={style}
     >
-      <AppSidebarContent {...props} labels={labels} density={density} />
+      <AppSidebarContent
+        navigation={navigation}
+        currentPath={currentPath}
+        renderLink={renderLink}
+        brand={brand}
+        headerActions={headerActions}
+        top={top}
+        footer={footer}
+        labels={labels}
+        onNavigate={onNavigate}
+        density={density}
+        headerClassName={headerClassName}
+        topClassName={topClassName}
+        navigationClassName={navigationClassName}
+        groupClassName={groupClassName}
+        groupLabelClassName={groupLabelClassName}
+        footerClassName={footerClassName}
+        itemClassName={itemClassName}
+        groupTriggerBehavior={groupTriggerBehavior}
+      />
     </SidebarPrimitive>
   );
 }

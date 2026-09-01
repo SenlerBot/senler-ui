@@ -77,6 +77,10 @@ assert.match(sidebarTypes, /declare function SidebarProvider/u)
 assert.match(sidebarTypes, /collapsible\?: 'offcanvas' \| 'icon' \| 'none'/u)
 assert.match(sidebarTypes, /desktopPosition\?: 'viewport' \| 'container'/u)
 assert.match(sidebarTypes, /labels\?: SidebarLabels/u)
+assert.doesNotMatch(sidebarTypes, /mobileForceMount/u)
+
+const sheetTypes = readFileSync(new URL('../dist/atoms/sheet.d.ts', import.meta.url), 'utf8')
+assert.doesNotMatch(sheetTypes, /forceMount/u)
 
 const selectionActionBarTypes = readFileSync(
   new URL('../dist/compound/selection-action-bar.d.ts', import.meta.url),
