@@ -56,6 +56,7 @@ function installDom() {
     Element: dom.window.Element,
     HTMLElement: dom.window.HTMLElement,
     Event: dom.window.Event,
+    KeyboardEvent: dom.window.KeyboardEvent,
     MouseEvent: dom.window.MouseEvent,
     CustomEvent: dom.window.CustomEvent,
     MutationObserver: dom.window.MutationObserver,
@@ -102,8 +103,14 @@ function installDom() {
   }
 }
 
-function renderLink({ item: _item, breadcrumb: _breadcrumb, children, ...props }) {
-  return React.createElement('a', props, children)
+function renderLink({ item: _item, breadcrumb: _breadcrumb, children, onClick, ...props }) {
+  return React.createElement('a', {
+    ...props,
+    onClick(event) {
+      event.preventDefault()
+      onClick?.(event)
+    },
+  }, children)
 }
 
 function click(element) {
@@ -149,13 +156,14 @@ try {
     }))
   })
 
-  const legacyTrigger = [...container.querySelectorAll('button')]
+  const selectTrigger = [...container.querySelectorAll('button')]
     .find((button) => button.textContent.includes('Tools'))
-  assert.ok(legacyTrigger, 'Legacy disclosure trigger must render')
+  assert.ok(selectTrigger, 'Select-mode parent control must render')
+  assert.equal(selectTrigger.hasAttribute('aria-expanded'), false, 'A non-disclosure control must not expose aria-expanded')
   assert.equal(container.textContent.includes('Storage'), false)
-  await act(async () => click(legacyTrigger))
-  assert.equal(navigateCount, 1, 'Legacy parent click must preserve onNavigate')
-  assert.equal(container.textContent.includes('Storage'), false, 'Legacy parent click must not add local disclosure state')
+  await act(async () => click(selectTrigger))
+  assert.equal(navigateCount, 1, 'Select-mode parent click must report navigation')
+  assert.equal(container.textContent.includes('Storage'), false, 'Select mode must not add local disclosure state')
 
   let expandedValue = null
   navigateCount = 0
@@ -165,18 +173,84 @@ try {
       currentPath: '/unrelated',
       renderLink,
       brand: 'Senler',
-      disclosureBehavior: 'interactive',
-      showDisclosureIcons: true,
+      groupTriggerBehavior: 'toggle',
       onNavigate: () => { navigateCount += 1 },
     }))
   })
-  const interactiveTrigger = [...container.querySelectorAll('button')]
+  const toggleTrigger = [...container.querySelectorAll('button')]
     .find((button) => button.textContent.includes('Tools'))
-  await act(async () => click(interactiveTrigger))
+  await act(async () => click(toggleTrigger))
   assert.equal(expandedValue, true)
-  assert.equal(navigateCount, 0, 'Interactive disclosure must not report navigation')
+  assert.equal(navigateCount, 0, 'A disclosure toggle must not report navigation')
   assert.equal(container.textContent.includes('Storage'), true)
-  assert.equal(interactiveTrigger.getAttribute('aria-expanded'), 'true')
+  assert.equal(toggleTrigger.getAttribute('aria-expanded'), 'true')
+
+  await act(async () => {
+    root.render(React.createElement(loaded.ui.AppSidebar, {
+      navigation: createNavigation((expanded) => { expandedValue = expanded }),
+      currentPath: '/storage',
+      renderLink,
+      brand: 'Senler',
+      groupTriggerBehavior: 'toggle',
+    }))
+  })
+  const activeToggle = [...container.querySelectorAll('button')]
+    .find((button) => button.textContent.includes('Tools'))
+  await act(async () => click(activeToggle))
+  assert.equal(expandedValue, false)
+  assert.equal(activeToggle.getAttribute('aria-expanded'), 'false')
+  assert.equal(container.textContent.includes('Storage'), false, 'An active group must remain collapsible')
+
+  await act(async () => {
+    root.render(React.createElement(loaded.ui.AppSidebar, {
+      navigation: createNavigation(),
+      currentPath: '/storage/details',
+      renderLink,
+      brand: 'Senler',
+      groupTriggerBehavior: 'toggle',
+    }))
+  })
+  assert.equal(
+    container.textContent.includes('Storage'),
+    true,
+    'Navigation to another active child route must reveal the current item',
+  )
+
+  navigateCount = 0
+  const linkedGroupNavigation = [{
+    id: 'main',
+    items: [{
+      id: 'tools-link',
+      label: 'Linked tools',
+      href: '/tools',
+      items: [{ id: 'linked-storage', label: 'Linked storage', href: '/tools/storage' }],
+    }],
+  }]
+  await act(async () => {
+    root.render(React.createElement(loaded.ui.AppSidebar, {
+      navigation: linkedGroupNavigation,
+      currentPath: '/unrelated',
+      renderLink,
+      brand: 'Senler',
+      groupTriggerBehavior: 'toggle',
+      onNavigate: () => { navigateCount += 1 },
+      labels: {
+        expandNavigationGroup: 'Развернуть раздел',
+        collapseNavigationGroup: 'Свернуть раздел',
+      },
+    }))
+  })
+  const linkedControl = container.querySelector('a[href="/tools"]')
+  const linkedDisclosure = container.querySelector('[data-slot="app-sidebar-disclosure"]')
+  assert.ok(linkedControl)
+  assert.ok(linkedDisclosure)
+  assert.equal(linkedControl.hasAttribute('aria-expanded'), false, 'Navigation links must not masquerade as disclosure controls')
+  assert.match(linkedDisclosure.getAttribute('aria-label'), /^Развернуть раздел:/u)
+  await act(async () => click(linkedDisclosure))
+  assert.equal(navigateCount, 0)
+  assert.equal(container.textContent.includes('Linked storage'), true)
+  await act(async () => click(linkedControl))
+  assert.equal(navigateCount, 1, 'The link and disclosure controls must remain independent')
 
   let mobileStateChange = null
   const renderShell = (currentPath) => React.createElement(
@@ -207,16 +281,59 @@ try {
   await act(async () => {
     root.render(React.createElement(
       loaded.ui.SidebarProvider,
-      { defaultOpen: false, isMobile: false, persistenceCookie: false },
+      {
+        defaultOpen: false,
+        isMobile: false,
+        keyboardShortcut: 'b',
+        labels: { toggle: 'Показать меню' },
+      },
       React.createElement(
         loaded.ui.Sidebar,
         { collapsible: 'icon' },
         React.createElement(loaded.ui.SidebarTrigger, null),
+        React.createElement(loaded.ui.SidebarGroupAction, null, 'Group action'),
+        React.createElement(loaded.ui.SidebarMenuButton, null, 'Menu button'),
+        React.createElement(loaded.ui.SidebarMenuAction, null, 'Menu action'),
+        React.createElement(
+          loaded.ui.SidebarMenuButton,
+          { asChild: true },
+          React.createElement('a', { href: '/child' }, 'Child link'),
+        ),
       ),
     ))
   })
   assert.equal(container.querySelector('[data-slot="sidebar"]').getAttribute('data-state'), 'collapsed')
-  await act(async () => click(container.querySelector('[data-slot="sidebar-trigger"]')))
+  const primitiveTrigger = container.querySelector('[data-slot="sidebar-trigger"]')
+  assert.equal(primitiveTrigger.getAttribute('aria-label'), 'Показать меню')
+  assert.equal(document.cookie.includes('sidebar_state='), false, 'Persistence must be opt-in')
+  for (const selector of [
+    '[data-slot="sidebar-trigger"]',
+    '[data-slot="sidebar-group-action"]',
+    '[data-slot="sidebar-menu-button"]:not(a)',
+    '[data-slot="sidebar-menu-action"]',
+  ]) {
+    assert.equal(container.querySelector(selector).getAttribute('type'), 'button')
+  }
+  assert.equal(container.querySelector('a[data-slot="sidebar-menu-button"]').hasAttribute('type'), false)
+
+  const shortcutInput = document.createElement('input')
+  document.body.append(shortcutInput)
+  await act(async () => {
+    shortcutInput.dispatchEvent(new KeyboardEvent('keydown', {
+      bubbles: true,
+      cancelable: true,
+      ctrlKey: true,
+      key: 'b',
+    }))
+  })
+  assert.equal(container.querySelector('[data-slot="sidebar"]').getAttribute('data-state'), 'collapsed', 'The shortcut must not hijack text input')
+  await act(async () => {
+    window.dispatchEvent(new KeyboardEvent('keydown', {
+      cancelable: true,
+      ctrlKey: true,
+      key: 'b',
+    }))
+  })
   assert.equal(container.querySelector('[data-slot="sidebar"]').getAttribute('data-state'), 'expanded')
 
   await act(async () => {

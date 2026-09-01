@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import {
   ChevronDownIcon,
@@ -8,18 +10,16 @@ import {
 import { Badge } from '../atoms/badge';
 import { Button } from '../atoms/button';
 import { ScrollArea } from '../atoms/scroll-area';
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-} from '../atoms/sheet';
-import { VisuallyHidden } from '../atoms/visually-hidden';
 import { cn } from '../lib/utils';
+import {
+  Sidebar as SidebarPrimitive,
+  SidebarProvider,
+} from './sidebar';
 
 export type AppShellIcon = React.ComponentType<{ className?: string }>;
 
 export type AppSidebarDensity = 'standard' | 'comfortable';
-export type AppSidebarDisclosureBehavior = 'legacy' | 'interactive';
+export type AppSidebarGroupTriggerBehavior = 'select' | 'toggle';
 
 export interface AppShellNavigationItemAttributes {
   'aria-label'?: string;
@@ -87,7 +87,6 @@ export interface AppShellRenderLinkProps {
   title?: string;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   'aria-current'?: 'page';
-  'aria-expanded'?: boolean;
   [attribute: `data-${string}`]: string | number | boolean | undefined;
 }
 
@@ -95,7 +94,10 @@ export type AppShellRenderLink = (props: AppShellRenderLinkProps) => React.React
 
 export interface AppShellLabels {
   navigation?: string;
+  navigationDescription?: string;
   openSidebar?: string;
+  expandNavigationGroup?: string;
+  collapseNavigationGroup?: string;
 }
 
 export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
@@ -119,8 +121,7 @@ export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
   groupLabelClassName?: string;
   footerClassName?: string;
   itemClassName?: AppSidebarItemClassName;
-  showDisclosureIcons?: boolean;
-  disclosureBehavior?: AppSidebarDisclosureBehavior;
+  groupTriggerBehavior?: AppSidebarGroupTriggerBehavior;
 }
 
 export interface AppShellHeaderRenderState {
@@ -167,8 +168,7 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   sidebarGroupLabelClassName?: string;
   sidebarFooterClassName?: string;
   sidebarItemClassName?: AppSidebarItemClassName;
-  sidebarShowDisclosureIcons?: boolean;
-  sidebarDisclosureBehavior?: AppSidebarDisclosureBehavior;
+  sidebarGroupTriggerBehavior?: AppSidebarGroupTriggerBehavior;
   sidebarClassName?: string;
   headerClassName?: string;
   mainClassName?: string;
@@ -176,7 +176,10 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const defaultLabels = {
   navigation: 'Navigation',
+  navigationDescription: 'Displays the application navigation.',
   openSidebar: 'Open navigation',
+  expandNavigationGroup: 'Expand navigation group',
+  collapseNavigationGroup: 'Collapse navigation group',
 };
 
 function getLabels(labels: AppShellLabels | undefined) {
@@ -245,8 +248,8 @@ function AppSidebarNavItem({
   onNavigate,
   density,
   itemClassName,
-  showDisclosureIcons,
-  disclosureBehavior,
+  labels,
+  groupTriggerBehavior,
   depth = 0,
 }: {
   item: AppShellNavigationItem;
@@ -255,26 +258,42 @@ function AppSidebarNavItem({
   onNavigate?: () => void;
   density: AppSidebarDensity;
   itemClassName?: AppSidebarItemClassName;
-  showDisclosureIcons: boolean;
-  disclosureBehavior: AppSidebarDisclosureBehavior;
+  labels: Required<AppShellLabels>;
+  groupTriggerBehavior: AppSidebarGroupTriggerBehavior;
   depth?: number;
 }) {
   const active = isItemActive(item, currentPath);
   const title = getItemTitle(item);
   const Icon = item.icon;
   const hasChildren = !!item.items?.length;
+  const childrenId = React.useId();
   const [uncontrolledExpanded, setUncontrolledExpanded] = React.useState(
     item.defaultOpen ?? active
   );
-  const usesInteractiveDisclosure =
-    disclosureBehavior === 'interactive' ||
-    item.expanded !== undefined ||
-    item.onExpandedChange !== undefined;
+  const previousActiveRef = React.useRef(active);
+  const previousPathRef = React.useRef(currentPath);
+  const usesToggle = hasChildren && groupTriggerBehavior === 'toggle';
   const expanded = hasChildren && (
-    usesInteractiveDisclosure
-      ? item.expanded ?? (active || uncontrolledExpanded)
-      : active || item.defaultOpen === true
+    usesToggle
+      ? item.expanded ?? uncontrolledExpanded
+      : item.expanded ?? (active || item.defaultOpen === true)
   );
+
+  React.useEffect(() => {
+    const becameActive = active && !previousActiveRef.current;
+    const changedWithinActiveGroup = active && previousPathRef.current !== currentPath;
+    previousActiveRef.current = active;
+    previousPathRef.current = currentPath;
+
+    if (
+      usesToggle &&
+      (becameActive || changedWithinActiveGroup) &&
+      item.expanded === undefined
+    ) {
+      setUncontrolledExpanded(true);
+    }
+  }, [active, currentPath, item.expanded, usesToggle]);
+
   const state = {
     active,
     depth,
@@ -301,7 +320,7 @@ function AppSidebarNavItem({
     resolvedItemClassName,
     item.className
   );
-  const content = (
+  const content = (includeDisclosure: boolean) => (
     <>
       {Icon ? <Icon className='size-4 shrink-0 text-muted-foreground group-hover/app-shell-nav-item:text-inherit' /> : null}
       <span className='min-w-0 flex-1 truncate'>{item.label}</span>
@@ -316,7 +335,7 @@ function AppSidebarNavItem({
         </span>
       ) : null}
       {item.trailing}
-      {hasChildren && showDisclosureIcons ? (
+      {includeDisclosure ? (
         <ChevronDownIcon
           aria-hidden='true'
           className={cn('size-4 shrink-0 text-muted-foreground transition-transform', expanded && 'rotate-180')}
@@ -332,18 +351,17 @@ function AppSidebarNavItem({
     item.onExpandedChange?.(nextExpanded);
   };
 
-  const handleButtonClick = () => {
+  const handleSelect = () => {
     if (item.disabled) {
       return;
     }
-
-    if (usesInteractiveDisclosure && hasChildren && !item.href) {
-      setExpanded(!expanded);
-      item.onSelect?.();
-      return;
-    }
-
     callNavigationHandlers(item, onNavigate);
+  };
+
+  const handleToggle = () => {
+    if (!item.disabled) {
+      setExpanded(!expanded);
+    }
   };
 
   const handleLinkClick: React.MouseEventHandler<HTMLAnchorElement> = (event) => {
@@ -355,40 +373,68 @@ function AppSidebarNavItem({
     callNavigationHandlers(item, onNavigate);
   };
 
-  const control = item.href && !item.disabled
-    ? renderLink({
+  let control: React.ReactNode;
+
+  if (item.href && !item.disabled) {
+    const link = renderLink({
       item,
       href: item.href,
-      className: controlClassName,
-      children: content,
+      className: cn(controlClassName, usesToggle && 'min-w-0 flex-1'),
+      children: content(false),
       title,
       onClick: handleLinkClick,
       'aria-current': active ? 'page' : undefined,
-      'aria-expanded': hasChildren ? expanded : undefined,
       ...item.attributes,
-    })
-    : (
+    });
+
+    control = usesToggle ? (
+      <div className='flex min-w-0 items-center gap-1'>
+        {link}
+        <button
+          type='button'
+          data-slot='app-sidebar-disclosure'
+          className={cn(
+            'flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors',
+            'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring',
+          )}
+          aria-controls={childrenId}
+          aria-expanded={expanded}
+          aria-label={`${expanded ? labels.collapseNavigationGroup : labels.expandNavigationGroup}: ${title}`}
+          title={`${expanded ? labels.collapseNavigationGroup : labels.expandNavigationGroup}: ${title}`}
+          onClick={handleToggle}
+        >
+          <ChevronDownIcon
+            aria-hidden='true'
+            className={cn('size-4 transition-transform', expanded && 'rotate-180')}
+          />
+        </button>
+      </div>
+    ) : link;
+  } else {
+    control = (
       <button
         type='button'
         className={controlClassName}
         disabled={item.disabled}
         aria-current={active ? 'page' : undefined}
-        aria-expanded={hasChildren ? expanded : undefined}
+        aria-controls={usesToggle ? childrenId : undefined}
+        aria-expanded={usesToggle ? expanded : undefined}
         aria-disabled={item.disabled || undefined}
         title={title}
-        onClick={handleButtonClick}
+        onClick={usesToggle ? handleToggle : handleSelect}
         {...item.attributes}
       >
-        {content}
+        {content(usesToggle)}
       </button>
     );
+  }
 
   return (
     <li className='min-w-0'>
       {control}
 
       {expanded ? (
-        <ul className={cn('mt-1 grid gap-1 border-l border-sidebar-border pl-3', item.childrenClassName)}>
+        <ul id={childrenId} className={cn('mt-1 grid gap-1 border-l border-sidebar-border pl-3', item.childrenClassName)}>
           {item.items?.map((child) => (
             <AppSidebarNavItem
               key={child.id}
@@ -398,8 +444,8 @@ function AppSidebarNavItem({
               onNavigate={onNavigate}
               density={density}
               itemClassName={itemClassName}
-              showDisclosureIcons={showDisclosureIcons}
-              disclosureBehavior={disclosureBehavior}
+              labels={labels}
+              groupTriggerBehavior={groupTriggerBehavior}
               depth={depth + 1}
             />
           ))}
@@ -427,8 +473,7 @@ function AppSidebarContent({
   groupLabelClassName,
   footerClassName,
   itemClassName,
-  disclosureBehavior = 'legacy',
-  showDisclosureIcons = disclosureBehavior === 'interactive',
+  groupTriggerBehavior = 'select',
 }: AppSidebarProps) {
   const resolvedLabels = getLabels(labels);
 
@@ -474,8 +519,8 @@ function AppSidebarContent({
                     onNavigate={onNavigate}
                     density={density}
                     itemClassName={itemClassName}
-                    showDisclosureIcons={showDisclosureIcons}
-                    disclosureBehavior={disclosureBehavior}
+                    labels={resolvedLabels}
+                    groupTriggerBehavior={groupTriggerBehavior}
                   />
                 ))}
               </ul>
@@ -491,47 +536,67 @@ function AppSidebarContent({
   );
 }
 
-export function AppSidebar({
+function AppSidebarPanel({
   className,
+  density = 'standard',
   mobile = false,
+  style,
+  labels,
+  ...props
+}: AppSidebarProps) {
+  const resolvedLabels = getLabels(labels);
+
+  return (
+    <SidebarPrimitive
+      data-slot='app-sidebar'
+      data-mobile={mobile || undefined}
+      data-density={density}
+      collapsible={mobile ? 'none' : 'offcanvas'}
+      desktopPosition='container'
+      labels={{
+        title: resolvedLabels.navigation,
+        description: resolvedLabels.navigationDescription,
+      }}
+      className={className}
+      style={style}
+    >
+      <AppSidebarContent {...props} labels={labels} density={density} />
+    </SidebarPrimitive>
+  );
+}
+
+export function AppSidebar({
   density = 'standard',
   width,
   mobileWidth,
-  style,
+  mobile = false,
+  labels,
   ...props
 }: AppSidebarProps) {
-  if (mobile) {
-    return (
-      <div
-        data-slot='app-sidebar'
-        data-mobile='true'
-        data-density={density}
-        className={cn(
-          'flex h-full bg-sidebar text-sidebar-foreground',
-          mobileWidth && 'w-(--app-sidebar-mobile-width)',
-          className,
-        )}
-        style={{ ...style, '--app-sidebar-mobile-width': mobileWidth } as React.CSSProperties}
-      >
-        <AppSidebarContent {...props} density={density} />
-      </div>
-    );
-  }
+  const resolvedLabels = getLabels(labels);
+  const resolvedWidth = width ?? (density === 'comfortable' ? '16.25rem' : '16rem');
+  const resolvedMobileWidth = mobileWidth ?? (density === 'comfortable' ? '16.25rem' : '18rem');
 
   return (
-    <aside
-      data-slot='app-sidebar'
-      data-state='expanded'
-      data-density={density}
-      className={cn(
-        'hidden h-dvh shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex',
-        width ? 'w-(--app-sidebar-width)' : density === 'comfortable' ? 'w-[16.25rem]' : 'w-64',
-        className
-      )}
-      style={{ ...style, '--app-sidebar-width': width } as React.CSSProperties}
+    <SidebarProvider
+      open
+      isMobile={mobile}
+      width={mobile ? resolvedMobileWidth : resolvedWidth}
+      mobileWidth={resolvedMobileWidth}
+      labels={{
+        title: resolvedLabels.navigation,
+        description: resolvedLabels.navigationDescription,
+        toggle: resolvedLabels.openSidebar,
+      }}
+      className={cn('w-auto', mobile && 'h-full')}
     >
-      <AppSidebarContent {...props} density={density} />
-    </aside>
+      <AppSidebarPanel
+        {...props}
+        labels={labels}
+        density={density}
+        mobile={mobile}
+      />
+    </SidebarProvider>
   );
 }
 
@@ -661,14 +726,20 @@ export function AppShell({
   sidebarGroupLabelClassName,
   sidebarFooterClassName,
   sidebarItemClassName,
-  sidebarShowDisclosureIcons,
-  sidebarDisclosureBehavior = 'legacy',
+  sidebarGroupTriggerBehavior = 'select',
   sidebarClassName,
   headerClassName,
   mainClassName,
   className,
   ...props
 }: AppShellProps) {
+  const resolvedLabels = getLabels(labels);
+  const resolvedSidebarWidth = sidebarWidth ?? (
+    sidebarDensity === 'comfortable' ? '16.25rem' : '16rem'
+  );
+  const resolvedSidebarMobileWidth = sidebarMobileWidth ?? (
+    sidebarDensity === 'comfortable' ? '16.25rem' : '18rem'
+  );
   const [uncontrolledMobileOpen, setUncontrolledMobileOpen] = React.useState(
     defaultMobileSidebarOpen
   );
@@ -709,8 +780,6 @@ export function AppShell({
     footer: sidebarFooter,
     labels,
     density: sidebarDensity,
-    width: sidebarWidth,
-    mobileWidth: sidebarMobileWidth,
     headerClassName: sidebarHeaderClassName,
     topClassName: sidebarTopClassName,
     navigationClassName: sidebarNavigationClassName,
@@ -718,8 +787,7 @@ export function AppShell({
     groupLabelClassName: sidebarGroupLabelClassName,
     footerClassName: sidebarFooterClassName,
     itemClassName: sidebarItemClassName,
-    showDisclosureIcons: sidebarShowDisclosureIcons,
-    disclosureBehavior: sidebarDisclosureBehavior,
+    groupTriggerBehavior: sidebarGroupTriggerBehavior,
     onNavigate: closeMobileSidebar,
   };
 
@@ -731,12 +799,22 @@ export function AppShell({
   };
 
   return (
-    <div
+    <SidebarProvider
+      open
+      mobileOpen={mobileSidebarOpen}
+      onMobileOpenChange={setMobileSidebarOpen}
+      width={resolvedSidebarWidth}
+      mobileWidth={resolvedSidebarMobileWidth}
+      labels={{
+        title: resolvedLabels.navigation,
+        description: resolvedLabels.navigationDescription,
+        toggle: resolvedLabels.openSidebar,
+      }}
       data-slot='app-shell'
       className={cn('flex h-dvh min-h-0 w-full overflow-hidden bg-background text-foreground', className)}
       {...props}
     >
-      <AppSidebar
+      <AppSidebarPanel
         {...sidebarProps}
         className={sidebarClassName}
       />
@@ -758,27 +836,6 @@ export function AppShell({
           {children}
         </main>
       </div>
-
-      <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
-        <SheetContent
-          side='left'
-          showCloseButton={false}
-          className={cn(
-            'p-0 text-sidebar-foreground sm:max-w-none [&>button]:hidden',
-            sidebarMobileWidth
-              ? 'w-(--app-sidebar-mobile-width)'
-              : sidebarDensity === 'comfortable'
-                ? 'w-[16.25rem]'
-                : 'w-[18rem]'
-          )}
-          style={{ '--app-sidebar-mobile-width': sidebarMobileWidth } as React.CSSProperties}
-        >
-          <VisuallyHidden>
-            <SheetTitle>{getLabels(labels).navigation}</SheetTitle>
-          </VisuallyHidden>
-          <AppSidebar {...sidebarProps} mobile />
-        </SheetContent>
-      </Sheet>
-    </div>
+    </SidebarProvider>
   );
 }

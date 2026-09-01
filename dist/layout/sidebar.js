@@ -1,3 +1,4 @@
+"use client";
 import { cn as e } from "../lib/utils/cn.js";
 import { Button as t } from "../atoms/button.js";
 import { Separator as n } from "../atoms/separator.js";
@@ -11,13 +12,17 @@ import { jsx as g, jsxs as _ } from "react/jsx-runtime";
 import { cva as v } from "class-variance-authority";
 import { Slot as y } from "@radix-ui/react-slot";
 //#region src/layout/sidebar.tsx
-var b = m.createContext(null);
-function x() {
-	let e = m.useContext(b);
+var b = {
+	title: "Sidebar",
+	description: "Displays the mobile sidebar.",
+	toggle: "Toggle sidebar"
+}, x = m.createContext(null);
+function S() {
+	let e = m.useContext(x);
 	if (!e) throw Error("useSidebar must be used within a SidebarProvider.");
 	return e;
 }
-function S(e) {
+function C(e) {
 	let [t, n] = m.useState(!1);
 	return m.useEffect(() => {
 		if (e !== void 0) return;
@@ -25,104 +30,127 @@ function S(e) {
 		return r(), t.addEventListener("change", r), () => t.removeEventListener("change", r);
 	}, [e]), e ?? t;
 }
-function C({ defaultOpen: t = !0, open: n, onOpenChange: r, defaultMobileOpen: i = !1, mobileOpen: a, onMobileOpenChange: o, isMobile: s, width: c = "16.25rem", mobileWidth: l = "16.25rem", iconWidth: u = "3rem", persistenceCookie: d = "sidebar_state", persistenceMaxAge: p = 604800, keyboardShortcut: h = "b", tooltipDelayDuration: _ = 0, className: v, style: y, children: x, ...C }) {
-	let w = S(s), [T, E] = m.useState(t), [D, O] = m.useState(i), k = n ?? T, A = a ?? D, j = m.useRef(k), M = m.useRef(A);
-	j.current = k, M.current = A;
-	let N = m.useCallback((e) => {
-		let t = typeof e == "function" ? e(j.current) : e;
-		j.current = t, n === void 0 && E(t), r?.(t), d && typeof document < "u" && (document.cookie = `${d}=${t}; path=/; max-age=${p}`);
+function w({ defaultOpen: t = !0, open: n, onOpenChange: r, defaultMobileOpen: i = !1, mobileOpen: a, onMobileOpenChange: o, isMobile: s, width: c = "16.25rem", mobileWidth: l = "16.25rem", iconWidth: u = "3rem", persistenceCookie: d = !1, persistenceMaxAge: p = 604800, keyboardShortcut: h = !1, tooltipDelayDuration: _ = 0, labels: v, className: y, style: S, children: w, ...T }) {
+	let E = C(s), D = m.useMemo(() => ({
+		...b,
+		...v
+	}), [v]), [O, k] = m.useState(t), [A, j] = m.useState(i), M = n ?? O, N = a ?? A, P = m.useRef(M), F = m.useRef(N);
+	P.current = M, F.current = N;
+	let I = m.useCallback((e) => {
+		let t = typeof e == "function" ? e(P.current) : e;
+		P.current = t, n === void 0 && k(t), r?.(t), d && typeof document < "u" && (document.cookie = `${d}=${t}; path=/; max-age=${p}`);
 	}, [
 		r,
 		n,
 		d,
 		p
-	]), P = m.useCallback((e) => {
-		let t = typeof e == "function" ? e(M.current) : e;
-		M.current = t, a === void 0 && O(t), o?.(t);
-	}, [a, o]), F = m.useCallback(() => {
-		if (w) {
-			P((e) => !e);
+	]), L = m.useCallback((e) => {
+		let t = typeof e == "function" ? e(F.current) : e;
+		F.current = t, a === void 0 && j(t), o?.(t);
+	}, [a, o]), R = m.useCallback(() => {
+		if (E) {
+			L((e) => !e);
 			return;
 		}
-		N((e) => !e);
+		I((e) => !e);
 	}, [
-		w,
-		N,
-		P
+		E,
+		I,
+		L
 	]);
 	m.useEffect(() => {
 		if (!h) return;
 		let e = (e) => {
-			e.key.toLowerCase() === h.toLowerCase() && (e.metaKey || e.ctrlKey) && (e.preventDefault(), F());
+			let t = e.target;
+			e.defaultPrevented || e.repeat || t instanceof window.HTMLElement && (t.isContentEditable || t.matches("input, textarea, select")) || e.key.toLowerCase() === h.toLowerCase() && (e.metaKey || e.ctrlKey) && (e.preventDefault(), R());
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
-	}, [h, F]);
-	let I = k ? "expanded" : "collapsed", L = m.useMemo(() => ({
-		state: I,
-		open: k,
-		setOpen: N,
-		openMobile: A,
-		setOpenMobile: P,
-		isMobile: w,
-		toggleSidebar: F
+	}, [h, R]);
+	let z = M ? "expanded" : "collapsed", B = m.useMemo(() => ({
+		state: z,
+		open: M,
+		setOpen: I,
+		openMobile: N,
+		setOpenMobile: L,
+		isMobile: E,
+		toggleSidebar: R,
+		labels: D
 	}), [
-		w,
-		k,
-		A,
+		E,
+		M,
 		N,
-		P,
+		D,
 		I,
-		F
-	]), R = {
-		...y,
+		L,
+		z,
+		R
+	]), V = {
+		...S,
 		"--sidebar-width": c,
 		"--sidebar-width-mobile": l,
 		"--sidebar-width-icon": u
 	};
-	return /* @__PURE__ */ g(b.Provider, {
-		value: L,
+	return /* @__PURE__ */ g(x.Provider, {
+		value: B,
 		children: /* @__PURE__ */ g(f, {
 			delayDuration: _,
 			children: /* @__PURE__ */ g("div", {
 				"data-slot": "sidebar-wrapper",
-				style: R,
-				className: e("group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex h-dvh w-full", v),
-				...C,
-				children: x
+				style: V,
+				className: e("group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex h-dvh w-full", y),
+				...T,
+				children: w
 			})
 		})
 	});
 }
-function w({ side: t = "left", variant: n = "sidebar", collapsible: r = "offcanvas", innerClassName: l, mobileForceMount: u, labels: d, className: f, children: p, ...m }) {
-	let { isMobile: h, state: v, openMobile: y, setOpenMobile: b } = x();
+function T({ side: t = "left", variant: n = "sidebar", collapsible: r = "offcanvas", desktopPosition: l = "viewport", innerClassName: u, mobileForceMount: d, labels: f, className: p, children: m, ...h }) {
+	let { isMobile: v, state: y, openMobile: b, setOpenMobile: x, labels: C } = S(), w = {
+		...C,
+		...f
+	};
 	return r === "none" ? /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar",
-		className: e("flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground", l, f),
-		...m,
-		children: p
-	}) : h ? /* @__PURE__ */ g(i, {
-		open: y,
-		onOpenChange: b,
+		className: e("flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground", u, p),
+		...h,
+		children: m
+	}) : v ? /* @__PURE__ */ g(i, {
+		open: b,
+		onOpenChange: x,
 		children: /* @__PURE__ */ _(a, {
 			"data-sidebar": "sidebar",
 			"data-slot": "sidebar",
 			"data-mobile": "true",
-			forceMount: u,
-			className: e("w-(--sidebar-width-mobile) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden", l, f),
+			forceMount: d,
+			className: e("w-(--sidebar-width-mobile) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden", u, p),
 			side: t,
-			...m,
+			...h,
 			children: [/* @__PURE__ */ _(s, {
 				className: "sr-only",
-				children: [/* @__PURE__ */ g(c, { children: d?.title ?? "Sidebar" }), /* @__PURE__ */ g(o, { children: d?.description ?? "Displays the mobile sidebar." })]
+				children: [/* @__PURE__ */ g(c, { children: w.title }), /* @__PURE__ */ g(o, { children: w.description })]
 			}), /* @__PURE__ */ g("div", {
 				className: "flex h-full w-full flex-col",
-				children: p
+				children: m
 			})]
+		})
+	}) : l === "container" ? /* @__PURE__ */ g("div", {
+		"data-sidebar": "sidebar",
+		"data-slot": "sidebar",
+		"data-state": y,
+		"data-collapsible": y === "collapsed" ? r : "",
+		"data-variant": n,
+		"data-side": t,
+		className: e("group peer hidden h-full w-(--sidebar-width) shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear md:flex", "data-[collapsible=offcanvas]:w-0 data-[collapsible=offcanvas]:overflow-hidden", "data-[collapsible=icon]:w-(--sidebar-width-icon)", n === "floating" || n === "inset" ? "m-2 rounded-lg border border-sidebar-border shadow-sm" : t === "left" ? "border-r border-sidebar-border" : "border-l border-sidebar-border", p),
+		...h,
+		children: /* @__PURE__ */ g("div", {
+			"data-slot": "sidebar-inner",
+			className: e("flex h-full w-full flex-col", u),
+			children: m
 		})
 	}) : /* @__PURE__ */ _("div", {
 		className: "group peer hidden text-sidebar-foreground md:block",
-		"data-state": v,
-		"data-collapsible": v === "collapsed" ? r : "",
+		"data-state": y,
+		"data-collapsible": y === "collapsed" ? r : "",
 		"data-variant": n,
 		"data-side": t,
 		"data-slot": "sidebar",
@@ -131,59 +159,61 @@ function w({ side: t = "left", variant: n = "sidebar", collapsible: r = "offcanv
 			className: e("relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear", "group-data-[collapsible=offcanvas]:w-0", "group-data-[side=right]:rotate-180", n === "floating" || n === "inset" ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)")
 		}), /* @__PURE__ */ g("div", {
 			"data-slot": "sidebar-container",
-			className: e("fixed inset-y-0 z-10 hidden h-dvh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex", t === "left" ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]" : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]", n === "floating" || n === "inset" ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l", f),
-			...m,
+			className: e("fixed inset-y-0 z-10 hidden h-dvh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex", t === "left" ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]" : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]", n === "floating" || n === "inset" ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]" : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l", p),
+			...h,
 			children: /* @__PURE__ */ g("div", {
 				"data-sidebar": "sidebar",
 				"data-slot": "sidebar-inner",
-				className: e("flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm", l),
-				children: p
+				className: e("flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm", u),
+				children: m
 			})
 		})]
 	});
 }
-function T({ className: n, onClick: r, children: i, ...a }) {
-	let { toggleSidebar: o } = x();
-	return /* @__PURE__ */ _(t, {
+function E({ className: n, onClick: r, children: i, type: a = "button", "aria-label": o, title: s, ...c }) {
+	let { labels: l, toggleSidebar: u } = S();
+	return /* @__PURE__ */ g(t, {
 		"data-sidebar": "trigger",
 		"data-slot": "sidebar-trigger",
 		variant: "ghost",
 		size: "icon",
+		type: a,
+		"aria-label": o ?? l.toggle,
+		title: s ?? l.toggle,
 		className: e("size-7", n),
 		onClick: (e) => {
-			r?.(e), e.defaultPrevented || o();
+			r?.(e), e.defaultPrevented || u();
 		},
-		...a,
-		children: [i ?? /* @__PURE__ */ g(h, {}), /* @__PURE__ */ g("span", {
-			className: "sr-only",
-			children: "Toggle Sidebar"
-		})]
+		...c,
+		children: i ?? /* @__PURE__ */ g(h, {})
 	});
 }
-function E({ className: n, ...r }) {
-	let { toggleSidebar: i } = x();
+function D({ className: n, type: r = "button", "aria-label": i, title: a, onClick: o, ...s }) {
+	let { labels: c, toggleSidebar: l } = S();
 	return /* @__PURE__ */ g(t, {
-		type: "button",
+		type: r,
 		variant: "ghost",
 		size: "none",
 		"data-sidebar": "rail",
 		"data-slot": "sidebar-rail",
-		"aria-label": "Toggle Sidebar",
+		"aria-label": i ?? c.toggle,
 		tabIndex: -1,
-		onClick: i,
-		title: "Toggle Sidebar",
+		onClick: (e) => {
+			o?.(e), e.defaultPrevented || l();
+		},
+		title: a ?? c.toggle,
 		className: e("absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex", "hover:bg-transparent hover:text-inherit dark:hover:bg-transparent", "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize", "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize", "group-data-[side=left]:-right-4 group-data-[side=right]:left-0", "hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full", "[[data-side=left][data-collapsible=offcanvas]_&]:-right-2", "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2", n),
-		...r
+		...s
 	});
 }
-function D({ className: t, ...n }) {
+function O({ className: t, ...n }) {
 	return /* @__PURE__ */ g("main", {
 		"data-slot": "sidebar-inset",
 		className: e("relative flex min-h-0 w-full flex-1 flex-col bg-background", "md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2", t),
 		...n
 	});
 }
-function O({ className: t, ...n }) {
+function k({ className: t, ...n }) {
 	return /* @__PURE__ */ g(r, {
 		"data-slot": "sidebar-input",
 		"data-sidebar": "input",
@@ -191,7 +221,7 @@ function O({ className: t, ...n }) {
 		...n
 	});
 }
-function k({ className: t, ...n }) {
+function A({ className: t, ...n }) {
 	return /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar-header",
 		"data-sidebar": "header",
@@ -199,7 +229,7 @@ function k({ className: t, ...n }) {
 		...n
 	});
 }
-function A({ className: t, ...n }) {
+function j({ className: t, ...n }) {
 	return /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar-footer",
 		"data-sidebar": "footer",
@@ -207,7 +237,7 @@ function A({ className: t, ...n }) {
 		...n
 	});
 }
-function j({ className: t, ...r }) {
+function M({ className: t, ...r }) {
 	return /* @__PURE__ */ g(n, {
 		"data-slot": "sidebar-separator",
 		"data-sidebar": "separator",
@@ -215,7 +245,7 @@ function j({ className: t, ...r }) {
 		...r
 	});
 }
-function M({ className: t, ...n }) {
+function N({ className: t, ...n }) {
 	return /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar-content",
 		"data-sidebar": "content",
@@ -223,7 +253,7 @@ function M({ className: t, ...n }) {
 		...n
 	});
 }
-function N({ className: t, ...n }) {
+function P({ className: t, ...n }) {
 	return /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar-group",
 		"data-sidebar": "group",
@@ -231,7 +261,7 @@ function N({ className: t, ...n }) {
 		...n
 	});
 }
-function P({ className: t, asChild: n = !1, ...r }) {
+function F({ className: t, asChild: n = !1, ...r }) {
 	return /* @__PURE__ */ g(n ? y : "div", {
 		"data-slot": "sidebar-group-label",
 		"data-sidebar": "group-label",
@@ -239,15 +269,16 @@ function P({ className: t, asChild: n = !1, ...r }) {
 		...r
 	});
 }
-function F({ className: t, asChild: n = !1, ...r }) {
+function I({ className: t, asChild: n = !1, type: r, ...i }) {
 	return /* @__PURE__ */ g(n ? y : "button", {
 		"data-slot": "sidebar-group-action",
 		"data-sidebar": "group-action",
+		type: n ? void 0 : r ?? "button",
 		className: e("absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0", "after:absolute after:-inset-2 md:after:hidden", "group-data-[collapsible=icon]:hidden", t),
-		...r
+		...i
 	});
 }
-function I({ className: t, ...n }) {
+function L({ className: t, ...n }) {
 	return /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar-group-content",
 		"data-sidebar": "group-content",
@@ -255,7 +286,7 @@ function I({ className: t, ...n }) {
 		...n
 	});
 }
-function L({ className: t, ...n }) {
+function R({ className: t, ...n }) {
 	return /* @__PURE__ */ g("ul", {
 		"data-slot": "sidebar-menu",
 		"data-sidebar": "menu",
@@ -263,7 +294,7 @@ function L({ className: t, ...n }) {
 		...n
 	});
 }
-function R({ className: t, ...n }) {
+function z({ className: t, ...n }) {
 	return /* @__PURE__ */ g("li", {
 		"data-slot": "sidebar-menu-item",
 		"data-sidebar": "menu-item",
@@ -271,7 +302,7 @@ function R({ className: t, ...n }) {
 		...n
 	});
 }
-var z = v("peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm font-normal text-foreground outline-none ring-sidebar-ring transition-[width,height,padding] [&>svg]:text-muted-foreground hover:bg-accent hover:text-foreground hover:[&>svg]:text-foreground focus-visible:ring-2 active:bg-accent/90 active:text-foreground active:[&>svg]:text-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-muted data-[active=true]:font-medium data-[active=true]:text-foreground data-[active=true]:[&>svg]:text-foreground data-[state=open]:hover:bg-accent data-[state=open]:hover:text-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0", {
+var B = v("peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm font-normal text-foreground outline-none ring-sidebar-ring transition-[width,height,padding] [&>svg]:text-muted-foreground hover:bg-accent hover:text-foreground hover:[&>svg]:text-foreground focus-visible:ring-2 active:bg-accent/90 active:text-foreground active:[&>svg]:text-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-muted data-[active=true]:font-medium data-[active=true]:text-foreground data-[active=true]:[&>svg]:text-foreground data-[state=open]:hover:bg-accent data-[state=open]:hover:text-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0", {
 	variants: {
 		variant: {
 			default: "",
@@ -288,45 +319,47 @@ var z = v("peer/menu-button flex w-full items-center gap-2 overflow-hidden round
 		size: "default"
 	}
 });
-function B({ asChild: t = !1, isActive: n = !1, variant: r = "default", size: i = "default", tooltip: a, className: o, onClick: s, ...c }) {
-	let l = t ? y : "button", { isMobile: f, state: h, setOpenMobile: v } = x(), b = m.useCallback((e) => {
-		s?.(e), t && f && !e.defaultPrevented && v(!1);
+function V({ asChild: t = !1, isActive: n = !1, variant: r = "default", size: i = "default", tooltip: a, className: o, onClick: s, type: c, ...l }) {
+	let f = t ? y : "button", { isMobile: h, state: v, setOpenMobile: b } = S(), x = m.useCallback((e) => {
+		s?.(e), t && h && !e.defaultPrevented && b(!1);
 	}, [
 		t,
-		f,
+		h,
 		s,
-		v
-	]), S = /* @__PURE__ */ g(l, {
+		b
+	]), C = /* @__PURE__ */ g(f, {
 		"data-slot": "sidebar-menu-button",
 		"data-sidebar": "menu-button",
 		"data-size": i,
 		"data-active": n,
-		className: e(z({
+		type: t ? void 0 : c ?? "button",
+		className: e(B({
 			variant: r,
 			size: i
 		}), o),
-		onClick: b,
-		...c
+		onClick: x,
+		...l
 	});
 	return a ? /* @__PURE__ */ _(u, { children: [/* @__PURE__ */ g(p, {
 		asChild: !0,
-		children: S
+		children: C
 	}), /* @__PURE__ */ g(d, {
 		side: "right",
 		align: "center",
-		hidden: h !== "collapsed" || f,
+		hidden: v !== "collapsed" || h,
 		...typeof a == "string" ? { children: a } : a
-	})] }) : S;
+	})] }) : C;
 }
-function V({ className: t, asChild: n = !1, showOnHover: r = !1, ...i }) {
+function H({ className: t, asChild: n = !1, showOnHover: r = !1, type: i, ...a }) {
 	return /* @__PURE__ */ g(n ? y : "button", {
 		"data-slot": "sidebar-menu-action",
 		"data-sidebar": "menu-action",
+		type: n ? void 0 : i ?? "button",
 		className: e("absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0", "after:absolute after:-inset-2 md:after:hidden", "peer-data-[size=sm]/menu-button:top-1 peer-data-[size=lg]/menu-button:top-2.5", "group-data-[collapsible=icon]:hidden", r && "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0", t),
-		...i
+		...a
 	});
 }
-function H({ className: t, ...n }) {
+function U({ className: t, ...n }) {
 	return /* @__PURE__ */ g("div", {
 		"data-slot": "sidebar-menu-badge",
 		"data-sidebar": "menu-badge",
@@ -334,7 +367,7 @@ function H({ className: t, ...n }) {
 		...n
 	});
 }
-function U({ className: t, showIcon: n = !1, width: r = "70%", ...i }) {
+function W({ className: t, showIcon: n = !1, width: r = "70%", ...i }) {
 	let a = { "--skeleton-width": r };
 	return /* @__PURE__ */ _("div", {
 		"data-slot": "sidebar-menu-skeleton",
@@ -351,7 +384,7 @@ function U({ className: t, showIcon: n = !1, width: r = "70%", ...i }) {
 		})]
 	});
 }
-function W({ className: t, ...n }) {
+function G({ className: t, ...n }) {
 	return /* @__PURE__ */ g("ul", {
 		"data-slot": "sidebar-menu-sub",
 		"data-sidebar": "menu-sub",
@@ -359,7 +392,7 @@ function W({ className: t, ...n }) {
 		...n
 	});
 }
-function G({ className: t, ...n }) {
+function K({ className: t, ...n }) {
 	return /* @__PURE__ */ g("li", {
 		"data-slot": "sidebar-menu-sub-item",
 		"data-sidebar": "menu-sub-item",
@@ -367,7 +400,7 @@ function G({ className: t, ...n }) {
 		...n
 	});
 }
-function K({ asChild: t = !1, size: n = "md", isActive: r = !1, className: i, ...a }) {
+function q({ asChild: t = !1, size: n = "md", isActive: r = !1, className: i, ...a }) {
 	return /* @__PURE__ */ g(t ? y : "a", {
 		"data-slot": "sidebar-menu-sub-button",
 		"data-sidebar": "menu-sub-button",
@@ -378,4 +411,4 @@ function K({ asChild: t = !1, size: n = "md", isActive: r = !1, className: i, ..
 	});
 }
 //#endregion
-export { w as Sidebar, M as SidebarContent, A as SidebarFooter, N as SidebarGroup, F as SidebarGroupAction, I as SidebarGroupContent, P as SidebarGroupLabel, k as SidebarHeader, O as SidebarInput, D as SidebarInset, L as SidebarMenu, V as SidebarMenuAction, H as SidebarMenuBadge, B as SidebarMenuButton, R as SidebarMenuItem, U as SidebarMenuSkeleton, W as SidebarMenuSub, K as SidebarMenuSubButton, G as SidebarMenuSubItem, C as SidebarProvider, E as SidebarRail, j as SidebarSeparator, T as SidebarTrigger, z as sidebarMenuButtonVariants, x as useSidebar };
+export { T as Sidebar, N as SidebarContent, j as SidebarFooter, P as SidebarGroup, I as SidebarGroupAction, L as SidebarGroupContent, F as SidebarGroupLabel, A as SidebarHeader, k as SidebarInput, O as SidebarInset, R as SidebarMenu, H as SidebarMenuAction, U as SidebarMenuBadge, V as SidebarMenuButton, z as SidebarMenuItem, W as SidebarMenuSkeleton, G as SidebarMenuSub, q as SidebarMenuSubButton, K as SidebarMenuSubItem, w as SidebarProvider, D as SidebarRail, M as SidebarSeparator, E as SidebarTrigger, B as sidebarMenuButtonVariants, S as useSidebar };

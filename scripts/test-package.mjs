@@ -64,11 +64,19 @@ const appShellTypes = readFileSync(new URL('../dist/layout/app-shell.d.ts', impo
 assert.match(appShellTypes, /density\?: AppSidebarDensity/u)
 assert.match(appShellTypes, /mobileSidebarOpen\?: boolean/u)
 assert.match(appShellTypes, /onExpandedChange\?: \(expanded: boolean\) => void/u)
-assert.match(appShellTypes, /disclosureBehavior\?: AppSidebarDisclosureBehavior/u)
+assert.match(appShellTypes, /groupTriggerBehavior\?: AppSidebarGroupTriggerBehavior/u)
+assert.doesNotMatch(appShellTypes, /AppSidebarDisclosureBehavior/u)
+
+for (const entry of ['../dist/app-shell.js', '../dist/layout/app-shell.js', '../dist/layout/sidebar.js']) {
+  const source = readFileSync(new URL(entry, import.meta.url), 'utf8')
+  assert.match(source, /^['"]use client['"];?/u, `${entry} must preserve its React Server Components boundary`)
+}
 
 const sidebarTypes = readFileSync(new URL('../dist/layout/sidebar.d.ts', import.meta.url), 'utf8')
 assert.match(sidebarTypes, /declare function SidebarProvider/u)
 assert.match(sidebarTypes, /collapsible\?: 'offcanvas' \| 'icon' \| 'none'/u)
+assert.match(sidebarTypes, /desktopPosition\?: 'viewport' \| 'container'/u)
+assert.match(sidebarTypes, /labels\?: SidebarLabels/u)
 
 const selectionActionBarTypes = readFileSync(
   new URL('../dist/compound/selection-action-bar.d.ts', import.meta.url),

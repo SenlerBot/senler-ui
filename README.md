@@ -35,7 +35,7 @@ source, so `npm publish` does not repeat the full workflow.
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.32.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.6.0.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -223,7 +223,7 @@ the roomier Senler navigation can opt into the `comfortable` density and the
 ```tsx
 <AppShell
   sidebarDensity="comfortable"
-  sidebarDisclosureBehavior="interactive"
+  sidebarGroupTriggerBehavior="toggle"
   sidebarWidth="16.25rem"
   sidebarMobileWidth="16.25rem"
   sidebarTop={<ProjectSelector />}
@@ -236,6 +236,11 @@ the roomier Senler navigation can opt into the `comfortable` density and the
   <Outlet />
 </AppShell>
 ```
+
+Navigation groups use `select` behavior by default. Set
+`sidebarGroupTriggerBehavior="toggle"` when parent rows must expand and
+collapse. A parent that also has an `href` renders separate navigation and
+disclosure controls, so clicking the arrow never causes navigation.
 
 Navigation items support nested disclosure, controlled expansion, plain or
 badge counters, trailing status controls, AI/data attributes, and per-item
@@ -262,8 +267,12 @@ const navigation = [{
 }];
 ```
 
-Interactive disclosure is opt-in. The default `legacy` behavior preserves the
-click and navigation semantics of existing consumers.
+The default `select` behavior treats parent rows as ordinary navigation
+controls. Use `groupTriggerBehavior="toggle"` on `AppSidebar` (or the
+`sidebarGroupTriggerBehavior` prop shown above on `AppShell`) for disclosure.
+In 0.6, these semantic props replace the ambiguous
+`legacy`/`interactive` disclosure API; disclosure icons are owned by toggle
+controls and no longer configured separately.
 
 `mobileSidebarOpen`, `defaultMobileSidebarOpen`, and
 `onMobileSidebarOpenChange` allow controlled mobile navigation. Use
@@ -277,9 +286,10 @@ For a staged migration of an existing product sidebar, the same entrypoint
 exports the low-level `SidebarProvider`, `Sidebar`, `SidebarInset`, header,
 footer, group, menu, submenu, trigger, rail, badge, skeleton, and input
 primitives. They support controlled desktop/mobile state, `offcanvas`, `icon`,
-and non-collapsible modes, configurable widths, an optional persistence cookie,
-and a configurable keyboard shortcut. Product-specific mobile gestures and
-native back handling stay in the application and connect through
+and non-collapsible modes, viewport or container positioning, configurable
+widths, localized accessible labels,
+an opt-in persistence cookie, and an opt-in keyboard shortcut. Product-specific
+mobile gestures and native back handling stay in the application and connect through
 `useSidebar().setOpenMobile`.
 
 `SelectionActionBar` also supports `placement="viewport-bottom"` for a fixed

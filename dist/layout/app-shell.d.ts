@@ -3,7 +3,7 @@ export type AppShellIcon = React.ComponentType<{
     className?: string;
 }>;
 export type AppSidebarDensity = 'standard' | 'comfortable';
-export type AppSidebarDisclosureBehavior = 'legacy' | 'interactive';
+export type AppSidebarGroupTriggerBehavior = 'select' | 'toggle';
 export interface AppShellNavigationItemAttributes {
     'aria-label'?: string;
     [attribute: `data-${string}`]: string | number | boolean | undefined;
@@ -62,13 +62,15 @@ export interface AppShellRenderLinkProps {
     title?: string;
     onClick?: React.MouseEventHandler<HTMLAnchorElement>;
     'aria-current'?: 'page';
-    'aria-expanded'?: boolean;
     [attribute: `data-${string}`]: string | number | boolean | undefined;
 }
 export type AppShellRenderLink = (props: AppShellRenderLinkProps) => React.ReactNode;
 export interface AppShellLabels {
     navigation?: string;
+    navigationDescription?: string;
     openSidebar?: string;
+    expandNavigationGroup?: string;
+    collapseNavigationGroup?: string;
 }
 export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
     navigation: AppShellNavigationGroup[];
@@ -91,8 +93,7 @@ export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
     groupLabelClassName?: string;
     footerClassName?: string;
     itemClassName?: AppSidebarItemClassName;
-    showDisclosureIcons?: boolean;
-    disclosureBehavior?: AppSidebarDisclosureBehavior;
+    groupTriggerBehavior?: AppSidebarGroupTriggerBehavior;
 }
 export interface AppShellHeaderRenderState {
     mobileSidebarOpen: boolean;
@@ -136,12 +137,11 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
     sidebarGroupLabelClassName?: string;
     sidebarFooterClassName?: string;
     sidebarItemClassName?: AppSidebarItemClassName;
-    sidebarShowDisclosureIcons?: boolean;
-    sidebarDisclosureBehavior?: AppSidebarDisclosureBehavior;
+    sidebarGroupTriggerBehavior?: AppSidebarGroupTriggerBehavior;
     sidebarClassName?: string;
     headerClassName?: string;
     mainClassName?: string;
 }
-export declare function AppSidebar({ className, mobile, density, width, mobileWidth, style, ...props }: AppSidebarProps): React.JSX.Element;
+export declare function AppSidebar({ density, width, mobileWidth, mobile, labels, ...props }: AppSidebarProps): React.JSX.Element;
 export declare function AppHeader({ title, breadcrumbs, actions, renderLink, labels, onSidebarOpen, className, ...props }: AppHeaderProps): React.JSX.Element;
-export declare function AppShell({ navigation, currentPath, renderLink, brand, sidebarHeaderActions, sidebarTop, sidebarFooter, headerTitle, headerBreadcrumbs, headerActions, children, closeMobileOnPathChange, mobileSidebarOpen: mobileSidebarOpenProp, defaultMobileSidebarOpen, onMobileSidebarOpenChange, renderHeader, labels, sidebarDensity, sidebarWidth, sidebarMobileWidth, sidebarHeaderClassName, sidebarTopClassName, sidebarNavigationClassName, sidebarGroupClassName, sidebarGroupLabelClassName, sidebarFooterClassName, sidebarItemClassName, sidebarShowDisclosureIcons, sidebarDisclosureBehavior, sidebarClassName, headerClassName, mainClassName, className, ...props }: AppShellProps): React.JSX.Element;
+export declare function AppShell({ navigation, currentPath, renderLink, brand, sidebarHeaderActions, sidebarTop, sidebarFooter, headerTitle, headerBreadcrumbs, headerActions, children, closeMobileOnPathChange, mobileSidebarOpen: mobileSidebarOpenProp, defaultMobileSidebarOpen, onMobileSidebarOpenChange, renderHeader, labels, sidebarDensity, sidebarWidth, sidebarMobileWidth, sidebarHeaderClassName, sidebarTopClassName, sidebarNavigationClassName, sidebarGroupClassName, sidebarGroupLabelClassName, sidebarFooterClassName, sidebarItemClassName, sidebarGroupTriggerBehavior, sidebarClassName, headerClassName, mainClassName, className, ...props }: AppShellProps): React.JSX.Element;

@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -40,7 +42,20 @@ export interface SidebarContextValue {
   setOpenMobile: SidebarStateSetter;
   isMobile: boolean;
   toggleSidebar: () => void;
+  labels: Required<SidebarLabels>;
 }
+
+export interface SidebarLabels {
+  title?: string;
+  description?: string;
+  toggle?: string;
+}
+
+const defaultSidebarLabels: Required<SidebarLabels> = {
+  title: 'Sidebar',
+  description: 'Displays the mobile sidebar.',
+  toggle: 'Toggle sidebar',
+};
 
 const SidebarContext = React.createContext<SidebarContextValue | null>(null);
 
@@ -87,6 +102,7 @@ export interface SidebarProviderProps extends React.ComponentProps<'div'> {
   persistenceMaxAge?: number;
   keyboardShortcut?: string | false;
   tooltipDelayDuration?: number;
+  labels?: SidebarLabels;
 }
 
 export function SidebarProvider({
@@ -100,16 +116,21 @@ export function SidebarProvider({
   width = '16.25rem',
   mobileWidth = '16.25rem',
   iconWidth = '3rem',
-  persistenceCookie = 'sidebar_state',
+  persistenceCookie = false,
   persistenceMaxAge = 60 * 60 * 24 * 7,
-  keyboardShortcut = 'b',
+  keyboardShortcut = false,
   tooltipDelayDuration = 0,
+  labels,
   className,
   style,
   children,
   ...props
 }: SidebarProviderProps) {
   const isMobile = useSidebarMobileState(isMobileOverride);
+  const resolvedLabels = React.useMemo(() => ({
+    ...defaultSidebarLabels,
+    ...labels,
+  }), [labels]);
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
   const [uncontrolledMobileOpen, setUncontrolledMobileOpen] = React.useState(
     defaultMobileOpen,
@@ -156,6 +177,18 @@ export function SidebarProvider({
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (
+        event.defaultPrevented ||
+        event.repeat ||
+        (target instanceof window.HTMLElement && (
+          target.isContentEditable ||
+          target.matches('input, textarea, select')
+        ))
+      ) {
+        return;
+      }
+
       if (
         event.key.toLowerCase() === keyboardShortcut.toLowerCase() &&
         (event.metaKey || event.ctrlKey)
@@ -178,7 +211,8 @@ export function SidebarProvider({
     setOpenMobile,
     isMobile,
     toggleSidebar,
-  }), [isMobile, open, openMobile, setOpen, setOpenMobile, state, toggleSidebar]);
+    labels: resolvedLabels,
+  }), [isMobile, open, openMobile, resolvedLabels, setOpen, setOpenMobile, state, toggleSidebar]);
   const sidebarStyle: SidebarCssProperties = {
     ...style,
     '--sidebar-width': width,
@@ -209,18 +243,17 @@ export interface SidebarProps extends React.ComponentProps<'div'> {
   side?: 'left' | 'right';
   variant?: 'sidebar' | 'floating' | 'inset';
   collapsible?: 'offcanvas' | 'icon' | 'none';
+  desktopPosition?: 'viewport' | 'container';
   innerClassName?: string;
   mobileForceMount?: true;
-  labels?: {
-    title?: string;
-    description?: string;
-  };
+  labels?: Pick<SidebarLabels, 'title' | 'description'>;
 }
 
 export function Sidebar({
   side = 'left',
   variant = 'sidebar',
   collapsible = 'offcanvas',
+  desktopPosition = 'viewport',
   innerClassName,
   mobileForceMount,
   labels,
@@ -228,7 +261,14 @@ export function Sidebar({
   children,
   ...props
 }: SidebarProps) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const {
+    isMobile,
+    state,
+    openMobile,
+    setOpenMobile,
+    labels: providerLabels,
+  } = useSidebar();
+  const resolvedLabels = { ...providerLabels, ...labels };
 
   if (collapsible === 'none') {
     return (
@@ -263,14 +303,44 @@ export function Sidebar({
           {...props}
         >
           <SheetHeader className='sr-only'>
-            <SheetTitle>{labels?.title ?? 'Sidebar'}</SheetTitle>
-            <SheetDescription>
-              {labels?.description ?? 'Displays the mobile sidebar.'}
-            </SheetDescription>
+            <SheetTitle>{resolvedLabels.title}</SheetTitle>
+            <SheetDescription>{resolvedLabels.description}</SheetDescription>
           </SheetHeader>
           <div className='flex h-full w-full flex-col'>{children}</div>
         </SheetContent>
       </Sheet>
+    );
+  }
+
+  if (desktopPosition === 'container') {
+    return (
+      <div
+        data-sidebar='sidebar'
+        data-slot='sidebar'
+        data-state={state}
+        data-collapsible={state === 'collapsed' ? collapsible : ''}
+        data-variant={variant}
+        data-side={side}
+        className={cn(
+          'group peer hidden h-full w-(--sidebar-width) shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear md:flex',
+          'data-[collapsible=offcanvas]:w-0 data-[collapsible=offcanvas]:overflow-hidden',
+          'data-[collapsible=icon]:w-(--sidebar-width-icon)',
+          variant === 'floating' || variant === 'inset'
+            ? 'm-2 rounded-lg border border-sidebar-border shadow-sm'
+            : side === 'left'
+              ? 'border-r border-sidebar-border'
+              : 'border-l border-sidebar-border',
+          className,
+        )}
+        {...props}
+      >
+        <div
+          data-slot='sidebar-inner'
+          className={cn('flex h-full w-full flex-col', innerClassName)}
+        >
+          {children}
+        </div>
+      </div>
     );
   }
 
@@ -327,9 +397,12 @@ export function SidebarTrigger({
   className,
   onClick,
   children,
+  type = 'button',
+  'aria-label': ariaLabel,
+  title,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+  const { labels, toggleSidebar } = useSidebar();
 
   return (
     <Button
@@ -337,6 +410,9 @@ export function SidebarTrigger({
       data-slot='sidebar-trigger'
       variant='ghost'
       size='icon'
+      type={type}
+      aria-label={ariaLabel ?? labels.toggle}
+      title={title ?? labels.toggle}
       className={cn('size-7', className)}
       onClick={(event) => {
         onClick?.(event);
@@ -347,25 +423,36 @@ export function SidebarTrigger({
       {...props}
     >
       {children ?? <PanelLeftIcon />}
-      <span className='sr-only'>Toggle Sidebar</span>
     </Button>
   );
 }
 
-export function SidebarRail({ className, ...props }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+export function SidebarRail({
+  className,
+  type = 'button',
+  'aria-label': ariaLabel,
+  title,
+  onClick,
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  const { labels, toggleSidebar } = useSidebar();
 
   return (
     <Button
-      type='button'
+      type={type}
       variant='ghost'
       size='none'
       data-sidebar='rail'
       data-slot='sidebar-rail'
-      aria-label='Toggle Sidebar'
+      aria-label={ariaLabel ?? labels.toggle}
       tabIndex={-1}
-      onClick={toggleSidebar}
-      title='Toggle Sidebar'
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) {
+          toggleSidebar();
+        }
+      }}
+      title={title ?? labels.toggle}
       className={cn(
         'absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex',
         'hover:bg-transparent hover:text-inherit dark:hover:bg-transparent',
@@ -464,6 +551,7 @@ export function SidebarGroupLabel({
 export function SidebarGroupAction({
   className,
   asChild = false,
+  type,
   ...props
 }: React.ComponentProps<'button'> & { asChild?: boolean }) {
   const Comp = asChild ? Slot : 'button';
@@ -471,6 +559,7 @@ export function SidebarGroupAction({
     <Comp
       data-slot='sidebar-group-action'
       data-sidebar='group-action'
+      type={asChild ? undefined : type ?? 'button'}
       className={cn(
         'absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
         'after:absolute after:-inset-2 md:after:hidden',
@@ -520,6 +609,7 @@ export function SidebarMenuButton({
   tooltip,
   className,
   onClick,
+  type,
   ...props
 }: React.ComponentProps<'button'> & {
   asChild?: boolean;
@@ -540,6 +630,7 @@ export function SidebarMenuButton({
       data-sidebar='menu-button'
       data-size={size}
       data-active={isActive}
+      type={asChild ? undefined : type ?? 'button'}
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
       onClick={handleClick}
       {...props}
@@ -568,6 +659,7 @@ export function SidebarMenuAction({
   className,
   asChild = false,
   showOnHover = false,
+  type,
   ...props
 }: React.ComponentProps<'button'> & { asChild?: boolean; showOnHover?: boolean }) {
   const Comp = asChild ? Slot : 'button';
@@ -575,6 +667,7 @@ export function SidebarMenuAction({
     <Comp
       data-slot='sidebar-menu-action'
       data-sidebar='menu-action'
+      type={asChild ? undefined : type ?? 'button'}
       className={cn(
         'absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
         'after:absolute after:-inset-2 md:after:hidden',

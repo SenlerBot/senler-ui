@@ -14,6 +14,12 @@ export interface SidebarContextValue {
     setOpenMobile: SidebarStateSetter;
     isMobile: boolean;
     toggleSidebar: () => void;
+    labels: Required<SidebarLabels>;
+}
+export interface SidebarLabels {
+    title?: string;
+    description?: string;
+    toggle?: string;
 }
 export declare function useSidebar(): SidebarContextValue;
 export interface SidebarProviderProps extends React.ComponentProps<'div'> {
@@ -31,22 +37,21 @@ export interface SidebarProviderProps extends React.ComponentProps<'div'> {
     persistenceMaxAge?: number;
     keyboardShortcut?: string | false;
     tooltipDelayDuration?: number;
+    labels?: SidebarLabels;
 }
-export declare function SidebarProvider({ defaultOpen, open: openProp, onOpenChange, defaultMobileOpen, mobileOpen: mobileOpenProp, onMobileOpenChange, isMobile: isMobileOverride, width, mobileWidth, iconWidth, persistenceCookie, persistenceMaxAge, keyboardShortcut, tooltipDelayDuration, className, style, children, ...props }: SidebarProviderProps): React.JSX.Element;
+export declare function SidebarProvider({ defaultOpen, open: openProp, onOpenChange, defaultMobileOpen, mobileOpen: mobileOpenProp, onMobileOpenChange, isMobile: isMobileOverride, width, mobileWidth, iconWidth, persistenceCookie, persistenceMaxAge, keyboardShortcut, tooltipDelayDuration, labels, className, style, children, ...props }: SidebarProviderProps): React.JSX.Element;
 export interface SidebarProps extends React.ComponentProps<'div'> {
     side?: 'left' | 'right';
     variant?: 'sidebar' | 'floating' | 'inset';
     collapsible?: 'offcanvas' | 'icon' | 'none';
+    desktopPosition?: 'viewport' | 'container';
     innerClassName?: string;
     mobileForceMount?: true;
-    labels?: {
-        title?: string;
-        description?: string;
-    };
+    labels?: Pick<SidebarLabels, 'title' | 'description'>;
 }
-export declare function Sidebar({ side, variant, collapsible, innerClassName, mobileForceMount, labels, className, children, ...props }: SidebarProps): React.JSX.Element;
-export declare function SidebarTrigger({ className, onClick, children, ...props }: React.ComponentProps<typeof Button>): React.JSX.Element;
-export declare function SidebarRail({ className, ...props }: React.ComponentProps<typeof Button>): React.JSX.Element;
+export declare function Sidebar({ side, variant, collapsible, desktopPosition, innerClassName, mobileForceMount, labels, className, children, ...props }: SidebarProps): React.JSX.Element;
+export declare function SidebarTrigger({ className, onClick, children, type, 'aria-label': ariaLabel, title, ...props }: React.ComponentProps<typeof Button>): React.JSX.Element;
+export declare function SidebarRail({ className, type, 'aria-label': ariaLabel, title, onClick, ...props }: React.ComponentProps<typeof Button>): React.JSX.Element;
 export declare function SidebarInset({ className, ...props }: React.ComponentProps<'main'>): React.JSX.Element;
 export declare function SidebarInput({ className, ...props }: React.ComponentProps<typeof Input>): React.JSX.Element;
 export declare function SidebarHeader({ className, ...props }: React.ComponentProps<'div'>): React.JSX.Element;
@@ -57,7 +62,7 @@ export declare function SidebarGroup({ className, ...props }: React.ComponentPro
 export declare function SidebarGroupLabel({ className, asChild, ...props }: React.ComponentProps<'div'> & {
     asChild?: boolean;
 }): React.JSX.Element;
-export declare function SidebarGroupAction({ className, asChild, ...props }: React.ComponentProps<'button'> & {
+export declare function SidebarGroupAction({ className, asChild, type, ...props }: React.ComponentProps<'button'> & {
     asChild?: boolean;
 }): React.JSX.Element;
 export declare function SidebarGroupContent({ className, ...props }: React.ComponentProps<'div'>): React.JSX.Element;
@@ -67,12 +72,12 @@ declare const sidebarMenuButtonVariants: (props?: ({
     variant?: "default" | "outline" | null | undefined;
     size?: "default" | "sm" | "lg" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
-export declare function SidebarMenuButton({ asChild, isActive, variant, size, tooltip, className, onClick, ...props }: React.ComponentProps<'button'> & {
+export declare function SidebarMenuButton({ asChild, isActive, variant, size, tooltip, className, onClick, type, ...props }: React.ComponentProps<'button'> & {
     asChild?: boolean;
     isActive?: boolean;
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
 } & VariantProps<typeof sidebarMenuButtonVariants>): React.JSX.Element;
-export declare function SidebarMenuAction({ className, asChild, showOnHover, ...props }: React.ComponentProps<'button'> & {
+export declare function SidebarMenuAction({ className, asChild, showOnHover, type, ...props }: React.ComponentProps<'button'> & {
     asChild?: boolean;
     showOnHover?: boolean;
 }): React.JSX.Element;

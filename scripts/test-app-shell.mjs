@@ -98,7 +98,8 @@ const loaded = await loadAppShell(mode)
 try {
   const standardMarkup = renderSidebar(loaded.appShell)
   assert.match(standardMarkup, /data-density="standard"/u)
-  assert.match(standardMarkup, /\bw-64\b/u)
+  assert.match(standardMarkup, /--sidebar-width:16rem/u)
+  assert.doesNotMatch(standardMarkup, /\bfixed\b/u)
   assert.match(standardMarkup, /\bh-8\b/u)
   assert.doesNotMatch(standardMarkup, /rounded-\[10px\]/u)
   assert.match(standardMarkup, /Active agents/u)
@@ -106,7 +107,7 @@ try {
 
   const comfortableMarkup = renderSidebar(loaded.appShell, {
     density: 'comfortable',
-    disclosureBehavior: 'interactive',
+    groupTriggerBehavior: 'toggle',
     width: '16.25rem',
     itemClassName: (_item, state) => `depth-${state.depth}`,
     headerClassName: 'cabinet-header',
@@ -115,7 +116,7 @@ try {
     footer: React.createElement('span', null, 'Limits'),
   })
   assert.match(comfortableMarkup, /data-density="comfortable"/u)
-  assert.match(comfortableMarkup, /--app-sidebar-width:16\.25rem/u)
+  assert.match(comfortableMarkup, /--sidebar-width:16\.25rem/u)
   assert.match(comfortableMarkup, /rounded-\[10px\]/u)
   assert.match(comfortableMarkup, /\bh-9\b/u)
   assert.match(comfortableMarkup, /\bdepth-0\b/u)
@@ -130,6 +131,10 @@ try {
   assert.match(comfortableMarkup, /aria-expanded="true"/u)
   assert.match(comfortableMarkup, />12</u)
   assert.match(comfortableMarkup, /data-testid="status"/u)
+
+  const mobileMarkup = renderSidebar(loaded.appShell, { mobile: true })
+  assert.match(mobileMarkup, /data-mobile="true"/u)
+  assert.match(mobileMarkup, /--sidebar-width:18rem/u)
 
   const shellMarkup = renderToStaticMarkup(
     React.createElement(
@@ -195,6 +200,7 @@ try {
   assert.match(primitiveMarkup, /data-state="collapsed"/u)
   assert.match(primitiveMarkup, /data-collapsible="icon"/u)
   assert.match(primitiveMarkup, /data-slot="sidebar-menu-button"/u)
+  assert.match(primitiveMarkup, /type="button"/u)
   assert.match(primitiveMarkup, /data-active="true"/u)
   assert.match(primitiveMarkup, /data-slot="sidebar-inset"/u)
 
