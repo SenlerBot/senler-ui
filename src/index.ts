@@ -53,6 +53,7 @@ export * from './layout/field';
 export * from './layout/page-list-layout';
 export * from './layout/page-toolbar';
 export * from './layout/section';
+export * from './layout/sidebar';
 export * from './lib/ai-auto-attributes';
 export * from './lib/ai-reveal-context';
 export * from './frontend-release';

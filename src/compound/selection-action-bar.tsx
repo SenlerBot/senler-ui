@@ -28,6 +28,7 @@ export interface SelectionActionBarProps {
   children?: React.ReactNode;
   controlsDisabled?: boolean;
   minTop?: number;
+  placement?: 'anchor' | 'viewport-bottom';
   className?: string;
   toolbarClassName?: string;
   actionsClassName?: string;
@@ -45,6 +46,7 @@ function SelectionActionBar({
   children,
   controlsDisabled,
   minTop = 0,
+  placement = 'anchor',
   className,
   toolbarClassName,
   actionsClassName,
@@ -71,7 +73,7 @@ function SelectionActionBar({
     const updateFixedRect = () => {
       const rect = anchorElement.getBoundingClientRect();
       const nextRect = {
-        top: Math.max(rect.top, minTop),
+        top: placement === 'anchor' ? Math.max(rect.top, minTop) : 0,
         left: rect.left,
         width: rect.width,
       };
@@ -103,10 +105,10 @@ function SelectionActionBar({
       window.removeEventListener('resize', updateFixedRect);
       window.removeEventListener('scroll', updateFixedRect, true);
     };
-  }, [isOpen, minTop]);
+  }, [isOpen, minTop, placement]);
 
   React.useLayoutEffect(() => {
-    if (!isOpen) {
+    if (!isOpen || placement === 'viewport-bottom') {
       setToolbarHeight(null);
       return;
     }
@@ -140,13 +142,17 @@ function SelectionActionBar({
       resizeObserver?.disconnect();
       window.removeEventListener('resize', updateToolbarHeight);
     };
-  }, [fixedRect?.width, isOpen]);
+  }, [fixedRect?.width, isOpen, placement]);
 
   return (
     <div
       ref={anchorRef}
       className={cn('min-h-10', className)}
-      style={isOpen && toolbarHeight ? { minHeight: toolbarHeight } : undefined}
+      style={
+        isOpen && toolbarHeight && placement === 'anchor'
+          ? { minHeight: toolbarHeight }
+          : undefined
+      }
     >
       {isOpen && fixedRect ? (
         <div
@@ -156,9 +162,13 @@ function SelectionActionBar({
             toolbarClassName,
           )}
           style={{
-            top: fixedRect.top,
             left: fixedRect.left,
             width: fixedRect.width,
+            ...(placement === 'viewport-bottom'
+              ? {
+                  bottom: 'calc(1rem + var(--app-safe-area-bottom, 0px))',
+                }
+              : { top: fixedRect.top }),
           }}
         >
           <div className="flex min-w-0 items-center gap-2">
@@ -203,7 +213,7 @@ function SelectionActionBar({
           </div>
         </div>
       ) : null}
-      {isOpen ? null : children}
+      {!isOpen || placement === 'viewport-bottom' ? children : null}
     </div>
   );
 }

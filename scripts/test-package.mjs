@@ -29,9 +29,14 @@ for (const [exportName, exportValue] of Object.entries(packageJson.exports)) {
 }
 
 const ui = await import('../dist/index.js')
+const appShell = await import('../dist/app-shell.js')
 const bridge = await import('../dist/bridge.js')
 assert.ok(ui.Button, 'Button must be exported from the package root')
 assert.ok(ui.Input, 'Input must be exported from the package root')
+assert.equal(typeof appShell.AppShell, 'function')
+assert.equal(typeof appShell.AppSidebar, 'function')
+assert.equal(typeof appShell.SidebarProvider, 'function')
+assert.equal(typeof appShell.Sidebar, 'function')
 assert.equal(typeof bridge.createSenlerBridgeClient, 'function')
 assert.equal(typeof bridge.createSenlerBridgeHost, 'function')
 assert.deepEqual(
@@ -54,5 +59,21 @@ assert.deepEqual(
 const buttonHtml = renderToStaticMarkup(createElement(ui.Button, null, 'Save'))
 assert.match(buttonHtml, /^<button/u)
 assert.match(buttonHtml, />Save<\/button>$/u)
+
+const appShellTypes = readFileSync(new URL('../dist/layout/app-shell.d.ts', import.meta.url), 'utf8')
+assert.match(appShellTypes, /density\?: AppSidebarDensity/u)
+assert.match(appShellTypes, /mobileSidebarOpen\?: boolean/u)
+assert.match(appShellTypes, /onExpandedChange\?: \(expanded: boolean\) => void/u)
+assert.match(appShellTypes, /disclosureBehavior\?: AppSidebarDisclosureBehavior/u)
+
+const sidebarTypes = readFileSync(new URL('../dist/layout/sidebar.d.ts', import.meta.url), 'utf8')
+assert.match(sidebarTypes, /declare function SidebarProvider/u)
+assert.match(sidebarTypes, /collapsible\?: 'offcanvas' \| 'icon' \| 'none'/u)
+
+const selectionActionBarTypes = readFileSync(
+  new URL('../dist/compound/selection-action-bar.d.ts', import.meta.url),
+  'utf8',
+)
+assert.match(selectionActionBarTypes, /placement\?: 'anchor' \| 'viewport-bottom'/u)
 
 console.log('package exports and component smoke: ok')

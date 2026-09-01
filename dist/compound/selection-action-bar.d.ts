@@ -11,9 +11,10 @@ export interface SelectionActionBarProps {
     children?: React.ReactNode;
     controlsDisabled?: boolean;
     minTop?: number;
+    placement?: 'anchor' | 'viewport-bottom';
     className?: string;
     toolbarClassName?: string;
     actionsClassName?: string;
 }
-declare function SelectionActionBar({ selectedCount, selectedCountLabel, selectAllChecked, selectAllLabel, clearLabel, onSelectAllChange, onClear, actions, children, controlsDisabled, minTop, className, toolbarClassName, actionsClassName, }: SelectionActionBarProps): React.JSX.Element;
+declare function SelectionActionBar({ selectedCount, selectedCountLabel, selectAllChecked, selectAllLabel, clearLabel, onSelectAllChange, onClear, actions, children, controlsDisabled, minTop, placement, className, toolbarClassName, actionsClassName, }: SelectionActionBarProps): React.JSX.Element;
 export { SelectionActionBar };

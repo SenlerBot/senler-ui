@@ -35,7 +35,7 @@ source, so `npm publish` does not repeat the full workflow.
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.31.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.5.32.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -215,6 +215,76 @@ export function Layout() {
   );
 }
 ```
+
+The default `standard` density remains unchanged. Product cabinets that need
+the roomier Senler navigation can opt into the `comfortable` density and the
+16.25 rem desktop/mobile widths without replacing `AppShell`:
+
+```tsx
+<AppShell
+  sidebarDensity="comfortable"
+  sidebarDisclosureBehavior="interactive"
+  sidebarWidth="16.25rem"
+  sidebarMobileWidth="16.25rem"
+  sidebarTop={<ProjectSelector />}
+  sidebarFooter={<ProjectLimits />}
+  navigation={navigation}
+  currentPath={location.pathname}
+  renderLink={renderLink}
+  brand={<SenlerBrand />}
+>
+  <Outlet />
+</AppShell>
+```
+
+Navigation items support nested disclosure, controlled expansion, plain or
+badge counters, trailing status controls, AI/data attributes, and per-item
+classes. Keep permissions and project state in the application and pass the
+resulting navigation model to the library:
+
+```tsx
+const navigation = [{
+  id: 'project',
+  items: [{
+    id: 'tools',
+    label: 'Tools',
+    defaultOpen: true,
+    attributes: { 'data-ai-context-id': 'cabinet.project-tools' },
+    items: visibleTools,
+  }, {
+    id: 'dialogs',
+    label: 'Dialogs',
+    href: '/dialogs',
+    badge: unreadDialogs,
+    badgeAppearance: 'plain',
+    trailing: connectionStatus,
+  }],
+}];
+```
+
+Interactive disclosure is opt-in. The default `legacy` behavior preserves the
+click and navigation semantics of existing consumers.
+
+`mobileSidebarOpen`, `defaultMobileSidebarOpen`, and
+`onMobileSidebarOpenChange` allow controlled mobile navigation. Use
+`renderHeader` when the product owns a custom header; it receives open, close,
+and toggle controls for the mobile drawer. Styling hooks for the
+header, top slot, navigation, groups, footer, and items are additive, so
+applications can migrate one region at a time while preserving the existing
+layout.
+
+For a staged migration of an existing product sidebar, the same entrypoint
+exports the low-level `SidebarProvider`, `Sidebar`, `SidebarInset`, header,
+footer, group, menu, submenu, trigger, rail, badge, skeleton, and input
+primitives. They support controlled desktop/mobile state, `offcanvas`, `icon`,
+and non-collapsible modes, configurable widths, an optional persistence cookie,
+and a configurable keyboard shortcut. Product-specific mobile gestures and
+native back handling stay in the application and connect through
+`useSidebar().setOpenMobile`.
+
+`SelectionActionBar` also supports `placement="viewport-bottom"` for a fixed
+bulk-action toolbar that stays above the application's safe-area inset while
+the selected rows remain visible.
 
 Code highlighting is available from a separate entrypoint:
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  ChevronDownIcon,
   ChevronRightIcon,
   MenuIcon,
 } from 'lucide-react';
@@ -17,26 +18,56 @@ import { cn } from '../lib/utils';
 
 export type AppShellIcon = React.ComponentType<{ className?: string }>;
 
+export type AppSidebarDensity = 'standard' | 'comfortable';
+export type AppSidebarDisclosureBehavior = 'legacy' | 'interactive';
+
+export interface AppShellNavigationItemAttributes {
+  'aria-label'?: string;
+  [attribute: `data-${string}`]: string | number | boolean | undefined;
+}
+
+export interface AppSidebarNavigationItemState {
+  active: boolean;
+  depth: number;
+  expanded: boolean;
+  hasChildren: boolean;
+}
+
+export type AppSidebarItemClassName =
+  | string
+  | ((item: AppShellNavigationItem, state: AppSidebarNavigationItemState) => string | undefined);
+
 export interface AppShellNavigationItem {
   id: string;
   label: React.ReactNode;
   href?: string;
   icon?: AppShellIcon;
   badge?: React.ReactNode;
+  badgeAppearance?: 'badge' | 'plain';
+  trailing?: React.ReactNode;
   disabled?: boolean;
   exact?: boolean;
   active?: boolean;
   match?: string | string[] | ((currentPath: string) => boolean);
   items?: AppShellNavigationItem[];
   defaultOpen?: boolean;
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
   onSelect?: () => void;
   title?: string;
+  attributes?: AppShellNavigationItemAttributes;
+  className?: string;
+  childrenClassName?: string;
 }
 
 export interface AppShellNavigationGroup {
   id: string;
   label?: React.ReactNode;
   items: AppShellNavigationItem[];
+  attributes?: AppShellNavigationItemAttributes;
+  className?: string;
+  labelClassName?: string;
+  itemsClassName?: string;
 }
 
 export interface AppShellBreadcrumb {
@@ -56,6 +87,8 @@ export interface AppShellRenderLinkProps {
   title?: string;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   'aria-current'?: 'page';
+  'aria-expanded'?: boolean;
+  [attribute: `data-${string}`]: string | number | boolean | undefined;
 }
 
 export type AppShellRenderLink = (props: AppShellRenderLinkProps) => React.ReactNode;
@@ -76,6 +109,25 @@ export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
   mobile?: boolean;
   labels?: AppShellLabels;
   onNavigate?: () => void;
+  density?: AppSidebarDensity;
+  width?: string;
+  mobileWidth?: string;
+  headerClassName?: string;
+  topClassName?: string;
+  navigationClassName?: string;
+  groupClassName?: string;
+  groupLabelClassName?: string;
+  footerClassName?: string;
+  itemClassName?: AppSidebarItemClassName;
+  showDisclosureIcons?: boolean;
+  disclosureBehavior?: AppSidebarDisclosureBehavior;
+}
+
+export interface AppShellHeaderRenderState {
+  mobileSidebarOpen: boolean;
+  openMobileSidebar: () => void;
+  closeMobileSidebar: () => void;
+  toggleMobileSidebar: () => void;
 }
 
 export interface AppHeaderProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
@@ -100,7 +152,23 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   headerActions?: React.ReactNode;
   children: React.ReactNode;
   closeMobileOnPathChange?: boolean;
+  mobileSidebarOpen?: boolean;
+  defaultMobileSidebarOpen?: boolean;
+  onMobileSidebarOpenChange?: (open: boolean) => void;
+  renderHeader?: (state: AppShellHeaderRenderState) => React.ReactNode;
   labels?: AppShellLabels;
+  sidebarDensity?: AppSidebarDensity;
+  sidebarWidth?: string;
+  sidebarMobileWidth?: string;
+  sidebarHeaderClassName?: string;
+  sidebarTopClassName?: string;
+  sidebarNavigationClassName?: string;
+  sidebarGroupClassName?: string;
+  sidebarGroupLabelClassName?: string;
+  sidebarFooterClassName?: string;
+  sidebarItemClassName?: AppSidebarItemClassName;
+  sidebarShowDisclosureIcons?: boolean;
+  sidebarDisclosureBehavior?: AppSidebarDisclosureBehavior;
   sidebarClassName?: string;
   headerClassName?: string;
   mainClassName?: string;
@@ -175,42 +243,103 @@ function AppSidebarNavItem({
   currentPath,
   renderLink,
   onNavigate,
+  density,
+  itemClassName,
+  showDisclosureIcons,
+  disclosureBehavior,
   depth = 0,
 }: {
   item: AppShellNavigationItem;
   currentPath: string;
   renderLink: AppShellRenderLink;
   onNavigate?: () => void;
+  density: AppSidebarDensity;
+  itemClassName?: AppSidebarItemClassName;
+  showDisclosureIcons: boolean;
+  disclosureBehavior: AppSidebarDisclosureBehavior;
   depth?: number;
 }) {
   const active = isItemActive(item, currentPath);
   const title = getItemTitle(item);
   const Icon = item.icon;
   const hasChildren = !!item.items?.length;
-  const showChildren = hasChildren && (active || item.defaultOpen);
-  const itemClassName = cn(
-    'group/app-shell-nav-item flex h-8 w-full cursor-pointer items-center gap-2 rounded-md text-sm outline-none transition-colors',
+  const [uncontrolledExpanded, setUncontrolledExpanded] = React.useState(
+    item.defaultOpen ?? active
+  );
+  const usesInteractiveDisclosure =
+    disclosureBehavior === 'interactive' ||
+    item.expanded !== undefined ||
+    item.onExpandedChange !== undefined;
+  const expanded = hasChildren && (
+    usesInteractiveDisclosure
+      ? item.expanded ?? (active || uncontrolledExpanded)
+      : active || item.defaultOpen === true
+  );
+  const state = {
+    active,
+    depth,
+    expanded,
+    hasChildren,
+  };
+  const resolvedItemClassName = typeof itemClassName === 'function'
+    ? itemClassName(item, state)
+    : itemClassName;
+  const controlClassName = cn(
+    'group/app-shell-nav-item flex w-full cursor-pointer items-center text-sm outline-none transition-colors',
     'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
     'focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50',
     'aria-disabled:pointer-events-none aria-disabled:opacity-50',
     active && 'bg-muted font-medium text-foreground',
-    'px-2',
-    depth > 0 && 'h-7 text-[13px] text-sidebar-foreground/80'
+    density === 'comfortable'
+      ? 'h-9 gap-1.5 rounded-[10px] px-2.5 font-medium'
+      : 'h-8 gap-2 rounded-md px-2',
+    depth > 0 && (
+      density === 'comfortable'
+        ? 'h-8 text-[13px] text-sidebar-foreground/80'
+        : 'h-7 text-[13px] text-sidebar-foreground/80'
+    ),
+    resolvedItemClassName,
+    item.className
   );
   const content = (
     <>
       {Icon ? <Icon className='size-4 shrink-0 text-muted-foreground group-hover/app-shell-nav-item:text-inherit' /> : null}
       <span className='min-w-0 flex-1 truncate'>{item.label}</span>
-      {item.badge !== undefined ? (
+      {item.badge !== undefined && item.badgeAppearance !== 'plain' ? (
         <Badge variant='secondary' className='ml-auto max-w-16 rounded-full px-1.5 py-0 text-[11px]'>
           {item.badge}
         </Badge>
       ) : null}
+      {item.badge !== undefined && item.badgeAppearance === 'plain' ? (
+        <span className='ml-auto shrink-0 text-[13px] font-medium tabular-nums text-muted-foreground'>
+          {item.badge}
+        </span>
+      ) : null}
+      {item.trailing}
+      {hasChildren && showDisclosureIcons ? (
+        <ChevronDownIcon
+          aria-hidden='true'
+          className={cn('size-4 shrink-0 text-muted-foreground transition-transform', expanded && 'rotate-180')}
+        />
+      ) : null}
     </>
   );
 
+  const setExpanded = (nextExpanded: boolean) => {
+    if (item.expanded === undefined) {
+      setUncontrolledExpanded(nextExpanded);
+    }
+    item.onExpandedChange?.(nextExpanded);
+  };
+
   const handleButtonClick = () => {
     if (item.disabled) {
+      return;
+    }
+
+    if (usesInteractiveDisclosure && hasChildren && !item.href) {
+      setExpanded(!expanded);
+      item.onSelect?.();
       return;
     }
 
@@ -230,21 +359,25 @@ function AppSidebarNavItem({
     ? renderLink({
       item,
       href: item.href,
-      className: itemClassName,
+      className: controlClassName,
       children: content,
       title,
       onClick: handleLinkClick,
       'aria-current': active ? 'page' : undefined,
+      'aria-expanded': hasChildren ? expanded : undefined,
+      ...item.attributes,
     })
     : (
       <button
         type='button'
-        className={itemClassName}
+        className={controlClassName}
         disabled={item.disabled}
         aria-current={active ? 'page' : undefined}
+        aria-expanded={hasChildren ? expanded : undefined}
         aria-disabled={item.disabled || undefined}
         title={title}
         onClick={handleButtonClick}
+        {...item.attributes}
       >
         {content}
       </button>
@@ -254,8 +387,8 @@ function AppSidebarNavItem({
     <li className='min-w-0'>
       {control}
 
-      {showChildren ? (
-        <ul className='mt-1 grid gap-1 border-l border-sidebar-border pl-3'>
+      {expanded ? (
+        <ul className={cn('mt-1 grid gap-1 border-l border-sidebar-border pl-3', item.childrenClassName)}>
           {item.items?.map((child) => (
             <AppSidebarNavItem
               key={child.id}
@@ -263,6 +396,10 @@ function AppSidebarNavItem({
               currentPath={currentPath}
               renderLink={renderLink}
               onNavigate={onNavigate}
+              density={density}
+              itemClassName={itemClassName}
+              showDisclosureIcons={showDisclosureIcons}
+              disclosureBehavior={disclosureBehavior}
               depth={depth + 1}
             />
           ))}
@@ -282,12 +419,22 @@ function AppSidebarContent({
   footer,
   labels,
   onNavigate,
+  density = 'standard',
+  headerClassName,
+  topClassName,
+  navigationClassName,
+  groupClassName,
+  groupLabelClassName,
+  footerClassName,
+  itemClassName,
+  disclosureBehavior = 'legacy',
+  showDisclosureIcons = disclosureBehavior === 'interactive',
 }: AppSidebarProps) {
   const resolvedLabels = getLabels(labels);
 
   return (
     <div className='flex h-full min-h-0 w-full flex-col'>
-      <div className='flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3'>
+      <div className={cn('flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3', headerClassName)}>
         <div className='min-w-0 flex-1 overflow-hidden'>
           {brand}
         </div>
@@ -295,19 +442,29 @@ function AppSidebarContent({
       </div>
 
       {top ? (
-        <div className='shrink-0 p-2'>{top}</div>
+        <div className={cn('shrink-0 p-2', topClassName)}>{top}</div>
       ) : null}
 
       <ScrollArea className='min-h-0 flex-1'>
-        <nav aria-label={resolvedLabels.navigation} className='grid gap-3 p-2'>
+        <nav aria-label={resolvedLabels.navigation} className={cn('grid gap-3 p-2', navigationClassName)}>
           {navigation.map((group) => (
-            <div key={group.id} className='grid gap-1'>
+            <div
+              key={group.id}
+              className={cn('grid gap-1', groupClassName, group.className)}
+              {...group.attributes}
+            >
               {group.label ? (
-                <div className='px-2 py-1 text-xs font-medium text-sidebar-foreground/70'>
+                <div
+                  className={cn(
+                    'px-2 py-1 text-xs font-medium text-sidebar-foreground/70',
+                    groupLabelClassName,
+                    group.labelClassName,
+                  )}
+                >
                   {group.label}
                 </div>
               ) : null}
-              <ul className='grid gap-1'>
+              <ul className={cn('grid gap-1', group.itemsClassName)}>
                 {group.items.map((item) => (
                   <AppSidebarNavItem
                     key={item.id}
@@ -315,6 +472,10 @@ function AppSidebarContent({
                     currentPath={currentPath}
                     renderLink={renderLink}
                     onNavigate={onNavigate}
+                    density={density}
+                    itemClassName={itemClassName}
+                    showDisclosureIcons={showDisclosureIcons}
+                    disclosureBehavior={disclosureBehavior}
                   />
                 ))}
               </ul>
@@ -324,7 +485,7 @@ function AppSidebarContent({
       </ScrollArea>
 
       {footer ? (
-        <div className='shrink-0 p-2'>{footer}</div>
+        <div className={cn('shrink-0 p-2', footerClassName)}>{footer}</div>
       ) : null}
     </div>
   );
@@ -333,6 +494,10 @@ function AppSidebarContent({
 export function AppSidebar({
   className,
   mobile = false,
+  density = 'standard',
+  width,
+  mobileWidth,
+  style,
   ...props
 }: AppSidebarProps) {
   if (mobile) {
@@ -340,9 +505,15 @@ export function AppSidebar({
       <div
         data-slot='app-sidebar'
         data-mobile='true'
-        className={cn('flex h-full bg-sidebar text-sidebar-foreground', className)}
+        data-density={density}
+        className={cn(
+          'flex h-full bg-sidebar text-sidebar-foreground',
+          mobileWidth && 'w-(--app-sidebar-mobile-width)',
+          className,
+        )}
+        style={{ ...style, '--app-sidebar-mobile-width': mobileWidth } as React.CSSProperties}
       >
-        <AppSidebarContent {...props} />
+        <AppSidebarContent {...props} density={density} />
       </div>
     );
   }
@@ -351,12 +522,15 @@ export function AppSidebar({
     <aside
       data-slot='app-sidebar'
       data-state='expanded'
+      data-density={density}
       className={cn(
-        'hidden h-dvh w-64 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex',
+        'hidden h-dvh shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex',
+        width ? 'w-(--app-sidebar-width)' : density === 'comfortable' ? 'w-[16.25rem]' : 'w-64',
         className
       )}
+      style={{ ...style, '--app-sidebar-width': width } as React.CSSProperties}
     >
-      <AppSidebarContent {...props} />
+      <AppSidebarContent {...props} density={density} />
     </aside>
   );
 }
@@ -472,20 +646,58 @@ export function AppShell({
   headerActions,
   children,
   closeMobileOnPathChange = true,
+  mobileSidebarOpen: mobileSidebarOpenProp,
+  defaultMobileSidebarOpen = false,
+  onMobileSidebarOpenChange,
+  renderHeader,
   labels,
+  sidebarDensity = 'standard',
+  sidebarWidth,
+  sidebarMobileWidth,
+  sidebarHeaderClassName,
+  sidebarTopClassName,
+  sidebarNavigationClassName,
+  sidebarGroupClassName,
+  sidebarGroupLabelClassName,
+  sidebarFooterClassName,
+  sidebarItemClassName,
+  sidebarShowDisclosureIcons,
+  sidebarDisclosureBehavior = 'legacy',
   sidebarClassName,
   headerClassName,
   mainClassName,
   className,
   ...props
 }: AppShellProps) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [uncontrolledMobileOpen, setUncontrolledMobileOpen] = React.useState(
+    defaultMobileSidebarOpen
+  );
+  const mobileSidebarOpen = mobileSidebarOpenProp ?? uncontrolledMobileOpen;
+  const setMobileSidebarOpen = React.useCallback((open: boolean) => {
+    if (mobileSidebarOpenProp === undefined) {
+      setUncontrolledMobileOpen(open);
+    }
+    onMobileSidebarOpenChange?.(open);
+  }, [mobileSidebarOpenProp, onMobileSidebarOpenChange]);
+
+  const previousPathRef = React.useRef(currentPath);
 
   React.useEffect(() => {
-    if (closeMobileOnPathChange) {
-      setMobileOpen(false);
+    if (closeMobileOnPathChange && previousPathRef.current !== currentPath) {
+      setMobileSidebarOpen(false);
     }
-  }, [closeMobileOnPathChange, currentPath]);
+    previousPathRef.current = currentPath;
+  }, [closeMobileOnPathChange, currentPath, setMobileSidebarOpen]);
+
+  const openMobileSidebar = React.useCallback(() => {
+    setMobileSidebarOpen(true);
+  }, [setMobileSidebarOpen]);
+  const closeMobileSidebar = React.useCallback(() => {
+    setMobileSidebarOpen(false);
+  }, [setMobileSidebarOpen]);
+  const toggleMobileSidebar = React.useCallback(() => {
+    setMobileSidebarOpen(!mobileSidebarOpen);
+  }, [mobileSidebarOpen, setMobileSidebarOpen]);
 
   const sidebarProps = {
     navigation,
@@ -496,7 +708,26 @@ export function AppShell({
     top: sidebarTop,
     footer: sidebarFooter,
     labels,
-    onNavigate: () => setMobileOpen(false),
+    density: sidebarDensity,
+    width: sidebarWidth,
+    mobileWidth: sidebarMobileWidth,
+    headerClassName: sidebarHeaderClassName,
+    topClassName: sidebarTopClassName,
+    navigationClassName: sidebarNavigationClassName,
+    groupClassName: sidebarGroupClassName,
+    groupLabelClassName: sidebarGroupLabelClassName,
+    footerClassName: sidebarFooterClassName,
+    itemClassName: sidebarItemClassName,
+    showDisclosureIcons: sidebarShowDisclosureIcons,
+    disclosureBehavior: sidebarDisclosureBehavior,
+    onNavigate: closeMobileSidebar,
+  };
+
+  const headerRenderState = {
+    mobileSidebarOpen,
+    openMobileSidebar,
+    closeMobileSidebar,
+    toggleMobileSidebar,
   };
 
   return (
@@ -511,26 +742,36 @@ export function AppShell({
       />
 
       <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col'>
-        <AppHeader
-          title={headerTitle}
-          breadcrumbs={headerBreadcrumbs}
-          actions={headerActions}
-          renderLink={renderLink}
-          labels={labels}
-          onSidebarOpen={() => setMobileOpen(true)}
-          className={headerClassName}
-        />
+        {renderHeader ? renderHeader(headerRenderState) : (
+          <AppHeader
+            title={headerTitle}
+            breadcrumbs={headerBreadcrumbs}
+            actions={headerActions}
+            renderLink={renderLink}
+            labels={labels}
+            onSidebarOpen={headerRenderState.openMobileSidebar}
+            className={headerClassName}
+          />
+        )}
 
         <main data-slot='app-shell-main' className={cn('min-h-0 flex-1 overflow-auto', mainClassName)}>
           {children}
         </main>
       </div>
 
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+      <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
         <SheetContent
           side='left'
           showCloseButton={false}
-          className='w-[18rem] p-0 text-sidebar-foreground sm:max-w-none [&>button]:hidden'
+          className={cn(
+            'p-0 text-sidebar-foreground sm:max-w-none [&>button]:hidden',
+            sidebarMobileWidth
+              ? 'w-(--app-sidebar-mobile-width)'
+              : sidebarDensity === 'comfortable'
+                ? 'w-[16.25rem]'
+                : 'w-[18rem]'
+          )}
+          style={{ '--app-sidebar-mobile-width': sidebarMobileWidth } as React.CSSProperties}
         >
           <VisuallyHidden>
             <SheetTitle>{getLabels(labels).navigation}</SheetTitle>
