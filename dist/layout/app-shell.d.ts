@@ -72,7 +72,7 @@ export interface AppShellLabels {
     expandNavigationGroup?: string;
     collapseNavigationGroup?: string;
 }
-export interface AppSidebarProps extends React.HTMLAttributes<HTMLElement> {
+export interface AppSidebarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'dangerouslySetInnerHTML'> {
     navigation: AppShellNavigationGroup[];
     currentPath: string;
     renderLink: AppShellRenderLink;

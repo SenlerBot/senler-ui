@@ -22,7 +22,7 @@ function m(e) {
 	};
 }
 function h(e, t) {
-	return typeof e.active == "boolean" ? e.active : typeof e.match == "function" ? e.match(t) : (Array.isArray(e.match) ? e.match : e.match ? [e.match] : []).some((e) => t === e || t.startsWith(`${e}/`) || t.includes(e)) ? !0 : e.href ? e.exact ? t === e.href : t === e.href || t.startsWith(`${e.href}/`) : e.items?.some((e) => h(e, t)) ?? !1;
+	return typeof e.active == "boolean" ? e.active : typeof e.match == "function" ? e.match(t) : (Array.isArray(e.match) ? e.match : e.match ? [e.match] : []).some((e) => t === e || t.startsWith(`${e}/`)) ? !0 : e.href ? e.exact ? t === e.href : t === e.href || t.startsWith(`${e.href}/`) : e.items?.some((e) => h(e, t)) ?? !1;
 }
 function g(e) {
 	return e.title ? e.title : typeof e.label == "string" ? e.label : e.id;
@@ -192,24 +192,40 @@ function y({ navigation: t, currentPath: n, renderLink: i, brand: a, headerActio
 		]
 	});
 }
-function b({ className: e, density: t = "standard", mobile: n = !1, style: r, labels: a, ...o }) {
-	let s = m(a);
+function b({ navigation: e, currentPath: t, renderLink: n, brand: r, headerActions: a, top: o, footer: s, className: c, density: l = "standard", mobile: u = !1, style: f, labels: p, onNavigate: h, headerClassName: g, topClassName: _, navigationClassName: v, groupClassName: b, groupLabelClassName: x, footerClassName: S, itemClassName: C, groupTriggerBehavior: w = "select", ...T }) {
+	let E = m(p);
 	return /* @__PURE__ */ d(i, {
+		...T,
 		"data-slot": "app-sidebar",
-		"data-mobile": n || void 0,
-		"data-density": t,
-		collapsible: n ? "none" : "offcanvas",
+		"data-mobile": u || void 0,
+		"data-density": l,
+		collapsible: u ? "none" : "offcanvas",
 		desktopPosition: "container",
 		labels: {
-			title: s.navigation,
-			description: s.navigationDescription
+			title: E.navigation,
+			description: E.navigationDescription
 		},
-		className: e,
-		style: r,
+		className: c,
+		style: f,
 		children: /* @__PURE__ */ d(y, {
-			...o,
-			labels: a,
-			density: t
+			navigation: e,
+			currentPath: t,
+			renderLink: n,
+			brand: r,
+			headerActions: a,
+			top: o,
+			footer: s,
+			labels: p,
+			onNavigate: h,
+			density: l,
+			headerClassName: g,
+			topClassName: _,
+			navigationClassName: v,
+			groupClassName: b,
+			groupLabelClassName: x,
+			footerClassName: S,
+			itemClassName: C,
+			groupTriggerBehavior: w
 		})
 	});
 }
