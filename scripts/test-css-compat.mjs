@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { JSDOM } from 'jsdom'
 import { createServer } from 'vite'
 
 const rootDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -10,6 +12,7 @@ async function loadCompatibilityModules(mode) {
     return {
       cssCompatibility: await import('../dist/vite-css-compat.js'),
       browserCompatibility: await import('../dist/vite-browser-compat.js'),
+      runtimeCompatibility: await import('../dist/browser-compat.js'),
       close: async () => {},
     }
   }
@@ -26,6 +29,7 @@ async function loadCompatibilityModules(mode) {
     return {
       cssCompatibility: await vite.ssrLoadModule('/src/vite-css-compat.ts'),
       browserCompatibility: await vite.ssrLoadModule('/src/vite-browser-compat.ts'),
+      runtimeCompatibility: await vite.ssrLoadModule('/src/browser-compat.ts'),
       close: () => vite.close(),
     }
   } catch (error) {
@@ -52,6 +56,47 @@ const {
   transformCssForBrowserCompatibility,
 } = loadedModules.cssCompatibility
 const { createDependencySyntaxCompatibilityPlugin } = loadedModules.browserCompatibility
+const { installBrowserFontCompatibility } = loadedModules.runtimeCompatibility
+
+const fontCompatibilityCases = [
+  ['reported iPhone 14 / iOS 16.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', true],
+  ['iOS 16.3 Chrome using WebKit', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/110.0.5481.83 Mobile/15E148 Safari/604.1', true],
+  ['iOS 16.2 embedded WebKit', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148', true],
+  ['iPadOS 16.1', 'Mozilla/5.0 (iPad; CPU OS 16_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Mobile/15E148 Safari/604.1', true],
+  ['desktop Safari 16.3', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Safari/605.1.15', true],
+  ['iOS 16.4 with browser fix', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1', false],
+  ['iOS 16.7', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1', false],
+  ['iPhone 16 generation / iOS 18.7', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1', false],
+  ['Safari 15.4', 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1', false],
+  ['iOS 14 is not the iPhone 14 model', 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1', false],
+  ['desktop Chrome', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', false],
+  ['Android Chrome', 'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', false],
+  ['Firefox', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:140.0) Gecko/20100101 Firefox/140.0', false],
+]
+
+for (const [label, userAgent, affected] of fontCompatibilityCases) {
+  const dom = new JSDOM('<!doctype html><html lang="ru" class="dark"><body></body></html>')
+  try {
+    const root = dom.window.document.documentElement
+    installBrowserFontCompatibility(userAgent, root)
+    installBrowserFontCompatibility(userAgent, root)
+    assert.equal(root.getAttribute('data-senler-font-optical-sizing'), affected ? 'fixed' : null, label)
+    assert.equal(root.className, 'dark', `${label}: preserve the selected theme`)
+    assert.equal(root.lang, 'ru', `${label}: preserve the selected language`)
+  } finally {
+    dom.window.close()
+  }
+}
+
+const fontCss = readFileSync(resolve(rootDirectory, mode === 'source' ? 'src/fonts.css' : 'dist/fonts.css'), 'utf8')
+for (const minify of [false, true]) {
+  const compatibleFontCss = transformCssForBrowserCompatibility(fontCss, 'fonts.css', {}, minify)
+  const workaround = compatibleFontCss.match(/:root\[data-senler-font-optical-sizing=(?:"fixed"|fixed)\]\s*\{([^}]+)\}/)?.[1]
+  assert.ok(workaround, 'The font workaround must retain its browser-specific selector')
+  assert.match(workaround, /font-variation-settings:\s*["']opsz["']\s+14\.01/, 'Keep a non-default optical axis value')
+  assert.match(workaround, /--default-font-variation-settings:\s*["']opsz["']\s+14\.01/, 'Keep the Tailwind preflight override')
+  assert.doesNotMatch(workaround, /(?:font-weight\s*:|["']wght["'])/, 'Regular, medium and bold must retain their weights')
+}
 
 assert.deepEqual(
   resolveCssCompatibilityBrowsers({ browsers: ['Chrome 100', 'Safari 15.4'] }),

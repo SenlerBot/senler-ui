@@ -166,4 +166,26 @@ export const installBrowserCompatibilityPolyfills = () => {
   }
 }
 
+export const installBrowserFontCompatibility = (userAgent: string, root: HTMLElement) => {
+  if (!userAgent.includes('AppleWebKit/')) {
+    return
+  }
+
+  // All iOS browsers use the OS WebKit version, including Chrome and embedded views.
+  const iosVersion = userAgent.match(/(?:iPhone|CPU) OS (\d+)[._](\d+)/)
+  const safariVersion = /(?:Chrome|Chromium|Edg|OPR|Android)/.test(userAgent)
+    ? null
+    : userAgent.match(/Version\/(\d+)\.(\d+).*Safari\//)
+  const version = iosVersion ?? safariVersion
+
+  // WebKit #247987: automatic optical sizing can select a hairline weight.
+  if (version?.[1] === '16' && Number(version[2]) < 4) {
+    root.setAttribute('data-senler-font-optical-sizing', 'fixed')
+  }
+}
+
 installBrowserCompatibilityPolyfills()
+
+if (typeof document !== 'undefined' && typeof navigator !== 'undefined') {
+  installBrowserFontCompatibility(navigator.userAgent, document.documentElement)
+}
