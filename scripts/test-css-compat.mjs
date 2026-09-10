@@ -267,6 +267,10 @@ const bundle = {
     type: 'chunk',
     fileName: 'assets/app.js',
     code: `import "./${cssFileName}";`,
+    viteMetadata: {
+      importedAssets: new Set([cssFileName]),
+      importedCss: new Set([cssFileName]),
+    },
   },
 }
 
@@ -284,6 +288,16 @@ assert.equal(
   bundle['assets/app.js'].code.includes(cssAsset.fileName),
   true,
   'Chunk should reference renamed CSS file',
+)
+assert.deepEqual(
+  [...bundle['assets/app.js'].viteMetadata.importedCss],
+  [cssAsset.fileName],
+  'Vite manifest metadata should reference renamed CSS files',
+)
+assert.deepEqual(
+  [...bundle['assets/app.js'].viteMetadata.importedAssets],
+  [cssAsset.fileName],
+  'Vite asset metadata should reference renamed CSS files',
 )
 
 const transformedCss = String(cssAsset.source)

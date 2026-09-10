@@ -33,7 +33,7 @@ function g(r, i) {
 		loadingMessage: (t) => e("px-3 py-2 text-sm text-muted-foreground", i?.loadingMessage?.(t)),
 		menu: (r) => e(t, "mt-1", n, i?.menu?.(r)),
 		menuList: (t) => e("max-h-72 overflow-auto p-1", i?.menuList?.(t)),
-		menuPortal: (t) => e("z-50", i?.menuPortal?.(t)),
+		menuPortal: (n) => e(t, i?.menuPortal?.(n)),
 		multiValue: (t) => e("m-0 flex h-[22px] items-center overflow-hidden rounded border border-border bg-background", i?.multiValue?.(t)),
 		multiValueLabel: (t) => e("flex items-center px-1.5 text-xs text-foreground", i?.multiValueLabel?.(t)),
 		multiValueRemove: (t) => e("flex h-full cursor-pointer items-center border-l border-border px-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground", i?.multiValueRemove?.(t)),

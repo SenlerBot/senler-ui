@@ -258,7 +258,7 @@ var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefi
 	})), p = L(l);
 	return !d && !f && !p ? t : R(t, `${c}{${`:root,:host{${u}:1${d ? `;${d}` : ""}}`}${f ? `.dark{${f}}` : ""}${p}}`);
 }, B = (e) => e.replace(/(--tw-gradient-position:[^;{}]*?)\s+in\s+oklab(?=[;{}])/g, "$1"), V = (e) => z(B(y(e))), H = (e, t) => {
-	let n = W(t);
+	let n = G(t);
 	return s.test(e) ? e.replace(s, `-${n}`) : e.replace(/\.css$/, `-${n}.css`);
 }, U = (e, t) => {
 	let n = e;
@@ -267,25 +267,27 @@ var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefi
 		n = n.split(e).join(r), t && i && t !== e && (n = n.split(t).join(i));
 	}
 	return n;
-}, W = (e) => {
+}, W = (e, t) => {
+	if (e) for (let [n, r] of t) e.delete(n) && e.add(r);
+}, G = (e) => {
 	let t = 2166136261;
 	for (let n = 0; n < e.length; n += 1) t ^= e.charCodeAt(n), t = Math.imul(t, 16777619);
 	return (t >>> 0).toString(16).padStart(8, "0");
-}, G = (e = {}) => t(e.browsers ?? a), K = (e) => r(G(e)), q = (e, t, n = {}, r = !0) => {
+}, K = (e = {}) => t(e.browsers ?? a), q = (e) => r(K(e)), J = (e, t, n = {}, r = !0) => {
 	let a = i({
 		filename: t,
 		code: new TextEncoder().encode(V(e)),
 		minify: r,
-		targets: K(n),
+		targets: q(n),
 		include: o,
 		errorRecovery: !0
 	});
 	return V(new TextDecoder().decode(a.code));
-}, J = (e, t = {}) => {
+}, Y = (e, t = {}) => {
 	let n = /* @__PURE__ */ new Map();
 	for (let r of Object.values(e)) {
 		if (r.type !== "asset" || !r.fileName.endsWith(".css")) continue;
-		let e = q(typeof r.source == "string" ? r.source : new TextDecoder().decode(r.source), r.fileName, t), i = H(r.fileName, e);
+		let e = J(typeof r.source == "string" ? r.source : new TextDecoder().decode(r.source), r.fileName, t), i = H(r.fileName, e);
 		i !== r.fileName && (n.set(r.fileName, i), r.fileName = i), r.source = e;
 	}
 	if (n.size !== 0) for (let t of Object.values(e)) {
@@ -293,14 +295,14 @@ var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefi
 			typeof t.source == "string" && (t.source = U(t.source, n));
 			continue;
 		}
-		t.code = U(t.code, n);
+		t.code = U(t.code, n), W(t.viteMetadata?.importedCss, n), W(t.viteMetadata?.importedAssets, n);
 	}
-}, Y = (e = {}) => ({
+}, X = (e = {}) => ({
 	name: "css-compatibility",
 	enforce: "post",
 	generateBundle(t, n) {
-		J(n, e);
+		Y(n, e);
 	}
 });
 //#endregion
-export { a as DEFAULT_CSS_COMPATIBILITY_BROWSERS, J as applyCssCompatibilityToBundle, Y as createCssCompatibilityPlugin, V as normalizeBrowserCompatibleCss, G as resolveCssCompatibilityBrowsers, q as transformCssForBrowserCompatibility };
+export { a as DEFAULT_CSS_COMPATIBILITY_BROWSERS, Y as applyCssCompatibilityToBundle, X as createCssCompatibilityPlugin, V as normalizeBrowserCompatibleCss, K as resolveCssCompatibilityBrowsers, J as transformCssForBrowserCompatibility };
