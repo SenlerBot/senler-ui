@@ -1,4 +1,4 @@
-# @senler/ui
+# @senlerio/ui
 
 Senler UI is a React 19 component library for building Senler-compatible interfaces. It provides shared styles, design tokens, layout helpers, and accessible UI primitives for product screens, forms, dialogs, menus, and content blocks.
 
@@ -6,7 +6,7 @@ Documentation: [ui.senler.io](https://ui.senler.io)
 
 ## Development
 
-This repository is the only editable source of truth for `@senler/ui`.
+This repository is the only editable source of truth for `@senlerio/ui`.
 The copy under `aibot-cabinet/packages/senler-ui` is a generated vendor snapshot
 and must be updated with the Cabinet `npm run ui:sync` command.
 
@@ -17,25 +17,24 @@ source, so `npm publish` does not repeat the full workflow.
 
 ## What Is Included
 
-- Shared Tailwind integration via `@senler/ui/tailwind.css`.
-- Shared CSS tokens via `@senler/ui/tokens.css`.
-- Bundled Inter font via `@senler/ui/fonts.css`.
-- Full standalone component stylesheet via `@senler/ui/styles.css`.
+- Shared Tailwind integration via `@senlerio/ui/tailwind.css`.
+- Shared CSS tokens via `@senlerio/ui/tokens.css`.
+- Bundled Inter font via `@senlerio/ui/fonts.css`.
+- Full standalone component stylesheet via `@senlerio/ui/styles.css`.
 - Core actions and feedback: `Button`, `Badge`, `Alert`, `Progress`, `Skeleton`, `Spinner`, `PageLoader`, `Announce`, `Empty`, `Toaster`.
 - Form controls: `Input`, `Textarea`, `CheckBox`, `RadioGroup`, `Switch`, `Slider`, `Select`, `SearchableSelect`, `AsyncSearchableSelect`, `Label`, `Field`, `Form`, `InputField`.
 - Surfaces and content: `Card`, `Table`, `Avatar`, `Img`, `ImagePreview`, `Separator`, `ScrollArea`, `VisuallyHidden`, `SvgIcon`.
 - Overlays and menus: `Dialog`, `AlertDialog`, `Sheet`, `Popover`, `Tooltip`, `HoverCard`, `DropdownMenu`, `ContextMenu`, `Menubar`.
 - Navigation and disclosure primitives: `Tabs`, `Accordion`, `Collapsible`, `Link`, `Calendar`.
 - Layout helpers: `LayoutContainer`, `LayoutSection`, `LayoutField`.
-- Application shell: `AppShell`, `AppSidebar`, `AppHeader` from `@senler/ui/app-shell`.
-- Optional code highlighting: `CodeBlock` from `@senler/ui/code`.
-- Browser compatibility helpers: `@senler/ui/browser-compat` and `@senler/ui/vite-browser-compat`.
-- Typed iframe integration for Senler applications via `@senler/ui/bridge`.
+- Application shell: `AppShell`, `AppSidebar`, `AppHeader` from `@senlerio/ui/app-shell`.
+- Optional code highlighting: `CodeBlock` from `@senlerio/ui/code`.
+- Browser compatibility helpers: `@senlerio/ui/browser-compat` and `@senlerio/ui/vite-browser-compat`.
 
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.6.1.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.7.0.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -50,7 +49,7 @@ Import the stylesheet once in the application entrypoint when Senler UI owns the
 Tailwind output. This includes the bundled Inter font:
 
 ```tsx
-import '@senler/ui/styles.css';
+import '@senlerio/ui/styles.css';
 ```
 
 If the host application already owns its Tailwind pipeline and global styles,
@@ -60,11 +59,11 @@ scans Senler UI classes:
 
 ```css
 @import "tailwindcss";
-@import "@senler/ui/fonts.css";
-@import "@senler/ui/tailwind.css";
+@import "@senlerio/ui/fonts.css";
+@import "@senlerio/ui/tailwind.css";
 ```
 
-Use `@senler/ui/tokens.css` only when you need raw CSS variables without
+Use `@senlerio/ui/tokens.css` only when you need raw CSS variables without
 Tailwind utility generation.
 
 ## Browser Compatibility
@@ -74,7 +73,7 @@ runtime compatibility entrypoint as the first import in browser applications
 when a project uses streaming APIs directly or through React Router:
 
 ```tsx
-import '@senler/ui/browser-compat';
+import '@senlerio/ui/browser-compat';
 ```
 
 For Vite applications, use the browser compatibility helper so JavaScript,
@@ -84,7 +83,7 @@ dependency syntax patches, and CSS transforms share the same browser policy:
 import {
   SENLER_JS_COMPATIBILITY_TARGET,
   createBrowserCompatibilityPlugins,
-} from '@senler/ui/vite-browser-compat';
+} from '@senlerio/ui/vite-browser-compat';
 
 export default defineConfig({
   plugins: [
@@ -106,7 +105,7 @@ properties, cascade layers, and fallbacks for supported `color-mix` patterns.
 Then import components from the root entrypoint:
 
 ```tsx
-import { Button, DialogRoot, DialogContent, Input } from '@senler/ui';
+import { Button, DialogRoot, DialogContent, Input } from '@senlerio/ui';
 
 export function Example() {
   return (
@@ -120,52 +119,12 @@ export function Example() {
 }
 ```
 
-## Senler Bridge
-
-Applications opened inside Senler use the typed bridge instead of calling
-`window.postMessage` directly. The bridge validates the parent origin, applies
-the initial language and theme, and receives their live updates without
-reloading the iframe:
-
-```ts
-import {
-  createSenlerBridgeClient,
-  resolveSenlerBridgeBootstrapContext,
-} from '@senler/ui/bridge';
-
-const bootstrap = resolveSenlerBridgeBootstrapContext(
-  location.search,
-  navigator.language,
-  matchMedia('(prefers-color-scheme: dark)').matches,
-);
-// bootstrap.mode identifies the surface before Bridge connects.
-
-const bridge = createSenlerBridgeClient({
-  parentOrigin: 'https://senler.io',
-});
-
-bridge.onContextChange(({ ui, launch }) => {
-  // ui: { language: 'ru' | 'en', theme: 'light' | 'dark' }
-  // launch identifies an embedded page, tool configurator, or automation step.
-});
-
-bridge.onToolConfiguratorSubmit(() => ({
-  configuration: {},
-  configured_parameters: [],
-}));
-
-await bridge.connect();
-```
-
-OAuth and signed launch sessions remain the authentication boundary. Do not
-send Senler access tokens or application secrets through the bridge.
-
 Subpath imports are also available when a project wants narrower imports:
 
 ```tsx
-import { Button } from '@senler/ui/atoms/button';
-import { SearchableSelect } from '@senler/ui/compound/searchable-select';
-import { LayoutContainer } from '@senler/ui/layout/container';
+import { Button } from '@senlerio/ui/atoms/button';
+import { SearchableSelect } from '@senlerio/ui/compound/searchable-select';
+import { LayoutContainer } from '@senlerio/ui/layout/container';
 ```
 
 ## App Shell
@@ -173,7 +132,7 @@ import { LayoutContainer } from '@senler/ui/layout/container';
 Use `AppShell` when a product needs the standard Senler sidebar and header behavior. The component owns the layout, desktop sidebar, mobile drawer, active menu state, header slots, footer slot, and breadcrumbs. The application provides navigation data, product-specific controls, and a router-specific link renderer.
 
 ```tsx
-import { AppShell } from '@senler/ui/app-shell';
+import { AppShell } from '@senlerio/ui/app-shell';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { BotIcon, HomeIcon, SettingsIcon } from 'lucide-react';
 
@@ -304,9 +263,15 @@ the selected rows remain visible.
 Code highlighting is available from a separate entrypoint:
 
 ```tsx
-import { CodeBlock } from '@senler/ui/code';
+import { CodeBlock } from '@senlerio/ui/code';
 ```
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Related packages
+
+Iframe integration is provided by [@senlerio/bridge](https://github.com/SenlerBot/senler-bridge), independently of UI and React. Replace imports from `@senler/ui/bridge` with `@senlerio/bridge`.
+
+The chat widget has its own [@senlerio/widget](https://github.com/SenlerBot/senler-widget) package for TypeScript types and loading, with optional React components in `@senlerio/widget/react`.

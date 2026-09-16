@@ -30,32 +30,12 @@ for (const [exportName, exportValue] of Object.entries(packageJson.exports)) {
 
 const ui = await import('../dist/index.js')
 const appShell = await import('../dist/app-shell.js')
-const bridge = await import('../dist/bridge.js')
 assert.ok(ui.Button, 'Button must be exported from the package root')
 assert.ok(ui.Input, 'Input must be exported from the package root')
 assert.equal(typeof appShell.AppShell, 'function')
 assert.equal(typeof appShell.AppSidebar, 'function')
 assert.equal(typeof appShell.SidebarProvider, 'function')
 assert.equal(typeof appShell.Sidebar, 'function')
-assert.equal(typeof bridge.createSenlerBridgeClient, 'function')
-assert.equal(typeof bridge.createSenlerBridgeHost, 'function')
-assert.deepEqual(
-  bridge.resolveSenlerBridgeBootstrapUi('?senler_theme=dark&senler_language=en', 'ru', false),
-  { language: 'en', theme: 'dark' },
-)
-assert.deepEqual(
-  bridge.resolveSenlerBridgeBootstrapContext(
-    '?senler_context_version=2&senler_mode=tool_configurator&senler_theme=dark&senler_language=en',
-    'ru',
-    false,
-  ),
-  {
-    context_version: '2',
-    mode: 'tool_configurator',
-    ui: { language: 'en', theme: 'dark' },
-  },
-)
-
 const buttonHtml = renderToStaticMarkup(createElement(ui.Button, null, 'Save'))
 assert.match(buttonHtml, /^<button/u)
 assert.match(buttonHtml, />Save<\/button>$/u)

@@ -7,7 +7,7 @@ import {
   parseSenlerBridgeContext,
   parseSenlerBridgeFrameSizeMessage,
   parseSenlerBridgeToolConfiguratorResult,
-} from '../dist/bridge.js';
+} from '../dist/index.js';
 
 const parentOrigin = 'https://senler.example';
 const appOrigin = 'https://app.example';

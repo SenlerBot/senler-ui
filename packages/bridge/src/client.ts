@@ -23,7 +23,7 @@ import {
   type SenlerBridgeLanguage,
   type SenlerBridgeToolConfiguratorResult,
   type SenlerBridgeUiContext,
-} from './protocol';
+} from './protocol.js';
 
 export interface SenlerBridgeBootstrapContext {
   context_version: typeof SENLER_BRIDGE_BOOTSTRAP_CONTEXT_VERSION | null;

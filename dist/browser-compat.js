@@ -69,7 +69,11 @@ var s = (e, t) => {
 	}
 }, f = () => {
 	s("ReadableStream", i), s("WritableStream", o), s("ByteLengthQueuingStrategy", n), s("CountQueuingStrategy", r), s("TransformStream", Reflect.has(globalThis, "ReadableStream") && Reflect.has(globalThis, "WritableStream") ? l : a), Reflect.has(globalThis, "TextEncoder") && s("TextEncoderStream", u), Reflect.has(globalThis, "TextDecoder") && s("TextDecoderStream", d);
+}, p = (e, t) => {
+	if (!e.includes("AppleWebKit/")) return;
+	let n = e.match(/(?:iPhone|CPU) OS (\d+)[._](\d+)/), r = /(?:Chrome|Chromium|Edg|OPR|Android)/.test(e) ? null : e.match(/Version\/(\d+)\.(\d+).*Safari\//), i = n ?? r;
+	i?.[1] === "16" && Number(i[2]) < 4 && t.setAttribute("data-senler-font-optical-sizing", "fixed");
 };
-f();
+f(), typeof document < "u" && typeof navigator < "u" && p(navigator.userAgent, document.documentElement);
 //#endregion
-export { e as SENLER_BROWSER_COMPATIBILITY_BROWSERS, t as SENLER_JS_COMPATIBILITY_TARGET, f as installBrowserCompatibilityPolyfills };
+export { e as SENLER_BROWSER_COMPATIBILITY_BROWSERS, t as SENLER_JS_COMPATIBILITY_TARGET, f as installBrowserCompatibilityPolyfills, p as installBrowserFontCompatibility };

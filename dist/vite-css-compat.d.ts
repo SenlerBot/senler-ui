@@ -13,6 +13,10 @@ type CssCompatibilityChunk = {
     type: 'chunk';
     fileName: string;
     code: string;
+    viteMetadata?: {
+        importedAssets?: Set<string>;
+        importedCss?: Set<string>;
+    };
 };
 export type CssCompatibilityBundle = Record<string, CssCompatibilityAsset | CssCompatibilityChunk>;
 export declare const normalizeBrowserCompatibleCss: (css: string) => string;

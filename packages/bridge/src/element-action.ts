@@ -1,7 +1,7 @@
 import type {
   SenlerBridgeElementActionRequest,
   SenlerBridgeElementActionResult,
-} from './protocol';
+} from './protocol.js';
 
 const CONTEXT_ATTRIBUTE = 'data-ai-context-id';
 const REVEALS_ATTRIBUTE = 'data-ai-reveals-context-id';

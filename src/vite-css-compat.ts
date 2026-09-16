@@ -48,6 +48,10 @@ type CssCompatibilityChunk = {
   type: 'chunk'
   fileName: string
   code: string
+  viteMetadata?: {
+    importedAssets?: Set<string>
+    importedCss?: Set<string>
+  }
 }
 
 export type CssCompatibilityBundle = Record<string, CssCompatibilityAsset | CssCompatibilityChunk>
@@ -710,6 +714,21 @@ const replaceBundleReferences = (source: string, renames: Map<string, string>) =
   return result
 }
 
+const replaceViteMetadataReferences = (
+  files: Set<string> | undefined,
+  renames: Map<string, string>,
+) => {
+  if (!files) {
+    return
+  }
+
+  for (const [oldFileName, newFileName] of renames) {
+    if (files.delete(oldFileName)) {
+      files.add(newFileName)
+    }
+  }
+}
+
 const createCssHash = (source: string) => {
   let hash = 0x811c9dc5
 
@@ -784,6 +803,8 @@ export const applyCssCompatibilityToBundle = (
     }
 
     output.code = replaceBundleReferences(output.code, cssRenames)
+    replaceViteMetadataReferences(output.viteMetadata?.importedCss, cssRenames)
+    replaceViteMetadataReferences(output.viteMetadata?.importedAssets, cssRenames)
   }
 }
 

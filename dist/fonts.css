@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Inter";
-  src: url("@senler/ui/fonts/inter-var.woff2") format("woff2");
+  src: url("@senlerio/ui/fonts/inter-var.woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -12,6 +12,14 @@
 
 :where(html) {
   font-family: var(--senler-font-sans);
+}
+
+/* Safari 16.0–16.3: bypass automatic opsz without overriding font-weight.
+   Avoid Inter's exact default (14), which triggers WebKit #227353 as well. */
+:root[data-senler-font-optical-sizing="fixed"] {
+  --default-font-variation-settings: "opsz" 14.01;
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 14.01;
 }
 
 @theme inline {

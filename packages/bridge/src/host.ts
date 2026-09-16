@@ -19,7 +19,7 @@ import {
   type SenlerBridgeSubmitResult,
   type SenlerBridgeToolConfiguratorResult,
   type SenlerBridgeUiContext,
-} from './protocol';
+} from './protocol.js';
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 20_000;
 

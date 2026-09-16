@@ -119,7 +119,8 @@ function buildSearchableSelectClassNames<
       ),
     menuList: (state) =>
       cn('max-h-72 overflow-auto p-1', classNames?.menuList?.(state)),
-    menuPortal: (state) => cn('z-50', classNames?.menuPortal?.(state)),
+    menuPortal: (state) =>
+      cn(overlayLayerClassName, classNames?.menuPortal?.(state)),
     multiValue: (state) =>
       cn(
         'm-0 flex h-[22px] items-center overflow-hidden rounded border border-border bg-background',

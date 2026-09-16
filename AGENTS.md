@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Этот repository — единственный редактируемый source of truth для `@senler/ui`.
+Этот repository — единственный редактируемый source of truth для `@senlerio/ui`.
 Не редактируй вручную копию в `aibot-cabinet/packages/senler-ui`: она обновляется
 из этого repository командой Cabinet `npm run ui:sync`.
 
