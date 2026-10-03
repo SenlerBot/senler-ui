@@ -2,24 +2,24 @@ import { cn as e } from "../lib/utils/cn.js";
 import { overlayLayerClassName as t, overlaySolidSurfaceClassName as n } from "../lib/overlay-styles.js";
 import { Label as r } from "../atoms/label.js";
 import { FieldDescription as i, FieldError as a } from "../atoms/field.js";
-import { ChevronDown as o, XIcon as s } from "lucide-react";
-import { jsx as c, jsxs as l } from "react/jsx-runtime";
-import u, { components as d } from "react-select";
-import f from "react-select/async";
+import { Check as o, ChevronDown as s, XIcon as c } from "lucide-react";
+import { jsx as l, jsxs as u } from "react/jsx-runtime";
+import d, { components as f } from "react-select";
+import p from "react-select/async";
 //#region src/compound/searchable-select.tsx
-var p = {
+var m = {
 	dropdownIndicator: !0,
 	loadingMessage: "Loading...",
 	noOptionsMessage: "No options",
 	placeholder: "Select..."
 };
-function m() {
-	return p.noOptionsMessage;
-}
 function h() {
-	return p.loadingMessage;
+	return m.noOptionsMessage;
 }
-function g(r, i) {
+function g() {
+	return m.loadingMessage;
+}
+function _(r, i) {
 	return {
 		clearIndicator: (t) => e("flex cursor-pointer items-center px-2 text-muted-foreground transition-colors hover:text-foreground", i?.clearIndicator?.(t)),
 		container: (t) => e("w-full", i?.container?.(t)),
@@ -38,97 +38,108 @@ function g(r, i) {
 		multiValueLabel: (t) => e("flex items-center px-1.5 text-xs text-foreground", i?.multiValueLabel?.(t)),
 		multiValueRemove: (t) => e("flex h-full cursor-pointer items-center border-l border-border px-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground", i?.multiValueRemove?.(t)),
 		noOptionsMessage: (t) => e("px-3 py-2 text-sm text-muted-foreground", i?.noOptionsMessage?.(t)),
-		option: (t) => e("cursor-pointer rounded-sm px-2 py-1.5 text-sm outline-none transition-colors", t.isSelected ? "bg-primary text-primary-foreground" : "text-popover-foreground", !t.isSelected && t.isFocused ? "bg-accent text-accent-foreground" : null, t.isDisabled ? "cursor-not-allowed opacity-50" : null, i?.option?.(t)),
+		option: (t) => e("relative cursor-pointer rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors", t.isSelected || t.isFocused ? "bg-accent/50 text-accent-foreground" : "text-popover-foreground", t.isDisabled ? "cursor-not-allowed opacity-50" : null, i?.option?.(t)),
 		placeholder: (t) => e("text-muted-foreground", i?.placeholder?.(t)),
 		singleValue: (t) => e("text-foreground", i?.singleValue?.(t)),
 		valueContainer: (t) => e("flex min-h-10 flex-1 items-center gap-1 px-3 py-1", i?.valueContainer?.(t))
 	};
 }
-function _(e) {
-	return /* @__PURE__ */ c(d.DropdownIndicator, {
-		...e,
-		children: /* @__PURE__ */ c(o, { className: "size-4" })
-	});
-}
 function v(e) {
-	return /* @__PURE__ */ c(d.ClearIndicator, {
+	return /* @__PURE__ */ u(f.Option, {
 		...e,
-		children: /* @__PURE__ */ c(s, { className: "size-4" })
+		children: [e.isSelected ? /* @__PURE__ */ l("span", {
+			className: "absolute inset-y-0 left-2 flex items-center",
+			"aria-hidden": "true",
+			children: /* @__PURE__ */ l(o, { className: "size-4" })
+		}) : null, e.children]
 	});
 }
 function y(e) {
-	return /* @__PURE__ */ c(d.MultiValueRemove, {
+	return /* @__PURE__ */ l(f.DropdownIndicator, {
 		...e,
-		children: /* @__PURE__ */ c(s, { className: "size-3.5" })
+		children: /* @__PURE__ */ l(s, { className: "size-4" })
 	});
 }
-function b(e, t) {
+function b(e) {
+	return /* @__PURE__ */ l(f.ClearIndicator, {
+		...e,
+		children: /* @__PURE__ */ l(c, { className: "size-4" })
+	});
+}
+function x(e) {
+	return /* @__PURE__ */ l(f.MultiValueRemove, {
+		...e,
+		children: /* @__PURE__ */ l(c, { className: "size-3.5" })
+	});
+}
+function S(e, t) {
 	return {
-		ClearIndicator: v,
-		DropdownIndicator: e ? _ : null,
+		ClearIndicator: b,
+		DropdownIndicator: e ? y : null,
 		IndicatorSeparator: null,
-		MultiValueRemove: y,
+		MultiValueRemove: x,
+		Option: v,
 		...t
 	};
 }
-function x({ children: e, error: t, helperText: n, inputId: o, label: s, wrapperProps: u }) {
-	return /* @__PURE__ */ l("div", {
+function C({ children: e, error: t, helperText: n, inputId: o, label: s, wrapperProps: c }) {
+	return /* @__PURE__ */ u("div", {
 		"data-slot": "searchable-select-field",
-		...u,
+		...c,
 		children: [
-			s ? /* @__PURE__ */ c(r, {
+			s ? /* @__PURE__ */ l(r, {
 				htmlFor: o,
 				className: "mb-1.5 text-sm",
 				children: s
 			}) : null,
 			e,
-			t && n ? /* @__PURE__ */ c(a, { children: n }) : null,
-			!t && n ? /* @__PURE__ */ c(i, {
+			t && n ? /* @__PURE__ */ l(a, { children: n }) : null,
+			!t && n ? /* @__PURE__ */ l(i, {
 				className: "mt-1.5",
 				children: n
 			}) : null
 		]
 	});
 }
-function S({ classNames: e, components: t, dropdownIndicator: n = p.dropdownIndicator, error: r, helperText: i, inputId: a, label: o, loadingMessage: s, noOptionsMessage: l, placeholder: d, unstyled: f, wrapperProps: _, ...v }) {
-	return /* @__PURE__ */ c(x, {
+function w({ classNames: e, components: t, dropdownIndicator: n = m.dropdownIndicator, error: r, helperText: i, inputId: a, label: o, loadingMessage: s, noOptionsMessage: c, placeholder: u, unstyled: f, wrapperProps: p, ...v }) {
+	return /* @__PURE__ */ l(C, {
 		error: r,
 		helperText: i,
 		inputId: a,
 		label: o,
-		wrapperProps: _,
-		children: /* @__PURE__ */ c(u, {
+		wrapperProps: p,
+		children: /* @__PURE__ */ l(d, {
 			"aria-invalid": r || void 0,
-			classNames: g(r, e),
-			components: b(n, t),
+			classNames: _(r, e),
+			components: S(n, t),
 			inputId: a,
-			loadingMessage: s ?? h,
-			noOptionsMessage: l ?? m,
-			placeholder: d ?? p.placeholder,
+			loadingMessage: s ?? g,
+			noOptionsMessage: c ?? h,
+			placeholder: u ?? m.placeholder,
 			unstyled: f ?? !0,
 			...v
 		})
 	});
 }
-function C({ classNames: e, components: t, dropdownIndicator: n = p.dropdownIndicator, error: r, helperText: i, inputId: a, label: o, loadingMessage: s, noOptionsMessage: l, placeholder: u, unstyled: d, wrapperProps: _, ...v }) {
-	return /* @__PURE__ */ c(x, {
+function T({ classNames: e, components: t, dropdownIndicator: n = m.dropdownIndicator, error: r, helperText: i, inputId: a, label: o, loadingMessage: s, noOptionsMessage: c, placeholder: u, unstyled: d, wrapperProps: f, ...v }) {
+	return /* @__PURE__ */ l(C, {
 		error: r,
 		helperText: i,
 		inputId: a,
 		label: o,
-		wrapperProps: _,
-		children: /* @__PURE__ */ c(f, {
+		wrapperProps: f,
+		children: /* @__PURE__ */ l(p, {
 			"aria-invalid": r || void 0,
-			classNames: g(r, e),
-			components: b(n, t),
+			classNames: _(r, e),
+			components: S(n, t),
 			inputId: a,
-			loadingMessage: s ?? h,
-			noOptionsMessage: l ?? m,
-			placeholder: u ?? p.placeholder,
+			loadingMessage: s ?? g,
+			noOptionsMessage: c ?? h,
+			placeholder: u ?? m.placeholder,
 			unstyled: d ?? !0,
 			...v
 		})
 	});
 }
 //#endregion
-export { C as AsyncSearchableSelect, S as SearchableSelect, p as searchableSelectDefaults };
+export { T as AsyncSearchableSelect, w as SearchableSelect, m as searchableSelectDefaults };

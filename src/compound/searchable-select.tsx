@@ -1,11 +1,12 @@
 import { type ComponentProps, type ReactNode } from 'react';
-import { ChevronDown, XIcon } from 'lucide-react';
+import { Check, ChevronDown, XIcon } from 'lucide-react';
 import ReactSelect, {
   components as reactSelectComponents,
   type ClearIndicatorProps,
   type DropdownIndicatorProps,
   type GroupBase,
   type MultiValueRemoveProps,
+  type OptionProps,
   type Props as ReactSelectProps,
 } from 'react-select';
 import ReactAsyncSelect, {
@@ -143,13 +144,10 @@ function buildSearchableSelectClassNames<
       ),
     option: (state) =>
       cn(
-        'cursor-pointer rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
-        state.isSelected
-          ? 'bg-primary text-primary-foreground'
+        'relative cursor-pointer rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors',
+        state.isSelected || state.isFocused
+          ? 'bg-accent/50 text-accent-foreground'
           : 'text-popover-foreground',
-        !state.isSelected && state.isFocused
-          ? 'bg-accent text-accent-foreground'
-          : null,
         state.isDisabled ? 'cursor-not-allowed opacity-50' : null,
         classNames?.option?.(state),
       ),
@@ -163,6 +161,26 @@ function buildSearchableSelectClassNames<
         classNames?.valueContainer?.(state),
       ),
   };
+}
+
+function SearchableSelectOption<
+  OptionType,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType>,
+>(props: OptionProps<OptionType, IsMulti, Group>) {
+  return (
+    <reactSelectComponents.Option {...props}>
+      {props.isSelected ? (
+        <span
+          className='absolute inset-y-0 left-2 flex items-center'
+          aria-hidden='true'
+        >
+          <Check className='size-4' />
+        </span>
+      ) : null}
+      {props.children}
+    </reactSelectComponents.Option>
+  );
 }
 
 function SearchableSelectDropdownIndicator<
@@ -215,6 +233,7 @@ function buildSearchableSelectComponents<
       : null,
     IndicatorSeparator: null,
     MultiValueRemove: SearchableSelectMultiValueRemove,
+    Option: SearchableSelectOption,
     ...components,
   } satisfies SearchableSelectProps<OptionType, IsMulti>['components'];
 }
