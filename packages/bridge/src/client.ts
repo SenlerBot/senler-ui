@@ -1,4 +1,10 @@
 import {
+  createFrameMaxWidthRequest,
+  isSenlerBridgeFrameMaxWidth,
+  parseFrameMaxWidthResult,
+  SenlerBridgeFrameWidthError,
+} from './frame-width.js';
+import {
   createElementActionResultMessage,
   createErrorResponseMessage,
   createReadyMessage,
@@ -46,6 +52,8 @@ interface SenlerBridgeClientWindow extends Window {
 }
 
 export interface SenlerBridgeClient {
+  /** Resolves when the host accepts the limit; browser layout may update later. */
+  setFrameMaxWidth(maxWidth: number | null): Promise<void>;
   onFunnelConfiguratorSubmit(handler: () => SenlerBridgeFunnelConfiguratorResult | Promise<SenlerBridgeFunnelConfiguratorResult>): () => void;
   connect(): Promise<SenlerBridgeContext>;
   getContext(): SenlerBridgeContext | null;
@@ -200,6 +208,12 @@ export function createSenlerBridgeClient(
   let frameTimeoutId: number | null = null;
   let lastFrameHeight: number | null = null;
   let frameSizeSyncActive = false;
+  let widthRequestSequence = 0;
+  const pendingWidths = new Map<string, {
+    resolve: () => void;
+    reject: (error: Error) => void;
+    timeoutId: number;
+  }>();
 
   const publishFrameSize = () => {
     frameAnimationId = null;
@@ -299,6 +313,21 @@ export function createSenlerBridgeClient(
       return;
     }
     const initMessage = parseSenlerBridgeInitMessage(event.data);
+    const widthResult = parseFrameMaxWidthResult(event.data);
+    if (widthResult) {
+      const pending = pendingWidths.get(widthResult.request_id);
+      if (pending) {
+        pendingWidths.delete(widthResult.request_id);
+        clientWindow.clearTimeout(pending.timeoutId);
+        if (widthResult.error === null) {
+          pending.resolve();
+        }
+        else pending.reject(new SenlerBridgeFrameWidthError(
+          widthResult.error === 'unsupported' ? 'unsupported' : 'remote_error',
+        ));
+      }
+      return;
+    }
     if (initMessage) {
       publishContext(initMessage.context);
       return;
@@ -404,6 +433,23 @@ export function createSenlerBridgeClient(
   clientWindow.addEventListener('message', handleMessage);
 
   return {
+    setFrameMaxWidth(maxWidth) {
+      if (destroyed) return Promise.reject(new SenlerBridgeFrameWidthError('destroyed'));
+      if (!isSenlerBridgeFrameMaxWidth(maxWidth)) return Promise.reject(new SenlerBridgeFrameWidthError('invalid_width'));
+      if (!context) return Promise.reject(new SenlerBridgeFrameWidthError('not_connected'));
+      if (context.frame_max_width !== true) return Promise.reject(new SenlerBridgeFrameWidthError('unsupported'));
+      const requestId = `width-${Date.now()}-${++widthRequestSequence}`;
+      return new Promise<void>((resolve, reject) => {
+        pendingWidths.set(requestId, {
+          resolve, reject,
+          timeoutId: clientWindow.setTimeout(() => {
+            pendingWidths.delete(requestId);
+            reject(new SenlerBridgeFrameWidthError('request_timeout'));
+          }, connectTimeoutMs),
+        });
+        postToParent(createFrameMaxWidthRequest(requestId, maxWidth));
+      });
+    },
     connect() {
       if (destroyed) {
         return Promise.reject(new Error('Senler Bridge client is destroyed'));
@@ -464,6 +510,11 @@ export function createSenlerBridgeClient(
       if (destroyed) return;
       destroyed = true;
       stopFrameSizeSync();
+      for (const pending of pendingWidths.values()) {
+        clientWindow.clearTimeout(pending.timeoutId);
+        pending.reject(new SenlerBridgeFrameWidthError('destroyed'));
+      }
+      pendingWidths.clear();
       clientWindow.removeEventListener('message', handleMessage);
       contextListeners.clear();
       elementHighlightClearListeners.clear();

@@ -24,14 +24,14 @@ var u = n.forwardRef(({ className: t, ...n }, o) => /* @__PURE__ */ i(c, { child
 		className: "flex min-h-full items-center justify-center p-4",
 		children: /* @__PURE__ */ r(a.Content, {
 			ref: o,
-			className: e("relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg", t),
+			className: e("relative z-50 grid min-w-0 w-full max-w-lg grid-cols-1 gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg", t),
 			...n
 		})
 	})
 })] }));
 u.displayName = a.Content.displayName;
 var d = ({ className: t, ...n }) => /* @__PURE__ */ r("div", {
-	className: e("flex flex-col space-y-2 text-center sm:text-left", t),
+	className: e("flex min-w-0 flex-col space-y-2 text-center sm:text-left", t),
 	...n
 });
 d.displayName = "AlertDialogHeader";
@@ -42,13 +42,13 @@ var f = ({ className: t, ...n }) => /* @__PURE__ */ r("div", {
 f.displayName = "AlertDialogFooter";
 var p = n.forwardRef(({ className: t, ...n }, i) => /* @__PURE__ */ r(a.Title, {
 	ref: i,
-	className: e("text-lg font-semibold", t),
+	className: e("text-lg font-semibold [overflow-wrap:anywhere]", t),
 	...n
 }));
 p.displayName = a.Title.displayName;
 var m = n.forwardRef(({ className: t, ...n }, i) => /* @__PURE__ */ r(a.Description, {
 	ref: i,
-	className: e("text-sm text-muted-foreground", t),
+	className: e("text-sm text-muted-foreground [overflow-wrap:anywhere]", t),
 	...n
 }));
 m.displayName = a.Description.displayName;

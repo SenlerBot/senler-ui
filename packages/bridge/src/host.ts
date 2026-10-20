@@ -1,3 +1,4 @@
+import { createFrameMaxWidthResult, parseFrameMaxWidthRequest } from './frame-width.js';
 import {
   createClearElementHighlightMessage,
   createElementActionMessage,
@@ -31,6 +32,7 @@ export interface SenlerBridgeHostOptions {
   hostWindow?: Window;
   requestTimeoutMs?: number;
   onFrameSizeChange?: (height: number) => void;
+  onFrameMaxWidthChange?: (maxWidth: number | null) => void;
 }
 
 export interface SenlerBridgeHost {
@@ -134,6 +136,20 @@ export function createSenlerBridgeHost(
       return;
     }
     const frameSize = parseSenlerBridgeFrameSizeMessage(event.data);
+    const frameWidth = parseFrameMaxWidthRequest(event.data);
+    if (frameWidth) {
+      if (!connected || context.frame_max_width !== true || !options.onFrameMaxWidthChange) {
+        postToFrame(createFrameMaxWidthResult(frameWidth.request_id, 'unsupported'));
+        return;
+      }
+      try {
+        options.onFrameMaxWidthChange(frameWidth.max_width);
+        postToFrame(createFrameMaxWidthResult(frameWidth.request_id));
+      } catch {
+        postToFrame(createFrameMaxWidthResult(frameWidth.request_id, 'remote_error'));
+      }
+      return;
+    }
     if (frameSize) {
       options.onFrameSizeChange?.(frameSize.height);
       return;

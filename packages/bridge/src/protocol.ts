@@ -154,6 +154,7 @@ export interface SenlerBridgeContext {
   ui: SenlerBridgeUiContext;
   launch: SenlerBridgeLaunchContext;
   frame_size_sync?: boolean;
+  frame_max_width?: boolean;
 }
 
 export interface SenlerBridgeToolConfiguratorResult {
@@ -600,6 +601,7 @@ export function parseSenlerBridgeContext(
 ): SenlerBridgeContext | null {
   if (
     !isRecord(value) ||
+    (value.frame_max_width !== undefined && typeof value.frame_max_width !== 'boolean') ||
     (value.frame_size_sync !== undefined &&
       typeof value.frame_size_sync !== 'boolean')
   ) {
@@ -612,6 +614,9 @@ export function parseSenlerBridgeContext(
     ? {
         ui,
         launch,
+        ...(typeof value.frame_max_width === 'boolean'
+          ? { frame_max_width: value.frame_max_width }
+          : {}),
         ...(typeof value.frame_size_sync === 'boolean'
           ? { frame_size_sync: value.frame_size_sync }
           : {}),

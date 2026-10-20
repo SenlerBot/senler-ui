@@ -89,7 +89,7 @@ const DialogContent = React.forwardRef<
           </DialogPrimitive.Close>
           <div
             className={cn(
-              'bg-background relative z-10 grid w-full gap-4 rounded-lg border p-4 shadow-lg sm:max-w-lg',
+              'bg-background relative z-10 grid min-w-0 w-full grid-cols-1 gap-4 rounded-lg border p-4 shadow-lg sm:max-w-lg',
               className
             )}
           >
@@ -121,7 +121,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='dialog-header'
-      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}
+      className={cn('flex min-w-0 flex-col gap-2 text-center sm:text-left', className)}
       {...props}
     />
   );
@@ -147,7 +147,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot='dialog-title'
-      className={cn('text-lg leading-none font-medium', className)}
+      className={cn('text-lg leading-none font-medium [overflow-wrap:anywhere]', className)}
       {...props}
     />
   );
@@ -160,7 +160,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot='dialog-description'
-      className={cn('text-muted-foreground text-sm', className)}
+      className={cn('text-muted-foreground text-sm [overflow-wrap:anywhere]', className)}
       {...props}
     />
   );

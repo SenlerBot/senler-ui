@@ -3,11 +3,11 @@
 Framework-independent bridge between a Senler host and an embedded application.
 No React, CSS or other runtime dependencies.
 
-This source package implements Bridge 2.0.0. Install its tested package archive
+This source package implements Bridge 2.1.2. Install its tested package archive
 in the host and the embedded application:
 
 ```sh
-npm install ./senlerio-bridge-2.0.0.tgz
+npm install ./senlerio-bridge-2.1.2.tgz
 ```
 
 To produce the archive from this directory, run `npm ci`, `npm run build`, and
@@ -50,6 +50,32 @@ await bridge.connect();
 
 OAuth and signed launch sessions remain the authentication boundary. Do not
 send Senler access tokens or application secrets through the bridge.
+
+## Maximum iframe width
+
+Bridge 2.1.2 supports changing the maximum iframe width in application dialogs.
+The host advertises support with `context.frame_max_width === true`.
+After connecting, request a positive integer in CSS pixels (1–100000):
+
+```ts
+await bridge.connect();
+await bridge.setFrameMaxWidth(1200);
+await bridge.setFrameMaxWidth(640);
+await bridge.setFrameMaxWidth(null); // Restore the app's saved limit, or 1024.
+```
+
+The promise resolves when the host accepts the limit; browser layout may update
+later. Observe the iframe window's `resize` event to read its actual width.
+Borders and host padding are outside this width; available screen space can make
+the iframe narrower. The dialog shell can remain wider to keep its controls usable.
+Changes do not reload the iframe or persist to application settings. The host
+retains the override through reloads and navigation within the same iframe,
+and resets it when the dialog closes or another application or configurator opens.
+Inline panels and older hosts reject with `SenlerBridgeFrameWidthError`
+and `code: 'unsupported'`.
+
+Hosts use `onFrameMaxWidthChange` and advertise `frame_max_width: true` only for
+supported dialog placements. The callback receives a number or `null` to reset.
 
 ## Funnel configurators
 

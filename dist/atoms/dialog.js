@@ -57,7 +57,7 @@ var f = t.forwardRef(({ className: t, children: s, showCloseButton: c = o.showCl
 					"aria-hidden": "true"
 				})
 			}), /* @__PURE__ */ i("div", {
-				className: e("bg-background relative z-10 grid w-full gap-4 rounded-lg border p-4 shadow-lg sm:max-w-lg", t),
+				className: e("bg-background relative z-10 grid min-w-0 w-full grid-cols-1 gap-4 rounded-lg border p-4 shadow-lg sm:max-w-lg", t),
 				children: [s, c && /* @__PURE__ */ r(a.Close, {
 					"data-slot": "dialog-close",
 					className: "absolute top-3 right-3 cursor-pointer rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none",
@@ -79,7 +79,7 @@ f.displayName = a.Content.displayName;
 function p({ className: t, ...n }) {
 	return /* @__PURE__ */ r("div", {
 		"data-slot": "dialog-header",
-		className: e("flex flex-col gap-2 text-center sm:text-left", t),
+		className: e("flex min-w-0 flex-col gap-2 text-center sm:text-left", t),
 		...n
 	});
 }
@@ -93,14 +93,14 @@ function m({ className: t, ...n }) {
 function h({ className: t, ...n }) {
 	return /* @__PURE__ */ r(a.Title, {
 		"data-slot": "dialog-title",
-		className: e("text-lg leading-none font-medium", t),
+		className: e("text-lg leading-none font-medium [overflow-wrap:anywhere]", t),
 		...n
 	});
 }
 function g({ className: t, ...n }) {
 	return /* @__PURE__ */ r(a.Description, {
 		"data-slot": "dialog-description",
-		className: e("text-muted-foreground text-sm", t),
+		className: e("text-muted-foreground text-sm [overflow-wrap:anywhere]", t),
 		...n
 	});
 }
