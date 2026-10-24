@@ -13,6 +13,9 @@ await mkdir(distDir, { recursive: true });
 await copyFile(path.join(srcDir, 'tokens.css'), path.join(distDir, 'tokens.css'));
 await copyFile(path.join(srcDir, 'tailwind.css'), path.join(distDir, 'tailwind.css'));
 await copyFile(path.join(srcDir, 'fonts.css'), path.join(distDir, 'fonts.css'));
+await cp(path.join(srcDir, 'themes'), path.join(distDir, 'themes'), {
+  recursive: true,
+});
 await cp(path.join(srcDir, 'fonts'), path.join(distDir, 'fonts'), {
   recursive: true,
 });

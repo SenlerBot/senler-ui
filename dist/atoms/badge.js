@@ -7,7 +7,7 @@ import { cva as r } from "class-variance-authority";
 var i = {
 	default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
 	secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-	destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+	destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive-hover/80",
 	outline: "text-foreground",
 	success: "border-transparent bg-green-500/15 text-green-700 dark:text-green-400 hover:bg-green-500/25",
 	warning: "border-transparent bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-500/25",

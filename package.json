@@ -1,6 +1,6 @@
 {
   "name": "@senlerio/ui",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "private": false,
   "type": "module",
   "description": "Senler React 19 UI component library with shared styles, atoms, layout primitives, forms, and overlays",
@@ -21,7 +21,8 @@
     "./dist/fonts.css",
     "./dist/styles.css",
     "./dist/tailwind.css",
-    "./dist/tokens.css"
+    "./dist/tokens.css",
+    "./dist/themes/*.css"
   ],
   "files": [
     "dist",
@@ -81,6 +82,7 @@
     "./fonts/*": "./dist/fonts/*",
     "./tailwind.css": "./dist/tailwind.css",
     "./tokens.css": "./dist/tokens.css",
+    "./themes/senler.css": "./dist/themes/senler.css",
     "./atoms/*": {
       "types": "./dist/atoms/*.d.ts",
       "import": "./dist/atoms/*.js",
@@ -107,9 +109,9 @@
     "normalize:dist": "chmod -R a+rX dist",
     "test": "npm run test:source",
     "test:source": "NODE_ENV=test npm run test:source:internal",
-    "test:source:internal": "node scripts/test-css-compat.mjs --source && node scripts/test-tabs.mjs --source && node scripts/test-app-shell.mjs --source && node scripts/test-sidebar-interactions.mjs --source",
+    "test:source:internal": "node scripts/test-css-compat.mjs --source && node scripts/test-theme.mjs --source && node scripts/test-tabs.mjs --source && node scripts/test-app-shell.mjs --source && node scripts/test-sidebar-interactions.mjs --source",
     "test:dist": "NODE_ENV=test npm run test:dist:internal",
-    "test:dist:internal": "node scripts/test-css-compat.mjs --dist && node scripts/test-tabs.mjs --dist && node scripts/test-app-shell.mjs --dist && node scripts/test-sidebar-interactions.mjs --dist && node scripts/test-package.mjs && node scripts/test-frontend-release.mjs",
+    "test:dist:internal": "node scripts/test-css-compat.mjs --dist && node scripts/test-theme.mjs --dist && node scripts/test-tabs.mjs --dist && node scripts/test-app-shell.mjs --dist && node scripts/test-sidebar-interactions.mjs --dist && node scripts/test-package.mjs && node scripts/test-frontend-release.mjs",
     "type-check": "tsc -p tsconfig.json --noEmit --incremental --tsBuildInfoFile .cache/tsconfig.type-check.tsbuildinfo",
     "type-check:configs": "tsc -p tsconfig.configs.json --noEmit",
     "package:state:write": "node scripts/package-state.mjs --write",
@@ -172,6 +174,7 @@
     "web-streams-polyfill": "^4.3.0"
   },
   "devDependencies": {
+    "@tailwindcss/node": "^4.3.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
@@ -181,6 +184,7 @@
     "lightningcss": "^1.33.0",
     "lucide-react": "1.43.0",
     "prism-react-renderer": "^2.4.1",
+    "postcss": "^8.5.26",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3",

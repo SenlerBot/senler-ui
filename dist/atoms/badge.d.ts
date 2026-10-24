@@ -3,7 +3,7 @@ import { type VariantProps } from 'class-variance-authority';
 export declare const badgeVariantClasses: {
     readonly default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80";
     readonly secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80";
-    readonly destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80";
+    readonly destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive-hover/80";
     readonly outline: "text-foreground";
     readonly success: "border-transparent bg-green-500/15 text-green-700 dark:text-green-400 hover:bg-green-500/25";
     readonly warning: "border-transparent bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-500/25";

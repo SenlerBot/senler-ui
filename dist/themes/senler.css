@@ -1,0 +1,19 @@
+/* Opt-in product palette. Import after the base Senler UI stylesheet. */
+.dark {
+  --background: hsl(215 27.907% 16.863%);
+  --card: var(--background);
+  --popover: var(--background);
+  --sidebar: var(--background);
+  --accent: hsl(216.923 19.118% 26.667%);
+  --secondary: var(--accent);
+  --muted: var(--accent);
+  --sidebar-accent: var(--accent);
+  --muted-foreground: hsl(217.895 10.615% 64.902%);
+  --border: hsl(216.923 19.118% 26.667%);
+  --input: var(--border);
+  --sidebar-border: var(--border);
+  --destructive: hsl(0 62.821% 30.588%);
+  --destructive-hover: hsl(0 84.236% 60.196%);
+  --destructive-text: hsl(0 93.548% 81.765%);
+  --destructive-border: hsl(0 73.709% 41.765%);
+}

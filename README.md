@@ -34,7 +34,7 @@ source, so `npm publish` does not repeat the full workflow.
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.7.1.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.7.2.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:
@@ -65,6 +65,29 @@ scans Senler UI classes:
 
 Use `@senlerio/ui/tokens.css` only when you need raw CSS variables without
 Tailwind utility generation.
+
+### Shared product palette
+
+Cabinet, Dialog, and Widget opt into the shared Senler palette after the base
+stylesheet. Other consumers keep the base palette unless they import this file:
+
+```css
+@import "tailwindcss";
+@import "@senlerio/ui/fonts.css";
+@import "@senlerio/ui/tailwind.css";
+@import "@senlerio/ui/themes/senler.css";
+```
+
+With the standalone stylesheet, import `@senlerio/ui/styles.css` first and
+`@senlerio/ui/themes/senler.css` second. The application owns the `.dark` class,
+theme persistence, iframe synchronization, and product-specific colors.
+
+Destructive surfaces, text, borders, and hover states have separate variables:
+`--destructive`, `--destructive-text`, `--destructive-border`, and
+`--destructive-hover`. `text-destructive` and `border-destructive` use their
+respective variables. Hover is explicit (`hover:bg-destructive-hover/90`);
+`bg-destructive` never adds interaction by itself. Custom palettes should
+provide readable destructive text and border colors for their chosen surfaces.
 
 ## Browser Compatibility
 

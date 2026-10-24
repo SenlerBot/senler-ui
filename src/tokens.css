@@ -22,6 +22,9 @@
 
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(210 40% 98%);
+  --destructive-hover: var(--destructive);
+  --destructive-text: var(--destructive);
+  --destructive-border: var(--destructive);
 
   --border: hsl(214.3 31.8% 91.4%);
   --input: hsl(214.3 31.8% 91.4%);
@@ -61,6 +64,9 @@
 
   --destructive: hsl(0 62.8% 30.6%);
   --destructive-foreground: hsl(210 40% 98%);
+  --destructive-hover: var(--destructive);
+  --destructive-text: var(--destructive);
+  --destructive-border: var(--destructive);
 
   --border: hsl(217.2 32.6% 17.5%);
   --input: hsl(217.2 32.6% 17.5%);
@@ -91,6 +97,11 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-text: var(--destructive-text);
+  --color-destructive-border: var(--destructive-border);
+  --text-color-destructive: var(--destructive-text);
+  --border-color-destructive: var(--destructive-border);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
