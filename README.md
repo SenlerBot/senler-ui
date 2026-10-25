@@ -15,6 +15,34 @@ publishing; it performs one full check, one artifact build, and one distribution
 test. The `prepack` hook only verifies that `dist` was built from the current
 source, so `npm publish` does not repeat the full workflow.
 
+After building, run `npm run test:consumer` to install the packed artifact into
+an isolated React/Vite application and check its public imports, types, fonts,
+and both standalone and Tailwind stylesheets. It also serves both builds on
+temporary loopback ports and runs Chromium checks for live theme changes,
+notifications, translated labels, dialog/sheet focus restoration, and decorative
+image descriptions. Install Chromium once with `npx playwright install chromium`
+(CI also installs its OS dependencies). Failures keep screenshots and traces in
+`.cache/consumer-browser`. CI runs this on Node 24. Cabinet
+keeps its local source connection; its `npm run ui:smoke` uses the same consumer
+check against the synchronized local package.
+
+### Application boundaries and upgrades
+
+Cabinet and the library are developed together. Cabinet uses a local generated
+snapshot, updated through `npm run ui:sync`, and workspace checks keep it aligned
+with this repository. After the library is verified and published, the other
+frontends pin, verify, and adopt that release independently; they do not have to
+upgrade or deploy together.
+
+The library owns reusable visual primitives and palettes. Applications own
+navigation, translations, error handling, notification workflows, and the source
+and persistence of their selected theme. Widget resolves its channel settings,
+embedding options, and SDK overrides before passing the resulting theme to UI
+components. Cabinet's assistant-aware dialog and focus handling stay in Cabinet.
+
+Application adapters can re-export or compose shared components. Keep application
+behavior local; move it into the library only when it is useful across consumers.
+
 ## What Is Included
 
 - Shared Tailwind integration via `@senlerio/ui/tailwind.css`.
@@ -54,14 +82,21 @@ import '@senlerio/ui/styles.css';
 
 If the host application already owns its Tailwind pipeline and global styles,
 import the Tailwind integration entrypoint from the app CSS file after
-`tailwindcss`. It registers semantic color utilities, the dark variant, and
-scans Senler UI classes:
+`tailwindcss`. It registers semantic color utilities and the dark variant.
+Explicitly register the installed component files for scanning:
 
 ```css
 @import "tailwindcss";
 @import "@senlerio/ui/fonts.css";
 @import "@senlerio/ui/tailwind.css";
+@source "../node_modules/@senlerio/ui/dist";
 ```
+
+The `@source` path is relative to the application's stylesheet (the example
+assumes `src/styles.css`). Keep it explicit with Vite/PostCSS: import processing
+can resolve the library's own relative `@source` from the consumer directory.
+The standalone `styles.css` entry already contains the compiled utilities and
+does not need source scanning. Cabinet's local source connection stays local.
 
 Use `@senlerio/ui/tokens.css` only when you need raw CSS variables without
 Tailwind utility generation.
@@ -82,12 +117,45 @@ With the standalone stylesheet, import `@senlerio/ui/styles.css` first and
 `@senlerio/ui/themes/senler.css` second. The application owns the `.dark` class,
 theme persistence, iframe synchronization, and product-specific colors.
 
+`Toaster` uses `next-themes` by default. Applications with their own theme
+provider should pass the resolved mode explicitly: `<Toaster theme={theme} />`,
+where `theme` is `"light"` or `"dark"`. The library does not read widget channel
+settings or SDK overrides.
+
+Notifications use Sonner's neutral appearance: white in light mode and black
+in dark mode, independently of the page palette. The close button is hidden by
+default; pass `closeButton` to enable it. Sonner's styling and behavior props
+remain available for application-specific overrides.
+
 Destructive surfaces, text, borders, and hover states have separate variables:
 `--destructive`, `--destructive-text`, `--destructive-border`, and
 `--destructive-hover`. `text-destructive` and `border-destructive` use their
 respective variables. Hover is explicit (`hover:bg-destructive-hover/90`);
 `bg-destructive` never adds interaction by itself. Custom palettes should
 provide readable destructive text and border colors for their chosen surfaces.
+
+## Translated component labels
+
+Applications supply translated strings; the library does not select a language
+or depend on an application's i18n provider. Existing English defaults remain
+available for consumers that omit these props:
+
+```tsx
+<DialogContent closeLabel={t('common:actions.close')} />
+<SheetContent closeLabel={t('common:actions.close')} />
+<ImagePreview src={url} alt={t('common:accessibility.imagePreview')} />
+<Spinner aria-label={t('common:status.loading')} />
+<PageLoader label={t('common:status.loading')} />
+<Toaster closeButton toastOptions={{ closeButtonAriaLabel: t('common:actions.close') }} />
+```
+
+`ImagePreview` and `Img` preserve an explicit `alt=""` for decorative images.
+Notification labels, `toastOptions`, `style`, and `className` are passed through
+to Sonner without replacing the application's settings.
+
+`PageLoader` also uses its visible `label` as the spinner's accessible label.
+Pass `aria-label` to override that description or translate a loader without
+adding visible text.
 
 ## Browser Compatibility
 

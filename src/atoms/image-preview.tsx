@@ -23,10 +23,11 @@ interface ImagePreviewProps
   extends React.ComponentProps<'div'>,
     VariantProps<typeof imagePreviewVariants> {
   src?: string;
+  alt?: string;
 }
 
 const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
-  ({ className, variant, src, ...props }, ref) => {
+  ({ className, variant, src, alt = 'Preview', ...props }, ref) => {
     return (
       <div
         ref={ref}
@@ -34,7 +35,7 @@ const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
         {...props}
       >
         {src ? (
-          <Img src={src} className='h-full w-full object-cover' alt='Preview' />
+          <Img src={src} className='h-full w-full object-cover' alt={alt} />
         ) : (
           <ImageIcon className='h-6 w-6 text-muted-foreground' />
         )}

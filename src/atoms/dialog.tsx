@@ -72,8 +72,9 @@ const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
     showCloseButton?: boolean;
+    closeLabel?: string;
   }
->(({ className, children, showCloseButton = dialogContentDefaults.showCloseButton, ...props }, ref) => {
+>(({ className, children, showCloseButton = dialogContentDefaults.showCloseButton, closeLabel = 'Close', ...props }, ref) => {
   return (
     <DialogPortal data-slot='dialog-portal'>
       <DialogOverlay />
@@ -105,7 +106,7 @@ const DialogContent = React.forwardRef<
                   className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md hover:bg-muted"
                 >
                   <XIcon className="h-4 w-4" />
-                  <span className="sr-only">Close</span>
+                  <span className="sr-only">{closeLabel}</span>
                 </button>
               </DialogPrimitive.Close>
             )}

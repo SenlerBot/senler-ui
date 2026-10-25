@@ -11,17 +11,17 @@ var o = a("flex justify-center items-center overflow-hidden bg-muted border bord
 		icon: "w-20 h-20"
 	} },
 	defaultVariants: { variant: "banner" }
-}), s = n.forwardRef(({ className: n, variant: a, src: s, ...c }, l) => /* @__PURE__ */ i("div", {
-	ref: l,
+}), s = n.forwardRef(({ className: n, variant: a, src: s, alt: c = "Preview", ...l }, u) => /* @__PURE__ */ i("div", {
+	ref: u,
 	className: e(o({
 		variant: a,
 		className: n
 	})),
-	...c,
+	...l,
 	children: s ? /* @__PURE__ */ i(t, {
 		src: s,
 		className: "h-full w-full object-cover",
-		alt: "Preview"
+		alt: c
 	}) : /* @__PURE__ */ i(r, { className: "h-6 w-6 text-muted-foreground" })
 }));
 s.displayName = "ImagePreview";

@@ -10,6 +10,7 @@ declare function DialogClose({ className, ...props }: React.ComponentProps<typeo
 declare const DialogOverlay: React.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogOverlayProps & React.RefAttributes<HTMLDivElement>, "ref"> & React.RefAttributes<HTMLDivElement>>;
 declare const DialogContent: React.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogContentProps & React.RefAttributes<HTMLDivElement>, "ref"> & {
     showCloseButton?: boolean;
+    closeLabel?: string;
 } & React.RefAttributes<HTMLDivElement>>;
 declare function DialogHeader({ className, ...props }: React.ComponentProps<'div'>): React.JSX.Element;
 declare function DialogFooter({ className, ...props }: React.ComponentProps<'div'>): React.JSX.Element;

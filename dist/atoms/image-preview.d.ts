@@ -5,6 +5,7 @@ declare const imagePreviewVariants: (props?: ({
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 interface ImagePreviewProps extends React.ComponentProps<'div'>, VariantProps<typeof imagePreviewVariants> {
     src?: string;
+    alt?: string;
 }
 declare const ImagePreview: React.ForwardRefExoticComponent<Omit<ImagePreviewProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
 export { ImagePreview, imagePreviewVariants, };

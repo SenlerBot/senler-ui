@@ -1,0 +1,23 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "type-check": "tsc --project tsconfig.json"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@vitejs/plugin-react": "6.1.1",
+    "typescript": "6.0.3",
+    "vite": "8.2.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "lucide-react": "1.43.0",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7"
+  },
+  "name": "senler-ui-consumer-smoke",
+  "private": true
+}

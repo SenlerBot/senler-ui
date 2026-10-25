@@ -108,6 +108,7 @@
     "copy:css": "node scripts/copy-css.mjs",
     "normalize:dist": "chmod -R a+rX dist",
     "test": "npm run test:source",
+    "test:consumer": "sh scripts/development/run-heavy-task.sh --repo senler-ui --task consumer-smoke -- node scripts/test-consumer.mjs",
     "test:source": "NODE_ENV=test npm run test:source:internal",
     "test:source:internal": "node scripts/test-css-compat.mjs --source && node scripts/test-theme.mjs --source && node scripts/test-tabs.mjs --source && node scripts/test-app-shell.mjs --source && node scripts/test-sidebar-interactions.mjs --source",
     "test:dist": "NODE_ENV=test npm run test:dist:internal",
@@ -174,6 +175,7 @@
     "web-streams-polyfill": "^4.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/node": "^4.3.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^24.13.3",
@@ -183,8 +185,8 @@
     "jsdom": "^30.0.1",
     "lightningcss": "^1.33.0",
     "lucide-react": "1.43.0",
-    "prism-react-renderer": "^2.4.1",
     "postcss": "^8.5.26",
+    "prism-react-renderer": "^2.4.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3",

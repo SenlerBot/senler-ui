@@ -8,7 +8,7 @@ interface ImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 const Img = ({ className, alt, ...props }: ImgProps) => {
   return (
     <img
-      alt={alt || 'image'}
+      alt={alt ?? 'image'}
       className={cn('max-w-full', className)}
       {...props}
     />

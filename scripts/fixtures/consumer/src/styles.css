@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "@senlerio/ui/fonts.css";
+@import "@senlerio/ui/tailwind.css";
+@import "@senlerio/ui/themes/senler.css";
+
+/* Vite/PostCSS resolves sources from this consumer stylesheet. */
+@source "../node_modules/@senlerio/ui/dist";

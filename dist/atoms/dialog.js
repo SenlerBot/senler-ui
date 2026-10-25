@@ -41,13 +41,13 @@ var d = t.forwardRef(({ className: t, ...n }, i) => /* @__PURE__ */ r(a.Overlay,
 	...n
 }));
 d.displayName = a.Overlay.displayName;
-var f = t.forwardRef(({ className: t, children: s, showCloseButton: c = o.showCloseButton, ...u }, f) => /* @__PURE__ */ i(l, {
+var f = t.forwardRef(({ className: t, children: s, showCloseButton: c = o.showCloseButton, closeLabel: u = "Close", ...f }, p) => /* @__PURE__ */ i(l, {
 	"data-slot": "dialog-portal",
 	children: [/* @__PURE__ */ r(d, {}), /* @__PURE__ */ r(a.Content, {
-		ref: f,
+		ref: p,
 		"data-slot": "dialog-content",
 		className: "fixed inset-0 z-50 overflow-y-auto data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200",
-		...u,
+		...f,
 		children: /* @__PURE__ */ i("div", {
 			className: "relative flex min-h-full items-center justify-center p-4",
 			children: [/* @__PURE__ */ r(a.Close, {
@@ -67,7 +67,7 @@ var f = t.forwardRef(({ className: t, children: s, showCloseButton: c = o.showCl
 						className: "inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md hover:bg-muted",
 						children: [/* @__PURE__ */ r(n, { className: "h-4 w-4" }), /* @__PURE__ */ r("span", {
 							className: "sr-only",
-							children: "Close"
+							children: u
 						})]
 					})
 				})]

@@ -3,7 +3,7 @@ import "react";
 import { jsx as t } from "react/jsx-runtime";
 //#region src/atoms/image.tsx
 var n = ({ className: n, alt: r, ...i }) => /* @__PURE__ */ t("img", {
-	alt: r || "image",
+	alt: r ?? "image",
 	className: e("max-w-full", n),
 	...i
 });

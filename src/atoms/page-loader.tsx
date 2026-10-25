@@ -4,12 +4,13 @@ import { cn } from '../lib/utils';
 interface PageLoaderProps {
   label?: string;
   className?: string;
+  'aria-label'?: string;
 }
 
-function PageLoader({ label, className }: PageLoaderProps) {
+function PageLoader({ label, className, 'aria-label': ariaLabel = label }: PageLoaderProps) {
   return (
     <div className={cn('flex flex-col items-center gap-2', className)}>
-      <Spinner className="size-8" />
+      <Spinner className="size-8" aria-label={ariaLabel} />
       {label && <p className="text-sm text-muted-foreground">{label}</p>}
     </div>
   );
