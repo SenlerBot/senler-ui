@@ -1,7 +1,7 @@
 import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t } from "react/jsx-runtime";
-//#region src/atoms/table.tsx
+// src/atoms/table.tsx
 function n({ className: n, ...r }) {
 	return /* @__PURE__ */ t("table", {
 		className: e("table w-full table-fixed border-collapse border-spacing-0 overflow-hidden", n),
@@ -44,5 +44,4 @@ function c({ className: n, ...r }) {
 		...r
 	});
 }
-//#endregion
 export { n as Table, r as TableBody, i as TableCell, a as TableContainer, o as TableHead, s as TableHeadCell, c as TableRow };

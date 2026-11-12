@@ -2,7 +2,7 @@ import { AI_KIND as e, getAiLabelFallback as t } from "../lib/ai-auto-attributes
 import { cn as n } from "../lib/utils/cn.js";
 import * as r from "react";
 import { jsx as i } from "react/jsx-runtime";
-//#region src/atoms/input.tsx
+// src/atoms/input.tsx
 var a = r.forwardRef(({ className: r, type: a, placeholder: o, "aria-label": s, title: c, name: l, "data-ai-kind": u, "data-ai-label": d, ...f }, p) => {
 	let m = t(d, typeof s == "string" ? s : void 0, typeof c == "string" ? c : void 0, o, l);
 	return /* @__PURE__ */ i("input", {
@@ -20,5 +20,4 @@ var a = r.forwardRef(({ className: r, type: a, placeholder: o, "aria-label": s, 
 	});
 });
 a.displayName = "Input";
-//#endregion
 export { a as Input };

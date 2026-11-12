@@ -4,7 +4,7 @@ import { Separator as n } from "./separator.js";
 import { useMemo as r } from "react";
 import { jsx as i, jsxs as a } from "react/jsx-runtime";
 import { cva as o } from "class-variance-authority";
-//#region src/atoms/field.tsx
+// src/atoms/field.tsx
 function s({ className: t, ...n }) {
 	return /* @__PURE__ */ i("fieldset", {
 		"data-slot": "field-set",
@@ -106,5 +106,4 @@ function _({ className: t, children: n, errors: a, ...o }) {
 		children: s
 	}) : null;
 }
-//#endregion
 export { d as Field, f as FieldContent, h as FieldDescription, _ as FieldError, l as FieldGroup, p as FieldLabel, c as FieldLegend, g as FieldSeparator, s as FieldSet, m as FieldTitle };

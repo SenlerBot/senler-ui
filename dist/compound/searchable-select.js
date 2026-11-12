@@ -1,12 +1,12 @@
-import { cn as e } from "../lib/utils/cn.js";
-import { overlayLayerClassName as t, overlaySolidSurfaceClassName as n } from "../lib/overlay-styles.js";
-import { Label as r } from "../atoms/label.js";
-import { FieldDescription as i, FieldError as a } from "../atoms/field.js";
+import { FieldDescription as e, FieldError as t } from "../atoms/field.js";
+import { Label as n } from "../atoms/label.js";
+import { overlayLayerClassName as r, overlaySolidSurfaceClassName as i } from "../lib/overlay-styles.js";
+import { cn as a } from "../lib/utils/cn.js";
 import { Check as o, ChevronDown as s, XIcon as c } from "lucide-react";
 import { jsx as l, jsxs as u } from "react/jsx-runtime";
 import d, { components as f } from "react-select";
 import p from "react-select/async";
-//#region src/compound/searchable-select.tsx
+// src/compound/searchable-select.tsx
 var m = {
 	dropdownIndicator: !0,
 	loadingMessage: "Loading...",
@@ -19,29 +19,29 @@ function h() {
 function g() {
 	return m.loadingMessage;
 }
-function _(r, i) {
+function _(e, t) {
 	return {
-		clearIndicator: (t) => e("flex cursor-pointer items-center px-2 text-muted-foreground transition-colors hover:text-foreground", i?.clearIndicator?.(t)),
-		container: (t) => e("w-full", i?.container?.(t)),
-		control: (t) => e("min-h-10 rounded-md border border-input bg-background text-sm transition-colors", "focus-within:border-primary", t.isDisabled ? "cursor-not-allowed opacity-50" : "cursor-text", r ? "border-destructive focus-within:border-destructive" : null, i?.control?.(t)),
-		dropdownIndicator: (t) => e("flex cursor-pointer items-center px-2 text-muted-foreground transition-colors hover:text-foreground", t.selectProps.menuIsOpen ? "rotate-180" : null, i?.dropdownIndicator?.(t)),
-		group: (t) => e("px-1 py-1", i?.group?.(t)),
-		groupHeading: (t) => e("px-2 py-1.5 text-xs font-medium text-muted-foreground", i?.groupHeading?.(t)),
-		indicatorsContainer: (t) => e("shrink-0", i?.indicatorsContainer?.(t)),
-		input: (t) => e("text-foreground", i?.input?.(t)),
-		loadingIndicator: (t) => e("px-2 text-muted-foreground", i?.loadingIndicator?.(t)),
-		loadingMessage: (t) => e("px-3 py-2 text-sm text-muted-foreground", i?.loadingMessage?.(t)),
-		menu: (r) => e(t, "mt-1", n, i?.menu?.(r)),
-		menuList: (t) => e("max-h-72 overflow-auto p-1", i?.menuList?.(t)),
-		menuPortal: (n) => e(t, i?.menuPortal?.(n)),
-		multiValue: (t) => e("m-0 flex h-[22px] items-center overflow-hidden rounded border border-border bg-background", i?.multiValue?.(t)),
-		multiValueLabel: (t) => e("flex items-center px-1.5 text-xs text-foreground", i?.multiValueLabel?.(t)),
-		multiValueRemove: (t) => e("flex h-full cursor-pointer items-center border-l border-border px-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground", i?.multiValueRemove?.(t)),
-		noOptionsMessage: (t) => e("px-3 py-2 text-sm text-muted-foreground", i?.noOptionsMessage?.(t)),
-		option: (t) => e("relative cursor-pointer rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors", t.isSelected || t.isFocused ? "bg-accent/50 text-accent-foreground" : "text-popover-foreground", t.isDisabled ? "cursor-not-allowed opacity-50" : null, i?.option?.(t)),
-		placeholder: (t) => e("text-muted-foreground", i?.placeholder?.(t)),
-		singleValue: (t) => e("text-foreground", i?.singleValue?.(t)),
-		valueContainer: (t) => e("flex min-h-10 flex-1 items-center gap-1 px-3 py-1", i?.valueContainer?.(t))
+		clearIndicator: (e) => a("flex cursor-pointer items-center px-2 text-muted-foreground transition-colors hover:text-foreground", t?.clearIndicator?.(e)),
+		container: (e) => a("w-full", t?.container?.(e)),
+		control: (n) => a("min-h-10 rounded-md border border-input bg-background text-sm transition-colors", "focus-within:border-primary", n.isDisabled ? "cursor-not-allowed opacity-50" : "cursor-text", e ? "border-destructive focus-within:border-destructive" : null, t?.control?.(n)),
+		dropdownIndicator: (e) => a("flex cursor-pointer items-center px-2 text-muted-foreground transition-colors hover:text-foreground", e.selectProps.menuIsOpen ? "rotate-180" : null, t?.dropdownIndicator?.(e)),
+		group: (e) => a("px-1 py-1", t?.group?.(e)),
+		groupHeading: (e) => a("px-2 py-1.5 text-xs font-medium text-muted-foreground", t?.groupHeading?.(e)),
+		indicatorsContainer: (e) => a("shrink-0", t?.indicatorsContainer?.(e)),
+		input: (e) => a("text-foreground", t?.input?.(e)),
+		loadingIndicator: (e) => a("px-2 text-muted-foreground", t?.loadingIndicator?.(e)),
+		loadingMessage: (e) => a("px-3 py-2 text-sm text-muted-foreground", t?.loadingMessage?.(e)),
+		menu: (e) => a(r, "mt-1", i, t?.menu?.(e)),
+		menuList: (e) => a("max-h-72 overflow-auto p-1", t?.menuList?.(e)),
+		menuPortal: (e) => a(r, t?.menuPortal?.(e)),
+		multiValue: (e) => a("m-0 flex h-[22px] items-center overflow-hidden rounded border border-border bg-background", t?.multiValue?.(e)),
+		multiValueLabel: (e) => a("flex items-center px-1.5 text-xs text-foreground", t?.multiValueLabel?.(e)),
+		multiValueRemove: (e) => a("flex h-full cursor-pointer items-center border-l border-border px-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground", t?.multiValueRemove?.(e)),
+		noOptionsMessage: (e) => a("px-3 py-2 text-sm text-muted-foreground", t?.noOptionsMessage?.(e)),
+		option: (e) => a("relative cursor-pointer rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors", e.isSelected || e.isFocused ? "bg-accent/50 text-accent-foreground" : "text-popover-foreground", e.isDisabled ? "cursor-not-allowed opacity-50" : null, t?.option?.(e)),
+		placeholder: (e) => a("text-muted-foreground", t?.placeholder?.(e)),
+		singleValue: (e) => a("text-foreground", t?.singleValue?.(e)),
+		valueContainer: (e) => a("flex min-h-10 flex-1 items-center gap-1 px-3 py-1", t?.valueContainer?.(e))
 	};
 }
 function v(e) {
@@ -82,21 +82,21 @@ function S(e, t) {
 		...t
 	};
 }
-function C({ children: e, error: t, helperText: n, inputId: o, label: s, wrapperProps: c }) {
+function C({ children: r, error: i, helperText: a, inputId: o, label: s, wrapperProps: c }) {
 	return /* @__PURE__ */ u("div", {
 		"data-slot": "searchable-select-field",
 		...c,
 		children: [
-			s ? /* @__PURE__ */ l(r, {
+			s ? /* @__PURE__ */ l(n, {
 				htmlFor: o,
 				className: "mb-1.5 text-sm",
 				children: s
 			}) : null,
-			e,
-			t && n ? /* @__PURE__ */ l(a, { children: n }) : null,
-			!t && n ? /* @__PURE__ */ l(i, {
+			r,
+			i && a ? /* @__PURE__ */ l(t, { children: a }) : null,
+			!i && a ? /* @__PURE__ */ l(e, {
 				className: "mt-1.5",
-				children: n
+				children: a
 			}) : null
 		]
 	});
@@ -141,5 +141,4 @@ function T({ classNames: e, components: t, dropdownIndicator: n = m.dropdownIndi
 		})
 	});
 }
-//#endregion
 export { T as AsyncSearchableSelect, w as SearchableSelect, m as searchableSelectDefaults };

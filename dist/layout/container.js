@@ -1,5 +1,5 @@
 import { jsx as e } from "react/jsx-runtime";
-//#region src/layout/container.tsx
+// src/layout/container.tsx
 function t({ children: t, ...n }) {
 	return /* @__PURE__ */ e("div", {
 		className: "w-full h-full p-4 sm:py-[40px] sm:px-[60px] lg:py-[40px] lg:px-[120px] mx-auto",
@@ -10,5 +10,4 @@ function t({ children: t, ...n }) {
 		})
 	});
 }
-//#endregion
 export { t as LayoutContainer };

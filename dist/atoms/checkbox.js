@@ -4,7 +4,7 @@ import * as r from "react";
 import { Check as i } from "lucide-react";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
 import * as s from "@radix-ui/react-checkbox";
-//#region src/atoms/checkbox.tsx
+// src/atoms/checkbox.tsx
 function c({ className: c, label: l, tooltip: u, id: d, "aria-label": f, title: p, name: m, "data-ai-kind": h, "data-ai-label": g, ..._ }) {
 	let v = r.useId(), y = d || v, b = t(g, typeof f == "string" ? f : void 0, typeof p == "string" ? p : void 0, void 0, m, l);
 	return /* @__PURE__ */ o("div", {
@@ -37,5 +37,4 @@ function c({ className: c, label: l, tooltip: u, id: d, "aria-label": f, title: 
 		})]
 	});
 }
-//#endregion
 export { c as CheckBox };

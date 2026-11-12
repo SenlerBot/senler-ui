@@ -1,5 +1,5 @@
 import * as e from "react";
-//#region src/lib/ai-auto-attributes.ts
+// src/lib/ai-auto-attributes.ts
 var t = {
 	button: "button",
 	field: "field",
@@ -58,5 +58,4 @@ function s(t) {
 function c(e, t, n, r, a, o) {
 	return i(e) ?? i(t) ?? i(n) ?? i(r) ?? i(a) ?? s(o);
 }
-//#endregion
 export { n as AI_ACTION, t as AI_KIND, c as getAiLabelFallback, s as getAiTextFromReactNode };

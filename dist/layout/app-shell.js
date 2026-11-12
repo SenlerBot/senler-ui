@@ -1,13 +1,13 @@
 "use client";
-import { cn as e } from "../lib/utils/cn.js";
+import { Badge as e } from "../atoms/badge.js";
 import { Button as t } from "../atoms/button.js";
-import { Badge as n } from "../atoms/badge.js";
-import { ScrollArea as r } from "../atoms/scroll-area.js";
+import { ScrollArea as n } from "../atoms/scroll-area.js";
+import { cn as r } from "../lib/utils/cn.js";
 import { Sidebar as i, SidebarProvider as a } from "./sidebar.js";
 import * as o from "react";
 import { ChevronDownIcon as s, ChevronRightIcon as c, MenuIcon as l } from "lucide-react";
 import { Fragment as u, jsx as d, jsxs as f } from "react/jsx-runtime";
-//#region src/layout/app-shell.tsx
+// src/layout/app-shell.tsx
 var p = {
 	navigation: "Navigation",
 	navigationDescription: "Displays the application navigation.",
@@ -30,14 +30,14 @@ function g(e) {
 function _(e, t) {
 	e.onSelect?.(), t?.();
 }
-function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, itemClassName: l, labels: p, groupTriggerBehavior: m, depth: y = 0 }) {
-	let b = h(t, r), x = g(t), S = t.icon, C = !!t.items?.length, w = o.useId(), [T, E] = o.useState(t.defaultOpen ?? b), D = o.useRef(b), O = o.useRef(r), k = C && m === "toggle", A = C && (k ? t.expanded ?? T : t.expanded ?? (b || t.defaultOpen === !0));
+function v({ item: t, currentPath: n, renderLink: i, onNavigate: a, density: c, itemClassName: l, labels: p, groupTriggerBehavior: m, depth: y = 0 }) {
+	let b = h(t, n), x = g(t), S = t.icon, C = !!t.items?.length, w = o.useId(), [T, E] = o.useState(t.defaultOpen ?? b), D = o.useRef(b), O = o.useRef(n), k = C && m === "toggle", A = C && (k ? t.expanded ?? T : t.expanded ?? (b || t.defaultOpen === !0));
 	o.useEffect(() => {
-		let e = b && !D.current, n = b && O.current !== r;
-		D.current = b, O.current = r, k && (e || n) && t.expanded === void 0 && E(!0);
+		let e = b && !D.current, r = b && O.current !== n;
+		D.current = b, O.current = n, k && (e || r) && t.expanded === void 0 && E(!0);
 	}, [
 		b,
-		r,
+		n,
 		t.expanded,
 		k
 	]);
@@ -46,13 +46,13 @@ function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, 
 		depth: y,
 		expanded: A,
 		hasChildren: C
-	}) : l, M = e("group/app-shell-nav-item flex w-full cursor-pointer items-center text-sm outline-none transition-colors", "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", "focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50", "aria-disabled:pointer-events-none aria-disabled:opacity-50", b && "bg-muted font-medium text-foreground", c === "comfortable" ? "h-9 gap-1.5 rounded-[10px] px-2.5 font-medium" : "h-8 gap-2 rounded-md px-2", y > 0 && (c === "comfortable" ? "h-8 text-[13px] text-sidebar-foreground/80" : "h-7 text-[13px] text-sidebar-foreground/80"), j, t.className), N = (r) => /* @__PURE__ */ f(u, { children: [
+	}) : l, M = r("group/app-shell-nav-item flex w-full cursor-pointer items-center text-sm outline-none transition-colors", "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", "focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-50", "aria-disabled:pointer-events-none aria-disabled:opacity-50", b && "bg-muted font-medium text-foreground", c === "comfortable" ? "h-9 gap-1.5 rounded-[10px] px-2.5 font-medium" : "h-8 gap-2 rounded-md px-2", y > 0 && (c === "comfortable" ? "h-8 text-[13px] text-sidebar-foreground/80" : "h-7 text-[13px] text-sidebar-foreground/80"), j, t.className), N = (n) => /* @__PURE__ */ f(u, { children: [
 		S ? /* @__PURE__ */ d(S, { className: "size-4 shrink-0 text-muted-foreground group-hover/app-shell-nav-item:text-inherit" }) : null,
 		/* @__PURE__ */ d("span", {
 			className: "min-w-0 flex-1 truncate",
 			children: t.label
 		}),
-		t.badge !== void 0 && t.badgeAppearance !== "plain" ? /* @__PURE__ */ d(n, {
+		t.badge !== void 0 && t.badgeAppearance !== "plain" ? /* @__PURE__ */ d(e, {
 			variant: "secondary",
 			className: "ml-auto max-w-16 rounded-full px-1.5 py-0 text-[11px]",
 			children: t.badge
@@ -62,9 +62,9 @@ function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, 
 			children: t.badge
 		}) : null,
 		t.trailing,
-		r ? /* @__PURE__ */ d(s, {
+		n ? /* @__PURE__ */ d(s, {
 			"aria-hidden": "true",
-			className: e("size-4 shrink-0 text-muted-foreground transition-transform", A && "rotate-180")
+			className: r("size-4 shrink-0 text-muted-foreground transition-transform", A && "rotate-180")
 		}) : null
 	] }), P = (e) => {
 		t.expanded === void 0 && E(e), t.onExpandedChange?.(e);
@@ -73,17 +73,13 @@ function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, 
 	}, I = () => {
 		t.disabled || P(!A);
 	}, L = (e) => {
-		if (t.disabled) {
-			e.preventDefault();
-			return;
-		}
-		_(t, a);
+		t.disabled ? e.preventDefault() : _(t, a);
 	}, R;
 	if (t.href && !t.disabled) {
-		let n = i({
+		let e = i({
 			item: t,
 			href: t.href,
-			className: e(M, k && "min-w-0 flex-1"),
+			className: r(M, k && "min-w-0 flex-1"),
 			children: N(!1),
 			title: x,
 			onClick: L,
@@ -92,10 +88,10 @@ function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, 
 		});
 		R = k ? /* @__PURE__ */ f("div", {
 			className: "flex min-w-0 items-center gap-1",
-			children: [n, /* @__PURE__ */ d("button", {
+			children: [e, /* @__PURE__ */ d("button", {
 				type: "button",
 				"data-slot": "app-sidebar-disclosure",
-				className: e("flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors", "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring"),
+				className: r("flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors", "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring"),
 				"aria-controls": w,
 				"aria-expanded": A,
 				"aria-label": `${A ? p.collapseNavigationGroup : p.expandNavigationGroup}: ${x}`,
@@ -103,10 +99,10 @@ function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, 
 				onClick: I,
 				children: /* @__PURE__ */ d(s, {
 					"aria-hidden": "true",
-					className: e("size-4 transition-transform", A && "rotate-180")
+					className: r("size-4 transition-transform", A && "rotate-180")
 				})
 			})]
-		}) : n;
+		}) : e;
 	} else R = /* @__PURE__ */ d("button", {
 		type: "button",
 		className: M,
@@ -124,10 +120,10 @@ function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, 
 		className: "min-w-0",
 		children: [R, A ? /* @__PURE__ */ d("ul", {
 			id: w,
-			className: e("mt-1 grid gap-1 border-l border-sidebar-border pl-3", t.childrenClassName),
+			className: r("mt-1 grid gap-1 border-l border-sidebar-border pl-3", t.childrenClassName),
 			children: t.items?.map((e) => /* @__PURE__ */ d(v, {
 				item: e,
-				currentPath: r,
+				currentPath: n,
 				renderLink: i,
 				onNavigate: a,
 				density: c,
@@ -139,13 +135,13 @@ function v({ item: t, currentPath: r, renderLink: i, onNavigate: a, density: c, 
 		}) : null]
 	});
 }
-function y({ navigation: t, currentPath: n, renderLink: i, brand: a, headerActions: o, top: s, footer: c, labels: l, onNavigate: u, density: p = "standard", headerClassName: h, topClassName: g, navigationClassName: _, groupClassName: y, groupLabelClassName: b, footerClassName: x, itemClassName: S, groupTriggerBehavior: C = "select" }) {
+function y({ navigation: e, currentPath: t, renderLink: i, brand: a, headerActions: o, top: s, footer: c, labels: l, onNavigate: u, density: p = "standard", headerClassName: h, topClassName: g, navigationClassName: _, groupClassName: y, groupLabelClassName: b, footerClassName: x, itemClassName: S, groupTriggerBehavior: C = "select" }) {
 	let w = m(l);
 	return /* @__PURE__ */ f("div", {
 		className: "flex h-full min-h-0 w-full flex-col",
 		children: [
 			/* @__PURE__ */ f("div", {
-				className: e("flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3", h),
+				className: r("flex h-14 shrink-0 items-center gap-2 border-b border-sidebar-border px-3", h),
 				children: [/* @__PURE__ */ d("div", {
 					className: "min-w-0 flex-1 overflow-hidden",
 					children: a
@@ -155,25 +151,25 @@ function y({ navigation: t, currentPath: n, renderLink: i, brand: a, headerActio
 				}) : null]
 			}),
 			s ? /* @__PURE__ */ d("div", {
-				className: e("shrink-0 p-2", g),
+				className: r("shrink-0 p-2", g),
 				children: s
 			}) : null,
-			/* @__PURE__ */ d(r, {
+			/* @__PURE__ */ d(n, {
 				className: "min-h-0 flex-1",
 				children: /* @__PURE__ */ d("nav", {
 					"aria-label": w.navigation,
-					className: e("grid gap-3 p-2", _),
-					children: t.map((t) => /* @__PURE__ */ f("div", {
-						className: e("grid gap-1", y, t.className),
-						...t.attributes,
-						children: [t.label ? /* @__PURE__ */ d("div", {
-							className: e("px-2 py-1 text-xs font-medium text-sidebar-foreground/70", b, t.labelClassName),
-							children: t.label
+					className: r("grid gap-3 p-2", _),
+					children: e.map((e) => /* @__PURE__ */ f("div", {
+						className: r("grid gap-1", y, e.className),
+						...e.attributes,
+						children: [e.label ? /* @__PURE__ */ d("div", {
+							className: r("px-2 py-1 text-xs font-medium text-sidebar-foreground/70", b, e.labelClassName),
+							children: e.label
 						}) : null, /* @__PURE__ */ d("ul", {
-							className: e("grid gap-1", t.itemsClassName),
-							children: t.items.map((e) => /* @__PURE__ */ d(v, {
+							className: r("grid gap-1", e.itemsClassName),
+							children: e.items.map((e) => /* @__PURE__ */ d(v, {
 								item: e,
-								currentPath: n,
+								currentPath: t,
 								renderLink: i,
 								onNavigate: u,
 								density: p,
@@ -182,11 +178,11 @@ function y({ navigation: t, currentPath: n, renderLink: i, brand: a, headerActio
 								groupTriggerBehavior: C
 							}, e.id))
 						})]
-					}, t.id))
+					}, e.id))
 				})
 			}),
 			c ? /* @__PURE__ */ d("div", {
-				className: e("shrink-0 p-2", x),
+				className: r("shrink-0 p-2", x),
 				children: c
 			}) : null
 		]
@@ -229,8 +225,8 @@ function b({ navigation: e, currentPath: t, renderLink: n, brand: r, headerActio
 		})
 	});
 }
-function x({ density: t = "standard", width: n, mobileWidth: r, mobile: i = !1, labels: o, ...s }) {
-	let c = m(o), l = n ?? (t === "comfortable" ? "16.25rem" : "16rem"), u = r ?? (t === "comfortable" ? "16.25rem" : "18rem");
+function x({ density: e = "standard", width: t, mobileWidth: n, mobile: i = !1, labels: o, ...s }) {
+	let c = m(o), l = t ?? (e === "comfortable" ? "16.25rem" : "16rem"), u = n ?? (e === "comfortable" ? "16.25rem" : "18rem");
 	return /* @__PURE__ */ d(a, {
 		open: !0,
 		isMobile: i,
@@ -241,40 +237,40 @@ function x({ density: t = "standard", width: n, mobileWidth: r, mobile: i = !1, 
 			description: c.navigationDescription,
 			toggle: c.openSidebar
 		},
-		className: e("w-auto", i && "h-full"),
+		className: r("w-auto", i && "h-full"),
 		children: /* @__PURE__ */ d(b, {
 			...s,
 			labels: o,
-			density: t,
+			density: e,
 			mobile: i
 		})
 	});
 }
-function S({ breadcrumbs: t, renderLink: n }) {
+function S({ breadcrumbs: e, renderLink: t }) {
 	return /* @__PURE__ */ d("div", {
 		className: "flex min-w-0 flex-1 items-center gap-1 overflow-hidden",
-		children: t.map((r, i) => {
-			let a = i !== t.length - 1 && !!r.href && !!n, s = e("text-[13px] font-medium leading-4 whitespace-nowrap text-foreground transition-colors", a && "cursor-pointer hover:text-primary");
-			return /* @__PURE__ */ f(o.Fragment, { children: [i > 0 ? /* @__PURE__ */ d(c, { className: "size-4 shrink-0 text-muted-foreground" }) : null, a && r.href ? n({
-				breadcrumb: r,
-				href: r.href,
+		children: e.map((n, i) => {
+			let a = i !== e.length - 1 && !!n.href && !!t, s = r("text-[13px] font-medium leading-4 whitespace-nowrap text-foreground transition-colors", a && "cursor-pointer hover:text-primary");
+			return /* @__PURE__ */ f(o.Fragment, { children: [i > 0 ? /* @__PURE__ */ d(c, { className: "size-4 shrink-0 text-muted-foreground" }) : null, a && n.href ? t({
+				breadcrumb: n,
+				href: n.href,
 				className: s,
-				children: r.label,
-				title: r.title,
-				onClick: () => r.onSelect?.()
+				children: n.label,
+				title: n.title,
+				onClick: () => n.onSelect?.()
 			}) : /* @__PURE__ */ d("p", {
 				className: s,
-				title: r.title,
-				children: r.label
-			})] }, r.id);
+				title: n.title,
+				children: n.label
+			})] }, n.id);
 		})
 	});
 }
-function C({ title: n, breadcrumbs: r, actions: i, renderLink: a, labels: o, onSidebarOpen: s, className: c, ...u }) {
+function C({ title: e, breadcrumbs: n, actions: i, renderLink: a, labels: o, onSidebarOpen: s, className: c, ...u }) {
 	let p = m(o);
 	return /* @__PURE__ */ f("header", {
 		"data-slot": "app-header",
-		className: e("shrink-0 border-b border-border bg-background", c),
+		className: r("shrink-0 border-b border-border bg-background", c),
 		...u,
 		children: [/* @__PURE__ */ f("div", {
 			className: "flex h-14 min-w-0 items-center gap-2 px-4 md:hidden",
@@ -288,9 +284,9 @@ function C({ title: n, breadcrumbs: r, actions: i, renderLink: a, labels: o, onS
 					onClick: s,
 					children: /* @__PURE__ */ d(l, {})
 				}) : null,
-				n ? /* @__PURE__ */ d("span", {
+				e ? /* @__PURE__ */ d("span", {
 					className: "min-w-0 flex-1 truncate text-sm font-semibold text-foreground",
-					children: n
+					children: e
 				}) : null,
 				i ? /* @__PURE__ */ d("div", {
 					className: "ml-auto flex shrink-0 items-center gap-1",
@@ -299,14 +295,14 @@ function C({ title: n, breadcrumbs: r, actions: i, renderLink: a, labels: o, onS
 			]
 		}), /* @__PURE__ */ f("div", {
 			className: "hidden h-14 min-w-0 items-center gap-2 px-4 md:flex",
-			children: [r?.length ? /* @__PURE__ */ d(S, {
-				breadcrumbs: r,
+			children: [n?.length ? /* @__PURE__ */ d(S, {
+				breadcrumbs: n,
 				renderLink: a
 			}) : /* @__PURE__ */ d("div", {
 				className: "min-w-0 flex-1",
-				children: n ? /* @__PURE__ */ d("p", {
+				children: e ? /* @__PURE__ */ d("p", {
 					className: "truncate text-[13px] font-medium leading-4 text-foreground",
-					children: n
+					children: e
 				}) : null
 			}), i ? /* @__PURE__ */ d("div", {
 				className: "ml-auto flex shrink-0 items-center gap-2",
@@ -315,15 +311,15 @@ function C({ title: n, breadcrumbs: r, actions: i, renderLink: a, labels: o, onS
 		})]
 	});
 }
-function w({ navigation: t, currentPath: n, renderLink: r, brand: i, sidebarHeaderActions: s, sidebarTop: c, sidebarFooter: l, headerTitle: u, headerBreadcrumbs: p, headerActions: h, children: g, closeMobileOnPathChange: _ = !0, mobileSidebarOpen: v, defaultMobileSidebarOpen: y = !1, onMobileSidebarOpenChange: x, renderHeader: S, labels: w, sidebarDensity: T = "standard", sidebarWidth: E, sidebarMobileWidth: D, sidebarHeaderClassName: O, sidebarTopClassName: k, sidebarNavigationClassName: A, sidebarGroupClassName: j, sidebarGroupLabelClassName: M, sidebarFooterClassName: N, sidebarItemClassName: P, sidebarGroupTriggerBehavior: F = "select", sidebarClassName: I, headerClassName: L, mainClassName: R, className: z, ...B }) {
+function w({ navigation: e, currentPath: t, renderLink: n, brand: i, sidebarHeaderActions: s, sidebarTop: c, sidebarFooter: l, headerTitle: u, headerBreadcrumbs: p, headerActions: h, children: g, closeMobileOnPathChange: _ = !0, mobileSidebarOpen: v, defaultMobileSidebarOpen: y = !1, onMobileSidebarOpenChange: x, renderHeader: S, labels: w, sidebarDensity: T = "standard", sidebarWidth: E, sidebarMobileWidth: D, sidebarHeaderClassName: O, sidebarTopClassName: k, sidebarNavigationClassName: A, sidebarGroupClassName: j, sidebarGroupLabelClassName: M, sidebarFooterClassName: N, sidebarItemClassName: P, sidebarGroupTriggerBehavior: F = "select", sidebarClassName: I, headerClassName: L, mainClassName: R, className: z, ...B }) {
 	let V = m(w), H = E ?? (T === "comfortable" ? "16.25rem" : "16rem"), U = D ?? (T === "comfortable" ? "16.25rem" : "18rem"), [W, G] = o.useState(y), K = v ?? W, q = o.useCallback((e) => {
 		v === void 0 && G(e), x?.(e);
-	}, [v, x]), J = o.useRef(n);
+	}, [v, x]), J = o.useRef(t);
 	o.useEffect(() => {
-		_ && J.current !== n && q(!1), J.current = n;
+		_ && J.current !== t && q(!1), J.current = t;
 	}, [
 		_,
-		n,
+		t,
 		q
 	]);
 	let Y = o.useCallback(() => {
@@ -333,9 +329,9 @@ function w({ navigation: t, currentPath: n, renderLink: r, brand: i, sidebarHead
 	}, [q]), Z = o.useCallback(() => {
 		q(!K);
 	}, [K, q]), Q = {
-		navigation: t,
-		currentPath: n,
-		renderLink: r,
+		navigation: e,
+		currentPath: t,
+		renderLink: n,
 		brand: i,
 		headerActions: s,
 		top: c,
@@ -369,7 +365,7 @@ function w({ navigation: t, currentPath: n, renderLink: r, brand: i, sidebarHead
 			toggle: V.openSidebar
 		},
 		"data-slot": "app-shell",
-		className: e("flex h-dvh min-h-0 w-full overflow-hidden bg-background text-foreground", z),
+		className: r("flex h-dvh min-h-0 w-full overflow-hidden bg-background text-foreground", z),
 		...B,
 		children: [/* @__PURE__ */ d(b, {
 			...Q,
@@ -380,17 +376,16 @@ function w({ navigation: t, currentPath: n, renderLink: r, brand: i, sidebarHead
 				title: u,
 				breadcrumbs: p,
 				actions: h,
-				renderLink: r,
+				renderLink: n,
 				labels: w,
 				onSidebarOpen: $.openMobileSidebar,
 				className: L
 			}), /* @__PURE__ */ d("main", {
 				"data-slot": "app-shell-main",
-				className: e("min-h-0 flex-1 overflow-auto", R),
+				className: r("min-h-0 flex-1 overflow-auto", R),
 				children: g
 			})]
 		})]
 	});
 }
-//#endregion
 export { C as AppHeader, w as AppShell, x as AppSidebar };

@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t, jsxs as n } from "react/jsx-runtime";
 import * as r from "@radix-ui/react-avatar";
-//#region src/atoms/avatar.tsx
+// src/atoms/avatar.tsx
 var i = {
 	xs: "size-5 text-[10px]",
 	sm: "size-6 text-xs",
@@ -103,5 +103,4 @@ function h({ src: r, alt: i, name: a, colorKey: o, fallback: l, fallbackIcon: h,
 		})]
 	}) : A;
 }
-//#endregion
 export { h as Avatar, m as AvatarFallback, p as AvatarImage, f as AvatarRoot, s as avatarBadgePositionClasses, c as avatarBadgeSizeClasses, o as avatarFallbackColorClasses, a as avatarShapeClasses, i as avatarSizeClasses, u as getAvatarColorClassName, d as getAvatarInitial };

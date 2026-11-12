@@ -3,7 +3,7 @@ import { buttonVariants as t } from "./button.js";
 import * as n from "react";
 import { jsx as r, jsxs as i } from "react/jsx-runtime";
 import * as a from "@radix-ui/react-alert-dialog";
-//#region src/atoms/alert-dialog.tsx
+// src/atoms/alert-dialog.tsx
 var o = a.Root;
 function s({ className: t, ...n }) {
 	return /* @__PURE__ */ r(a.Trigger, {
@@ -64,5 +64,4 @@ var g = n.forwardRef(({ className: n, ...i }, o) => /* @__PURE__ */ r(a.Cancel, 
 	...i
 }));
 g.displayName = a.Cancel.displayName;
-//#endregion
 export { o as AlertDialog, h as AlertDialogAction, g as AlertDialogCancel, u as AlertDialogContent, m as AlertDialogDescription, f as AlertDialogFooter, d as AlertDialogHeader, l as AlertDialogOverlay, c as AlertDialogPortal, p as AlertDialogTitle, s as AlertDialogTrigger };

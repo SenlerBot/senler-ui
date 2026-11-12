@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t } from "react/jsx-runtime";
 import * as n from "@radix-ui/react-hover-card";
-//#region src/atoms/hover-card.tsx
+// src/atoms/hover-card.tsx
 function r({ ...e }) {
 	return /* @__PURE__ */ t(n.Root, {
 		"data-slot": "hover-card",
@@ -27,5 +27,4 @@ function a({ className: r, align: i = "center", sideOffset: a = 4, ...o }) {
 		})
 	});
 }
-//#endregion
 export { a as HoverCardContent, r as HoverCardRoot, i as HoverCardTrigger };

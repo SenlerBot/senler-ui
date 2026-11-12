@@ -1,6 +1,6 @@
 import * as e from "react";
 import { jsx as t } from "react/jsx-runtime";
-//#region src/lib/ai-reveal-context.tsx
+// src/lib/ai-reveal-context.tsx
 var n = e.createContext(null);
 function r(t) {
 	let n = /* @__PURE__ */ new Set();
@@ -34,5 +34,4 @@ function o(t, r, a = []) {
 		"data-ai-reveal-action": o ? r ?? "click" : void 0
 	};
 }
-//#endregion
 export { a as AiRevealContextProvider, r as collectAiContextIds, i as mergeAiRevealContextIds, o as useAiRevealAttributes };

@@ -1,6 +1,6 @@
 import { cn as e } from "../lib/utils/cn.js";
 import { jsx as t } from "react/jsx-runtime";
-//#region src/atoms/skeleton.tsx
+// src/atoms/skeleton.tsx
 function n({ className: n, ...r }) {
 	return /* @__PURE__ */ t("div", {
 		"data-slot": "skeleton",
@@ -8,5 +8,4 @@ function n({ className: n, ...r }) {
 		...r
 	});
 }
-//#endregion
 export { n as Skeleton };

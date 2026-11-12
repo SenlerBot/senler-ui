@@ -5,7 +5,7 @@ import "react";
 import * as a from "@radix-ui/react-accordion";
 import { ChevronDownIcon as o } from "lucide-react";
 import { jsx as s, jsxs as c } from "react/jsx-runtime";
-//#region src/atoms/accordion.tsx
+// src/atoms/accordion.tsx
 function l({ ...e }) {
 	return /* @__PURE__ */ s(a.Root, {
 		"data-slot": "accordion",
@@ -48,5 +48,4 @@ function f({ className: e, children: t, ...n }) {
 		})
 	});
 }
-//#endregion
 export { l as Accordion, f as AccordionContent, u as AccordionItem, d as AccordionTrigger };

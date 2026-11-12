@@ -1,9 +1,9 @@
-import { cn as e } from "../lib/utils/cn.js";
-import { literalKeys as t } from "../lib/literal-keys.js";
+import { literalKeys as e } from "../lib/literal-keys.js";
+import { cn as t } from "../lib/utils/cn.js";
 import "react";
 import { jsx as n } from "react/jsx-runtime";
 import { cva as r } from "class-variance-authority";
-//#region src/atoms/badge.tsx
+// src/atoms/badge.tsx
 var i = {
 	default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
 	secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
@@ -20,15 +20,14 @@ var i = {
 	indigo: "border-transparent bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-500/25",
 	violet: "border-transparent bg-violet-500/15 text-violet-700 dark:text-violet-400 hover:bg-violet-500/25",
 	pink: "border-transparent bg-pink-500/15 text-pink-700 dark:text-pink-400 hover:bg-pink-500/25"
-}, a = t(i), o = { variant: "default" }, s = r("inline-flex shrink-0 items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", {
+}, a = e(i), o = { variant: "default" }, s = r("inline-flex shrink-0 items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", {
 	variants: { variant: i },
 	defaultVariants: { variant: o.variant }
 });
-function c({ className: t, variant: r, ...i }) {
+function c({ className: e, variant: r, ...i }) {
 	return /* @__PURE__ */ n("div", {
-		className: e(s({ variant: r }), t),
+		className: t(s({ variant: r }), e),
 		...i
 	});
 }
-//#endregion
 export { c as Badge, o as badgeDefaults, i as badgeVariantClasses, a as badgeVariantOptions, s as badgeVariants };

@@ -1,15 +1,15 @@
-import { AI_KIND as e, getAiLabelFallback as t } from "../lib/ai-auto-attributes.js";
-import { cn as n } from "../lib/utils/cn.js";
-import { literalKeys as r } from "../lib/literal-keys.js";
+import { literalKeys as e } from "../lib/literal-keys.js";
+import { AI_KIND as t, getAiLabelFallback as n } from "../lib/ai-auto-attributes.js";
+import { cn as r } from "../lib/utils/cn.js";
 import * as i from "react";
 import { Fragment as a, jsx as o, jsxs as s } from "react/jsx-runtime";
 import { cva as c } from "class-variance-authority";
-//#region src/atoms/switch.tsx
+// src/atoms/switch.tsx
 var l = {
 	xs: "h-3.5 w-5.5 p-0.5",
 	tiny: "h-4 w-[26px] p-0.5",
 	small: "h-5 w-7.5 p-0.75"
-}, u = r(l), d = {
+}, u = e(l), d = {
 	size: "small",
 	value: "on"
 }, f = {
@@ -34,8 +34,8 @@ var l = {
 function g(e) {
 	return e ? "checked" : "unchecked";
 }
-var _ = i.forwardRef(({ checked: r, defaultChecked: c = !1, onCheckedChange: l, disabled: u = !1, required: f = !1, name: _, value: v = d.value, form: y, className: b, size: x, onClick: S, "aria-label": C, title: w, "data-ai-kind": T, "data-ai-label": E, ...D }, O) => {
-	let k = r !== void 0, [A, j] = i.useState(c), M = r ?? A, N = g(M), P = !!_ || f || !!y, F = t(E, typeof C == "string" ? C : void 0, typeof w == "string" ? w : void 0, void 0, _), I = i.useCallback((e) => {
+var _ = i.forwardRef(({ checked: e, defaultChecked: c = !1, onCheckedChange: l, disabled: u = !1, required: f = !1, name: _, value: v = d.value, form: y, className: b, size: x, onClick: S, "aria-label": C, title: w, "data-ai-kind": T, "data-ai-label": E, ...D }, O) => {
+	let k = e !== void 0, [A, j] = i.useState(c), M = e ?? A, N = g(M), P = !!_ || f || !!y, F = n(E, typeof C == "string" ? C : void 0, typeof w == "string" ? w : void 0, void 0, _), I = i.useCallback((e) => {
 		if (S?.(e), e.defaultPrevented || u) return;
 		let t = !M;
 		k || j(t), l?.(t);
@@ -55,13 +55,13 @@ var _ = i.forwardRef(({ checked: r, defaultChecked: c = !1, onCheckedChange: l, 
 		"aria-required": f,
 		disabled: u,
 		"data-slot": "switch",
-		"data-ai-kind": T ?? e.field,
+		"data-ai-kind": T ?? t.field,
 		"data-ai-label": F,
 		"data-state": N,
 		"data-disabled": u ? "" : void 0,
 		"aria-label": C,
 		title: w,
-		className: n(p({
+		className: r(p({
 			size: x,
 			className: b
 		}), "bg-input", "focus-visible:border-ring focus-visible:ring-ring/50", "hover:bg-muted", "focus:bg-muted", "data-[state=checked]:bg-primary", "data-[state=checked]:hover:bg-primary/90", "data-[state=checked]:focus:bg-primary/90"),
@@ -70,7 +70,7 @@ var _ = i.forwardRef(({ checked: r, defaultChecked: c = !1, onCheckedChange: l, 
 			"data-slot": "switch-thumb",
 			"data-state": N,
 			"data-disabled": u ? "" : void 0,
-			className: n(m({ size: x }), "bg-background shadow-md", "data-[state=unchecked]:translate-x-0")
+			className: r(m({ size: x }), "bg-background shadow-md", "data-[state=unchecked]:translate-x-0")
 		})
 	}), P ? /* @__PURE__ */ o("input", {
 		"aria-hidden": "true",
@@ -87,5 +87,4 @@ var _ = i.forwardRef(({ checked: r, defaultChecked: c = !1, onCheckedChange: l, 
 	}) : null] });
 });
 _.displayName = "Switch";
-//#endregion
 export { _ as Switch, d as switchDefaults, l as switchSizeClasses, u as switchSizeOptions, f as switchThumbSizeClasses };

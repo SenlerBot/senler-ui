@@ -1,7 +1,7 @@
 import { cn as e } from "../lib/utils/cn.js";
 import { jsx as t } from "react/jsx-runtime";
 import { cva as n } from "class-variance-authority";
-//#region src/atoms/empty.tsx
+// src/atoms/empty.tsx
 function r({ className: n, ...r }) {
 	return /* @__PURE__ */ t("div", {
 		"data-slot": "empty",
@@ -55,5 +55,4 @@ function l({ className: n, ...r }) {
 		...r
 	});
 }
-//#endregion
 export { r as Empty, l as EmptyContent, c as EmptyDescription, i as EmptyHeader, o as EmptyMedia, s as EmptyTitle };

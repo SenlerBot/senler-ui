@@ -1,34 +1,30 @@
-import { cn as e } from "../lib/utils/cn.js";
+import { Input as e } from "./input.js";
 import { Label as t } from "./label.js";
-import { Input as n } from "./input.js";
-import { Textarea as r } from "./textarea.js";
+import { Textarea as n } from "./textarea.js";
+import { cn as r } from "../lib/utils/cn.js";
 import * as i from "react";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
-//#region src/atoms/text-field.tsx
+// src/atoms/text-field.tsx
 function s(e, t) {
-	if (typeof e == "function") {
-		e(t);
-		return;
-	}
-	e && (e.current = t);
+	typeof e == "function" ? e(t) : e && (e.current = t);
 }
 var c = {
 	small: "h-9 text-sm",
 	medium: "h-10 text-base"
 }, l = i.forwardRef((i, l) => {
-	let { label: u, error: d, helperText: f, fullWidth: p, size: m = "medium", startAdornment: h, endAdornment: g, className: _, maxRows: v } = i, y = e(p && "w-full", _), b = e(c[m], d && "border-destructive focus-visible:ring-destructive", h && "pl-10", g && "pr-12"), x = () => {
+	let { label: u, error: d, helperText: f, fullWidth: p, size: m = "medium", startAdornment: h, endAdornment: g, className: _, maxRows: v } = i, y = r(p && "w-full", _), b = r(c[m], d && "border-destructive focus-visible:ring-destructive", h && "pl-10", g && "pr-12"), x = () => {
 		if (i.multiline) {
-			let { multiline: t, label: n, error: o, helperText: c, fullWidth: u, size: d, startAdornment: f, endAdornment: p, maxRows: m, className: h, rows: g, ..._ } = i;
-			return /* @__PURE__ */ a(r, {
+			let { multiline: e, label: t, error: o, helperText: c, fullWidth: u, size: d, startAdornment: f, endAdornment: p, maxRows: m, className: h, rows: g, ..._ } = i;
+			return /* @__PURE__ */ a(n, {
 				ref: (e) => s(l, e),
 				rows: g,
-				className: e(b, v && "resize-none overflow-auto"),
+				className: r(b, v && "resize-none overflow-auto"),
 				style: v ? { maxHeight: `${v * 1.5}em` } : void 0,
 				..._
 			});
 		}
 		let { multiline: t, label: o, error: c, helperText: u, fullWidth: d, size: f, startAdornment: p, endAdornment: m, maxRows: h, className: g, ..._ } = i;
-		return /* @__PURE__ */ a(n, {
+		return /* @__PURE__ */ a(e, {
 			ref: (e) => s(l, e),
 			className: b,
 			..._
@@ -38,7 +34,7 @@ var c = {
 		className: y,
 		children: [
 			u ? /* @__PURE__ */ a(t, {
-				className: e("mb-1.5", d && "text-destructive"),
+				className: r("mb-1.5", d && "text-destructive"),
 				children: u
 			}) : null,
 			h || g ? /* @__PURE__ */ o("div", {
@@ -56,12 +52,11 @@ var c = {
 				]
 			}) : x(),
 			f ? /* @__PURE__ */ a("p", {
-				className: e("mt-1.5 text-xs", d ? "text-destructive" : "text-muted-foreground"),
+				className: r("mt-1.5 text-xs", d ? "text-destructive" : "text-muted-foreground"),
 				children: f
 			}) : null
 		]
 	});
 });
 l.displayName = "TextField";
-//#endregion
 export { l as TextField };

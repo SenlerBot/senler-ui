@@ -4,9 +4,9 @@ import { type AsyncProps as ReactAsyncSelectProps } from 'react-select/async';
 import type { AiDataAttributes } from '../lib/ai-auto-attributes';
 export declare const searchableSelectDefaults: {
     readonly dropdownIndicator: true;
-    readonly loadingMessage: "Loading...";
-    readonly noOptionsMessage: "No options";
-    readonly placeholder: "Select...";
+    readonly loadingMessage: 'Loading...';
+    readonly noOptionsMessage: 'No options';
+    readonly placeholder: 'Select...';
 };
 type SearchableSelectOwnProps = {
     dropdownIndicator?: boolean;

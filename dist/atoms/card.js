@@ -1,7 +1,7 @@
 import { cn as e } from "../lib/utils/cn.js";
 import * as t from "react";
 import { jsx as n } from "react/jsx-runtime";
-//#region src/atoms/card.tsx
+// src/atoms/card.tsx
 var r = t.forwardRef(({ className: t, ...r }, i) => /* @__PURE__ */ n("div", {
 	ref: i,
 	className: e("rounded-lg border bg-card text-card-foreground shadow-none", t),
@@ -38,5 +38,4 @@ var c = t.forwardRef(({ className: t, ...r }, i) => /* @__PURE__ */ n("div", {
 	...r
 }));
 c.displayName = "CardFooter";
-//#endregion
 export { r as Card, s as CardContent, o as CardDescription, c as CardFooter, i as CardHeader, a as CardTitle };

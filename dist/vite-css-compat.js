@@ -1,7 +1,7 @@
 import { SENLER_BROWSER_COMPATIBILITY_BROWSERS as e } from "./browser-support.js";
 import t from "browserslist";
 import { Features as n, browserslistToTargets as r, transform as i } from "lightningcss";
-//#region src/vite-css-compat.ts
+// src/vite-css-compat.ts
 var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefixes, s = /-[A-Za-z0-9_-]{8}(?=\.css$)/, c = "@supports not (color: color-mix(in lab, red, red))", l = /^@supports\s+not\s*\(\s*color\s*:\s*color-mix\(in\s+lab\s*,\s*red\s*,\s*red\s*\)\s*\)$/, u = "--senler-ui-color-mix-fallback-generated", d = /* @__PURE__ */ new Map(), f = (e, t) => {
 	let n = 0;
 	for (let r = t - 1; r >= 0 && e[r] === "\\"; --r) n += 1;
@@ -10,31 +10,17 @@ var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefi
 	let n = 0, r = "", i = !1;
 	for (let a = t; a < e.length; a += 1) {
 		let t = e[a], o = e[a + 1];
-		if (i) {
-			t === "*" && o === "/" && (i = !1, a += 1);
-			continue;
-		}
-		if (r) {
+		if (i) t === "*" && o === "/" && (i = !1, a += 1);
+		else if (r) {
 			if (t === "\\") {
 				a += 1;
 				continue;
 			}
 			t === r && (r = "");
-			continue;
-		}
-		if (t === "/" && o === "*") {
-			i = !0, a += 1;
-			continue;
-		}
-		if ((t === "\"" || t === "'") && !f(e, a)) {
-			r = t;
-			continue;
-		}
-		if (t === "{") {
-			n += 1;
-			continue;
-		}
-		if (t === "}" && (--n, n === 0)) return a;
+		} else if (t === "/" && o === "*") i = !0, a += 1;
+		else if ((t === "\"" || t === "'") && !f(e, a)) r = t;
+		else if (t === "{") n += 1;
+		else if (t === "}" && (--n, n === 0)) return a;
 	}
 	return -1;
 }, m = (e) => e.replace(/\/\*[\s\S]*?\*\//g, "").trim(), h = (e, t) => {
@@ -85,13 +71,7 @@ var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefi
 	}
 }, g = (e) => l.test(e.replace(/\s+/g, " ")), _ = (e, t, n) => {
 	h(e, (e) => {
-		if (e.prelude) {
-			if (e.prelude.startsWith("@")) {
-				_(e.body, [...t, e.prelude], n);
-				return;
-			}
-			n(e.prelude, e.body, t);
-		}
+		e.prelude && (e.prelude.startsWith("@") ? _(e.body, [...t, e.prelude], n) : n(e.prelude, e.body, t));
 	});
 }, v = (e, t) => {
 	for (let n = t; n < e.length; n += 1) {
@@ -290,13 +270,7 @@ var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefi
 		let e = J(typeof r.source == "string" ? r.source : new TextDecoder().decode(r.source), r.fileName, t), i = H(r.fileName, e);
 		i !== r.fileName && (n.set(r.fileName, i), r.fileName = i), r.source = e;
 	}
-	if (n.size !== 0) for (let t of Object.values(e)) {
-		if (t.type === "asset") {
-			typeof t.source == "string" && (t.source = U(t.source, n));
-			continue;
-		}
-		t.code = U(t.code, n), W(t.viteMetadata?.importedCss, n), W(t.viteMetadata?.importedAssets, n);
-	}
+	if (n.size !== 0) for (let t of Object.values(e)) t.type === "asset" ? typeof t.source == "string" && (t.source = U(t.source, n)) : (t.code = U(t.code, n), W(t.viteMetadata?.importedCss, n), W(t.viteMetadata?.importedAssets, n));
 }, X = (e = {}) => ({
 	name: "css-compatibility",
 	enforce: "post",
@@ -304,5 +278,4 @@ var a = [...e], o = n.Colors | n.LogicalProperties | n.Selectors | n.VendorPrefi
 		Y(n, e);
 	}
 });
-//#endregion
 export { a as DEFAULT_CSS_COMPATIBILITY_BROWSERS, Y as applyCssCompatibilityToBundle, X as createCssCompatibilityPlugin, V as normalizeBrowserCompatibleCss, K as resolveCssCompatibilityBrowsers, J as transformCssForBrowserCompatibility };

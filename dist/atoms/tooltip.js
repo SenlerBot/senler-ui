@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t } from "react/jsx-runtime";
 import * as n from "@radix-ui/react-tooltip";
-//#region src/atoms/tooltip.tsx
+// src/atoms/tooltip.tsx
 function r({ delayDuration: e = 350, ...r }) {
 	return /* @__PURE__ */ t(n.Provider, {
 		"data-slot": "tooltip-provider",
@@ -31,5 +31,4 @@ function o({ className: r, sideOffset: i = 5, children: a, ...o }) {
 		children: a
 	}) });
 }
-//#endregion
 export { i as Tooltip, o as TooltipContent, r as TooltipProvider, a as TooltipTrigger };

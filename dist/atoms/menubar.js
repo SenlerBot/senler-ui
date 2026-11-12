@@ -3,7 +3,7 @@ import * as t from "react";
 import { CheckIcon as n, ChevronRightIcon as r, CircleIcon as i } from "lucide-react";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
 import * as s from "@radix-ui/react-menubar";
-//#region src/atoms/menubar.tsx
+// src/atoms/menubar.tsx
 function c({ ...e }) {
 	return /* @__PURE__ */ a(s.Root, {
 		"data-slot": "menubar",
@@ -127,5 +127,4 @@ function C({ className: t, ...n }) {
 }
 var w = t.forwardRef(p);
 w.displayName = "MenubarTrigger";
-//#endregion
 export { c as Menubar, g as MenubarCheckboxItem, m as MenubarContent, u as MenubarGroup, h as MenubarItem, v as MenubarLabel, l as MenubarMenu, d as MenubarPortal, f as MenubarRadioGroup, _ as MenubarRadioItem, y as MenubarSeparator, b as MenubarShortcut, x as MenubarSub, C as MenubarSubContent, S as MenubarSubTrigger, w as MenubarTrigger };

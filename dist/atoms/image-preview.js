@@ -4,7 +4,7 @@ import * as n from "react";
 import { ImageIcon as r } from "lucide-react";
 import { jsx as i } from "react/jsx-runtime";
 import { cva as a } from "class-variance-authority";
-//#region src/atoms/image-preview.tsx
+// src/atoms/image-preview.tsx
 var o = a("flex justify-center items-center overflow-hidden bg-muted border border-border rounded-md", {
 	variants: { variant: {
 		banner: "min-h-[140px] w-full",
@@ -25,5 +25,4 @@ var o = a("flex justify-center items-center overflow-hidden bg-muted border bord
 	}) : /* @__PURE__ */ i(r, { className: "h-6 w-6 text-muted-foreground" })
 }));
 s.displayName = "ImagePreview";
-//#endregion
 export { s as ImagePreview, o as imagePreviewVariants };

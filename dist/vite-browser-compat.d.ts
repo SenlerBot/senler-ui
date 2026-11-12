@@ -12,5 +12,5 @@ export declare const createBrowserCompatibilityPlugins: (options?: BrowserCompat
 export declare const SENLER_VITE_BROWSER_COMPATIBILITY: {
     readonly browsers: readonly ["last 2 Chrome versions", "last 2 Edge versions", "last 2 Firefox versions", "last 2 Safari versions", "ios_saf >= 15.4", "safari >= 15.4", "not dead"];
     readonly jsTarget: "es2020";
-    readonly createPlugins: (options?: BrowserCompatibilityPluginOptions) => Plugin[];
+    readonly createPlugins: typeof createBrowserCompatibilityPlugins;
 };

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { type VariantProps } from 'class-variance-authority';
 declare const linkVariants: (props?: ({
-    hover?: "none" | "text" | "block" | null | undefined;
+    hover?: "block" | "none" | "text" | null | undefined;
     disabled?: boolean | null | undefined;
     underline?: boolean | null | undefined;
-    color?: "none" | "main" | null | undefined;
+    color?: "main" | "none" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'color'>, VariantProps<typeof linkVariants> {
 }

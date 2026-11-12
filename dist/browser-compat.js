@@ -1,6 +1,6 @@
 import { SENLER_BROWSER_COMPATIBILITY_BROWSERS as e, SENLER_JS_COMPATIBILITY_TARGET as t } from "./browser-support.js";
 import { ByteLengthQueuingStrategy as n, CountQueuingStrategy as r, ReadableStream as i, TransformStream as a, WritableStream as o } from "web-streams-polyfill";
-//#region src/browser-compat.ts
+// src/browser-compat.ts
 var s = (e, t) => {
 	Reflect.has(globalThis, e) || Reflect.defineProperty(globalThis, e, {
 		value: t,
@@ -75,5 +75,4 @@ var s = (e, t) => {
 	i?.[1] === "16" && Number(i[2]) < 4 && t.setAttribute("data-senler-font-optical-sizing", "fixed");
 };
 f(), typeof document < "u" && typeof navigator < "u" && p(navigator.userAgent, document.documentElement);
-//#endregion
 export { e as SENLER_BROWSER_COMPATIBILITY_BROWSERS, t as SENLER_JS_COMPATIBILITY_TARGET, f as installBrowserCompatibilityPolyfills, p as installBrowserFontCompatibility };

@@ -1,5 +1,5 @@
 import { useCallback as e, useEffect as t, useState as n, useSyncExternalStore as r } from "react";
-//#region src/frontend-release.ts
+// src/frontend-release.ts
 var i = 6e4, a = 108e5, o = null, s = f(), c = null, l = /* @__PURE__ */ new Set(), u = /* @__PURE__ */ new Map();
 function d(e) {
 	return typeof e == "string" && e.trim() ? e.trim() : null;
@@ -144,5 +144,4 @@ function T(r = a) {
 		}, [])
 	};
 }
-//#endregion
 export { a as FRONTEND_UPDATE_PROMPT_COOLDOWN_MS, b as configureFrontendRelease, x as getFrontendReleaseSnapshot, C as shouldSuppressOutdatedFrontendError, S as syncFrontendRelease, w as useFrontendReleaseStatus, T as useFrontendUpdatePrompt };

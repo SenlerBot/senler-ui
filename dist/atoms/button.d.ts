@@ -2,38 +2,38 @@ import { type ComponentProps } from 'react';
 import { type VariantProps } from 'class-variance-authority';
 import { type AiDataAttributes } from '../lib/ai-auto-attributes';
 export declare const buttonVariantClasses: {
-    readonly default: "bg-primary text-primary-foreground hover:bg-primary/90";
-    readonly destructive: "bg-destructive text-destructive-foreground hover:bg-destructive-hover/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 dark:hover:bg-destructive-hover/90";
-    readonly outline: "border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50";
-    readonly secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80";
-    readonly ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50";
-    readonly link: "text-primary underline-offset-4 hover:underline";
+    readonly default: 'bg-primary text-primary-foreground hover:bg-primary/90';
+    readonly destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive-hover/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 dark:hover:bg-destructive-hover/90';
+    readonly outline: 'border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50';
+    readonly secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80';
+    readonly ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50';
+    readonly link: 'text-primary underline-offset-4 hover:underline';
 };
-export declare const buttonVariantOptions: ("link" | "default" | "secondary" | "destructive" | "outline" | "ghost")[];
+export declare const buttonVariantOptions: ("default" | "destructive" | "ghost" | "link" | "outline" | "secondary")[];
 export type ButtonVariant = (typeof buttonVariantOptions)[number];
 export declare const buttonSizeClasses: {
-    readonly default: "h-7 px-2 py-2 gap-1";
-    readonly sm: "h-8 rounded-md gap-1 px-2";
-    readonly lg: "h-10 rounded-md px-3";
-    readonly icon: "size-7";
-    readonly icon_sm: "size-6";
-    readonly none: "p-0 h-auto";
+    readonly default: 'h-7 px-2 py-2 gap-1';
+    readonly sm: 'h-8 rounded-md gap-1 px-2';
+    readonly lg: 'h-10 rounded-md px-3';
+    readonly icon: 'size-7';
+    readonly icon_sm: 'size-6';
+    readonly none: 'p-0 h-auto';
 };
-export declare const buttonSizeOptions: ("default" | "none" | "sm" | "lg" | "icon" | "icon_sm")[];
+export declare const buttonSizeOptions: ("default" | "icon" | "icon_sm" | "lg" | "none" | "sm")[];
 export type ButtonSize = (typeof buttonSizeOptions)[number];
-export declare const buttonTypeOptions: readonly ["button", "submit", "reset"];
+export declare const buttonTypeOptions: readonly ['button', 'submit', 'reset'];
 export type ButtonType = (typeof buttonTypeOptions)[number];
 export declare const buttonDefaults: {
-    readonly variant: "default";
-    readonly size: "default";
-    readonly type: "button";
+    readonly variant: 'default';
+    readonly size: 'default';
+    readonly type: 'button';
     readonly asChild: false;
     readonly loading: false;
     readonly disabled: false;
 };
 declare const buttonVariants: (props?: ({
-    variant?: "link" | "default" | "secondary" | "destructive" | "outline" | "ghost" | null | undefined;
-    size?: "default" | "none" | "sm" | "lg" | "icon" | "icon_sm" | null | undefined;
+    variant?: "default" | "destructive" | "ghost" | "link" | "outline" | "secondary" | null | undefined;
+    size?: "default" | "icon" | "icon_sm" | "lg" | "none" | "sm" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 export interface ButtonProps extends ComponentProps<'button'>, VariantProps<typeof buttonVariants>, AiDataAttributes {
     variant?: ButtonVariant;

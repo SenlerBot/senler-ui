@@ -1,7 +1,7 @@
 import { execFileSync as e } from "node:child_process";
 import { readFileSync as t } from "node:fs";
 import { join as n } from "node:path";
-//#region src/vite-app-version.ts
+// src/vite-app-version.ts
 var r = "dev";
 function i(e) {
 	return typeof e == "string" && e.trim() ? e.trim() : null;
@@ -69,11 +69,7 @@ function d(e, t = "", n = "/") {
 		configureServer(e) {
 			e.middlewares.use((e, t, n) => {
 				let i = e.url?.split("?")[0] ?? "";
-				if (!a.has(i)) {
-					n();
-					return;
-				}
-				t.setHeader("Content-Type", "application/json; charset=utf-8"), t.setHeader("Cache-Control", "no-store"), t.end(r);
+				a.has(i) ? (t.setHeader("Content-Type", "application/json; charset=utf-8"), t.setHeader("Cache-Control", "no-store"), t.end(r)) : n();
 			});
 		},
 		generateBundle() {
@@ -85,5 +81,4 @@ function d(e, t = "", n = "/") {
 		}
 	};
 }
-//#endregion
 export { d as createVersionManifestPlugin, l as resolveAppVersion };

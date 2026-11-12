@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import { PageToolbar as t } from "./page-toolbar.js";
 import "react";
 import { jsx as n, jsxs as r } from "react/jsx-runtime";
-//#region src/layout/page-list-layout.tsx
+// src/layout/page-list-layout.tsx
 function i({ toolbar: i, toolbarClassName: a, toolbarContentClassName: o, contentClassName: s, className: c, children: l, ...u }) {
 	let d = i != null && i !== !1;
 	return /* @__PURE__ */ r("div", {
@@ -18,5 +18,4 @@ function i({ toolbar: i, toolbarClassName: a, toolbarContentClassName: o, conten
 		})]
 	});
 }
-//#endregion
 export { i as PageListLayout };

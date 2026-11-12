@@ -4,7 +4,7 @@ import "react";
 import { XIcon as t } from "lucide-react";
 import { jsx as n, jsxs as r } from "react/jsx-runtime";
 import * as i from "@radix-ui/react-dialog";
-//#region src/atoms/sheet.tsx
+// src/atoms/sheet.tsx
 function a({ ...e }) {
 	return /* @__PURE__ */ n(i.Root, {
 		"data-slot": "sheet",
@@ -80,5 +80,4 @@ function m({ className: t, ...r }) {
 		...r
 	});
 }
-//#endregion
 export { a as Sheet, s as SheetClose, u as SheetContent, m as SheetDescription, f as SheetFooter, d as SheetHeader, p as SheetTitle, o as SheetTrigger };

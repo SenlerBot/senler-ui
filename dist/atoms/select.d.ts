@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { type AiDataAttributes } from '../lib/ai-auto-attributes';
-export declare const selectContentPositionOptions: readonly ["popper", "item-aligned"];
+export declare const selectContentPositionOptions: readonly ['popper', 'item-aligned'];
 export type SelectContentPosition = (typeof selectContentPositionOptions)[number];
 export declare const selectContentDefaults: {
-    readonly position: "popper";
+    readonly position: 'popper';
 };
 declare const Select: React.FC<SelectPrimitive.SelectProps>;
 declare const SelectGroup: React.ForwardRefExoticComponent<SelectPrimitive.SelectGroupProps & React.RefAttributes<HTMLDivElement>>;

@@ -1,9 +1,9 @@
-import { cn as e } from "../lib/utils/cn.js";
+import { Input as e } from "./input.js";
 import { Field as t, FieldDescription as n, FieldError as r, FieldLabel as i } from "./field.js";
-import { Input as a } from "./input.js";
+import { cn as a } from "../lib/utils/cn.js";
 import { forwardRef as o, useId as s } from "react";
 import { jsx as c, jsxs as l } from "react/jsx-runtime";
-//#region src/atoms/input-field.tsx
+// src/atoms/input-field.tsx
 var u = o(({ label: o, startAdornment: u, endAdornment: d, error: f, helperText: p, ...m }, h) => {
 	let g = s();
 	return /* @__PURE__ */ l(t, {
@@ -16,11 +16,11 @@ var u = o(({ label: o, startAdornment: u, endAdornment: d, error: f, helperText:
 			/* @__PURE__ */ l("div", {
 				className: "relative",
 				children: [
-					/* @__PURE__ */ c(a, {
+					/* @__PURE__ */ c(e, {
 						id: g,
 						ref: h,
 						...m,
-						className: e({
+						className: a({
 							"ps-9": u,
 							"pe-9": d
 						}, m.className)
@@ -41,5 +41,4 @@ var u = o(({ label: o, startAdornment: u, endAdornment: d, error: f, helperText:
 	});
 });
 u.displayName = "InputField";
-//#endregion
 export { u as InputField };

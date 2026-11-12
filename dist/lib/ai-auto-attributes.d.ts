@@ -14,13 +14,13 @@ export interface AiDataAttributes {
     'data-ai-reveal-action'?: 'click' | 'hover' | 'focus';
 }
 export declare const AI_KIND: {
-    readonly button: "button";
-    readonly field: "field";
-    readonly tab: "tab";
-    readonly listItem: "list-item";
+    readonly button: 'button';
+    readonly field: 'field';
+    readonly tab: 'tab';
+    readonly listItem: 'list-item';
 };
 export declare const AI_ACTION: {
-    readonly save: "save";
+    readonly save: 'save';
 };
 export declare function getAiTextFromReactNode(children: React.ReactNode): string | undefined;
 export declare function getAiLabelFallback(explicitLabel: string | undefined, ariaLabel: string | undefined, title: string | undefined, placeholder: string | undefined, name: string | undefined, children?: React.ReactNode): string | undefined;

@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import * as t from "react";
 import { jsx as n } from "react/jsx-runtime";
 import { cva as r } from "class-variance-authority";
-//#region src/atoms/link.tsx
+// src/atoms/link.tsx
 var i = r("flex cursor-pointer items-center gap-1.5 leading-normal text-primary text-sm transition-colors", {
 	variants: {
 		hover: {
@@ -33,5 +33,4 @@ var i = r("flex cursor-pointer items-center gap-1.5 leading-normal text-primary 
 	...c
 }));
 a.displayName = "Link";
-//#endregion
 export { a as Link, i as linkVariants };

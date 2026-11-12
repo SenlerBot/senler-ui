@@ -69,7 +69,7 @@ export declare function SidebarMenu({ className, ...props }: React.ComponentProp
 export declare function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>): React.JSX.Element;
 declare const sidebarMenuButtonVariants: (props?: ({
     variant?: "default" | "outline" | null | undefined;
-    size?: "default" | "sm" | "lg" | null | undefined;
+    size?: "default" | "lg" | "sm" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 export declare function SidebarMenuButton({ asChild, isActive, variant, size, tooltip, className, onClick, type, ...props }: React.ComponentProps<'button'> & {
     asChild?: boolean;

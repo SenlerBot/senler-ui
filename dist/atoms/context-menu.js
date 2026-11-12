@@ -3,7 +3,7 @@ import "react";
 import { CheckIcon as t, ChevronRightIcon as n, CircleIcon as r } from "lucide-react";
 import { jsx as i, jsxs as a } from "react/jsx-runtime";
 import * as o from "@radix-ui/react-context-menu";
-//#region src/atoms/context-menu.tsx
+// src/atoms/context-menu.tsx
 function s({ ...e }) {
 	return /* @__PURE__ */ i(o.Root, {
 		"data-slot": "context-menu",
@@ -118,5 +118,4 @@ function x({ className: t, ...n }) {
 		...n
 	});
 }
-//#endregion
 export { s as ContextMenu, _ as ContextMenuCheckboxItem, h as ContextMenuContent, l as ContextMenuGroup, g as ContextMenuItem, y as ContextMenuLabel, u as ContextMenuPortal, f as ContextMenuRadioGroup, v as ContextMenuRadioItem, b as ContextMenuSeparator, x as ContextMenuShortcut, d as ContextMenuSub, m as ContextMenuSubContent, p as ContextMenuSubTrigger, c as ContextMenuTrigger };

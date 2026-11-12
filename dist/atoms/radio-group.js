@@ -3,7 +3,7 @@ import * as t from "react";
 import { Circle as n } from "lucide-react";
 import { jsx as r } from "react/jsx-runtime";
 import * as i from "@radix-ui/react-radio-group";
-//#region src/atoms/radio-group.tsx
+// src/atoms/radio-group.tsx
 var a = t.forwardRef(({ className: t, ...n }, a) => /* @__PURE__ */ r(i.Root, {
 	className: e("grid gap-2", t),
 	...n,
@@ -20,5 +20,4 @@ var o = t.forwardRef(({ className: t, ...a }, o) => /* @__PURE__ */ r(i.Item, {
 	})
 }));
 o.displayName = i.Item.displayName;
-//#endregion
 export { a as RadioGroup, o as RadioGroupItem };

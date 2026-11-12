@@ -1,11 +1,11 @@
-import { cn as e } from "../lib/utils/cn.js";
-import { Button as t } from "../atoms/button.js";
-import { CheckBox as n } from "../atoms/checkbox.js";
-import { Tooltip as r, TooltipContent as i, TooltipTrigger as a } from "../atoms/tooltip.js";
+import { Button as e } from "../atoms/button.js";
+import { CheckBox as t } from "../atoms/checkbox.js";
+import { Tooltip as n, TooltipContent as r, TooltipTrigger as i } from "../atoms/tooltip.js";
+import { cn as a } from "../lib/utils/cn.js";
 import * as o from "react";
 import { X as s } from "lucide-react";
 import { jsx as c, jsxs as l } from "react/jsx-runtime";
-//#region src/compound/selection-action-bar.tsx
+// src/compound/selection-action-bar.tsx
 function u({ selectedCount: u, selectedCountLabel: d, selectAllChecked: f, selectAllLabel: p, clearLabel: m, onSelectAllChange: h, onClear: g, actions: _, children: v, controlsDisabled: y, minTop: b = 0, placement: x = "anchor", className: S, toolbarClassName: C, actionsClassName: w }) {
 	let T = o.useRef(null), E = o.useRef(null), D = u > 0, [O, k] = o.useState(null), [A, j] = o.useState(null);
 	return o.useLayoutEffect(() => {
@@ -54,11 +54,11 @@ function u({ selectedCount: u, selectedCountLabel: d, selectAllChecked: f, selec
 		x
 	]), /* @__PURE__ */ l("div", {
 		ref: T,
-		className: e("min-h-10", S),
+		className: a("min-h-10", S),
 		style: D && A && x === "anchor" ? { minHeight: A } : void 0,
 		children: [D && O ? /* @__PURE__ */ l("div", {
 			ref: E,
-			className: e("fixed z-30 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-background px-2 py-1 shadow-lg backdrop-blur", C),
+			className: a("fixed z-30 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-background px-2 py-1 shadow-lg backdrop-blur", C),
 			style: {
 				left: O.left,
 				width: O.width,
@@ -66,7 +66,7 @@ function u({ selectedCount: u, selectedCountLabel: d, selectAllChecked: f, selec
 			},
 			children: [/* @__PURE__ */ l("div", {
 				className: "flex min-w-0 items-center gap-2",
-				children: [/* @__PURE__ */ c(n, {
+				children: [/* @__PURE__ */ c(t, {
 					checked: f,
 					onCheckedChange: h,
 					disabled: y,
@@ -78,10 +78,10 @@ function u({ selectedCount: u, selectedCountLabel: d, selectAllChecked: f, selec
 					children: d
 				})]
 			}), /* @__PURE__ */ l("div", {
-				className: e("flex flex-wrap items-center justify-end gap-2", w),
-				children: [_, /* @__PURE__ */ l(r, { children: [/* @__PURE__ */ c(a, {
+				className: a("flex flex-wrap items-center justify-end gap-2", w),
+				children: [_, /* @__PURE__ */ l(n, { children: [/* @__PURE__ */ c(i, {
 					asChild: !0,
-					children: /* @__PURE__ */ c(t, {
+					children: /* @__PURE__ */ c(e, {
 						type: "button",
 						variant: "ghost",
 						size: "icon_sm",
@@ -91,10 +91,9 @@ function u({ selectedCount: u, selectedCountLabel: d, selectAllChecked: f, selec
 						title: m,
 						children: /* @__PURE__ */ c(s, { className: "h-4 w-4" })
 					})
-				}), /* @__PURE__ */ c(i, { children: m })] })]
+				}), /* @__PURE__ */ c(r, { children: m })] })]
 			})]
 		}) : null, !D || x === "viewport-bottom" ? v : null]
 	});
 }
-//#endregion
 export { u as SelectionActionBar };

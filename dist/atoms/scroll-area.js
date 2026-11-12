@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t, jsxs as n } from "react/jsx-runtime";
 import * as r from "@radix-ui/react-scroll-area";
-//#region src/atoms/scroll-area.tsx
+// src/atoms/scroll-area.tsx
 function i({ className: i, children: o, ...s }) {
 	return /* @__PURE__ */ n(r.Root, {
 		"data-slot": "scroll-area",
@@ -31,5 +31,4 @@ function a({ className: n, orientation: i = "vertical", ...a }) {
 		})
 	});
 }
-//#endregion
 export { i as ScrollArea, a as ScrollBar };

@@ -3,7 +3,7 @@ import * as t from "react";
 import { XIcon as n } from "lucide-react";
 import { jsx as r, jsxs as i } from "react/jsx-runtime";
 import * as a from "@radix-ui/react-dialog";
-//#region src/atoms/dialog.tsx
+// src/atoms/dialog.tsx
 var o = { showCloseButton: !0 };
 function s({ ...e }) {
 	return /* @__PURE__ */ r(a.Root, {
@@ -104,5 +104,4 @@ function g({ className: t, ...n }) {
 		...n
 	});
 }
-//#endregion
 export { u as DialogClose, f as DialogContent, g as DialogDescription, m as DialogFooter, p as DialogHeader, d as DialogOverlay, l as DialogPortal, s as DialogRoot, h as DialogTitle, c as DialogTrigger, o as dialogContentDefaults };

@@ -1,6 +1,6 @@
 import { cn as e } from "../lib/utils/cn.js";
 import { jsx as t, jsxs as n } from "react/jsx-runtime";
-//#region src/layout/field.tsx
+// src/layout/field.tsx
 function r({ left: r, children: i, alignHorizontal: a = "start", ...o }) {
 	let { className: s, ...c } = o;
 	return /* @__PURE__ */ n("div", {
@@ -15,5 +15,4 @@ function r({ left: r, children: i, alignHorizontal: a = "start", ...o }) {
 		})]
 	});
 }
-//#endregion
 export { r as LayoutField };

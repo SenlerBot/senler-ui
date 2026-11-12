@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { type VariantProps } from 'class-variance-authority';
 export declare const alertVariantClasses: {
-    readonly default: "bg-card text-card-foreground";
-    readonly destructive: "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90";
+    readonly default: 'bg-card text-card-foreground';
+    readonly destructive: 'text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90';
 };
 export declare const alertVariantOptions: ("default" | "destructive")[];
 export type AlertVariant = (typeof alertVariantOptions)[number];
 export declare const alertDefaults: {
-    readonly variant: "default";
+    readonly variant: 'default';
 };
 declare const alertVariants: (props?: ({
     variant?: "default" | "destructive" | null | undefined;

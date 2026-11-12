@@ -1,7 +1,7 @@
 import { cn as e } from "../lib/utils/cn.js";
 import { jsx as t } from "react/jsx-runtime";
 import { cva as n } from "class-variance-authority";
-//#region src/layout/section.tsx
+// src/layout/section.tsx
 var r = n("", {
 	variants: { border: {
 		true: "border border-border rounded-lg",
@@ -18,5 +18,4 @@ function i({ border: n, className: i, ...a }) {
 		...a
 	});
 }
-//#endregion
 export { i as LayoutSection };

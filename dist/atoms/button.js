@@ -1,11 +1,11 @@
 import { AI_ACTION as e, AI_KIND as t, getAiLabelFallback as n } from "../lib/ai-auto-attributes.js";
-import { cn as r } from "../lib/utils/cn.js";
-import { literalKeys as i } from "../lib/literal-keys.js";
+import { literalKeys as r } from "../lib/literal-keys.js";
+import { cn as i } from "../lib/utils/cn.js";
 import { Loader2Icon as a } from "lucide-react";
 import { jsx as o } from "react/jsx-runtime";
 import { cva as s } from "class-variance-authority";
 import { Slot as c } from "@radix-ui/react-slot";
-//#region src/atoms/button.tsx
+// src/atoms/button.tsx
 var l = {
 	default: "bg-primary text-primary-foreground hover:bg-primary/90",
 	destructive: "bg-destructive text-destructive-foreground hover:bg-destructive-hover/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 dark:hover:bg-destructive-hover/90",
@@ -13,14 +13,14 @@ var l = {
 	secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
 	ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
 	link: "text-primary underline-offset-4 hover:underline"
-}, u = i(l), d = {
+}, u = r(l), d = {
 	default: "h-7 px-2 py-2 gap-1",
 	sm: "h-8 rounded-md gap-1 px-2",
 	lg: "h-10 rounded-md px-3",
 	icon: "size-7",
 	icon_sm: "size-6",
 	none: "p-0 h-auto"
-}, f = i(d), p = [
+}, f = r(d), p = [
 	"button",
 	"submit",
 	"reset"
@@ -41,7 +41,7 @@ var l = {
 		size: m.size
 	}
 });
-function g({ className: i, variant: s, size: l, ref: u, asChild: d = m.asChild, type: f = m.type, loading: p, disabled: g, children: _, "aria-label": v, title: y, name: b, "data-ai-kind": x, "data-ai-label": S, "data-ai-action": C, ...w }) {
+function g({ className: r, variant: s, size: l, ref: u, asChild: d = m.asChild, type: f = m.type, loading: p, disabled: g, children: _, "aria-label": v, title: y, name: b, "data-ai-kind": x, "data-ai-label": S, "data-ai-action": C, ...w }) {
 	let T = d ? c : "button", E = n(S, typeof v == "string" ? v : void 0, typeof y == "string" ? y : void 0, void 0, b, _);
 	return /* @__PURE__ */ o(T, {
 		ref: u,
@@ -54,14 +54,13 @@ function g({ className: i, variant: s, size: l, ref: u, asChild: d = m.asChild, 
 		title: y,
 		name: b,
 		disabled: g || p,
-		className: r(h({
+		className: i(h({
 			variant: s,
 			size: l,
-			className: i
+			className: r
 		})),
 		...w,
 		children: p && !d ? /* @__PURE__ */ o(a, { className: "size-4 animate-spin" }) : _
 	});
 }
-//#endregion
 export { g as Button, m as buttonDefaults, d as buttonSizeClasses, f as buttonSizeOptions, p as buttonTypeOptions, l as buttonVariantClasses, u as buttonVariantOptions, h as buttonVariants };

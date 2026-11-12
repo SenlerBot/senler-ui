@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t } from "react/jsx-runtime";
 import * as n from "@radix-ui/react-separator";
-//#region src/atoms/separator.tsx
+// src/atoms/separator.tsx
 function r({ className: r, orientation: i = "horizontal", decorative: a = !0, ...o }) {
 	return /* @__PURE__ */ t(n.Root, {
 		"data-slot": "separator",
@@ -12,5 +12,4 @@ function r({ className: r, orientation: i = "horizontal", decorative: a = !0, ..
 		...o
 	});
 }
-//#endregion
 export { r as Separator };

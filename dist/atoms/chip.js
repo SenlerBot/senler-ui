@@ -1,7 +1,7 @@
 import { cn as e } from "../lib/utils/cn.js";
 import { jsx as t, jsxs as n } from "react/jsx-runtime";
 import { cva as r } from "class-variance-authority";
-//#region src/atoms/chip.tsx
+// src/atoms/chip.tsx
 var i = r("inline-flex items-center rounded-full font-medium transition-colors", {
 	variants: {
 		color: {
@@ -102,5 +102,4 @@ function a({ label: r, color: a, size: o, variant: s, className: c, icon: l }) {
 		}) : null, r]
 	});
 }
-//#endregion
 export { a as Chip, i as chipVariants };

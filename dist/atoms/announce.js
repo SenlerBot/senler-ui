@@ -3,7 +3,7 @@ import "react";
 import { jsx as t } from "react/jsx-runtime";
 import { cva as n } from "class-variance-authority";
 import * as r from "@radix-ui/react-announce";
-//#region src/atoms/announce.tsx
+// src/atoms/announce.tsx
 var i = n("rounded-md text-sm/4 font-medium", {
 	variants: {
 		color: {
@@ -29,5 +29,4 @@ function a({ className: n, color: a, size: o, asChild: s = !1, ...c }) {
 		...c
 	});
 }
-//#endregion
 export { a as Announce, i as announceVariants };

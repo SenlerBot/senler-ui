@@ -5,14 +5,14 @@ declare function AlertDialogTrigger({ className, ...props }: React.ComponentProp
 declare const AlertDialogPortal: React.FC<AlertDialogPrimitive.AlertDialogPortalProps>;
 declare const AlertDialogOverlay: React.ForwardRefExoticComponent<Omit<AlertDialogPrimitive.AlertDialogOverlayProps & React.RefAttributes<HTMLDivElement>, "ref"> & React.RefAttributes<HTMLDivElement>>;
 declare const AlertDialogContent: React.ForwardRefExoticComponent<Omit<AlertDialogPrimitive.AlertDialogContentProps & React.RefAttributes<HTMLDivElement>, "ref"> & React.RefAttributes<HTMLDivElement>>;
-declare const AlertDialogHeader: {
-    ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element;
-    displayName: string;
-};
-declare const AlertDialogFooter: {
-    ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element;
-    displayName: string;
-};
+declare function AlertDialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element;
+declare namespace AlertDialogHeader {
+    var displayName: string;
+}
+declare function AlertDialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element;
+declare namespace AlertDialogFooter {
+    var displayName: string;
+}
 declare const AlertDialogTitle: React.ForwardRefExoticComponent<Omit<AlertDialogPrimitive.AlertDialogTitleProps & React.RefAttributes<HTMLHeadingElement>, "ref"> & React.RefAttributes<HTMLHeadingElement>>;
 declare const AlertDialogDescription: React.ForwardRefExoticComponent<Omit<AlertDialogPrimitive.AlertDialogDescriptionProps & React.RefAttributes<HTMLParagraphElement>, "ref"> & React.RefAttributes<HTMLParagraphElement>>;
 declare const AlertDialogAction: React.ForwardRefExoticComponent<Omit<AlertDialogPrimitive.AlertDialogActionProps & React.RefAttributes<HTMLButtonElement>, "ref"> & React.RefAttributes<HTMLButtonElement>>;

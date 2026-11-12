@@ -2,7 +2,7 @@ import { AI_KIND as e, getAiLabelFallback as t } from "../lib/ai-auto-attributes
 import { cn as n } from "../lib/utils/cn.js";
 import * as r from "react";
 import { jsx as i } from "react/jsx-runtime";
-//#region src/atoms/textarea.tsx
+// src/atoms/textarea.tsx
 var a = r.forwardRef(({ className: r, placeholder: a, "aria-label": o, title: s, name: c, "data-ai-kind": l, "data-ai-label": u, ...d }, f) => {
 	let p = t(u, typeof o == "string" ? o : void 0, typeof s == "string" ? s : void 0, a, c);
 	return /* @__PURE__ */ i("textarea", {
@@ -19,5 +19,4 @@ var a = r.forwardRef(({ className: r, placeholder: a, "aria-label": o, title: s,
 	});
 });
 a.displayName = "Textarea";
-//#endregion
 export { a as Textarea };

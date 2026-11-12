@@ -1,7 +1,7 @@
 import { AlertDialog as e, AlertDialogAction as t, AlertDialogCancel as n, AlertDialogContent as r, AlertDialogDescription as i, AlertDialogFooter as a, AlertDialogHeader as o, AlertDialogTitle as s } from "../atoms/alert-dialog.js";
 import { ArrowRight as c, RefreshCw as l, Sparkles as u } from "lucide-react";
 import { jsx as d, jsxs as f } from "react/jsx-runtime";
-//#region src/compound/frontend-update-prompt.tsx
+// src/compound/frontend-update-prompt.tsx
 function p({ open: p, currentVersion: m, latestVersion: h, labels: g, onRemindLater: _, onRefresh: v }) {
 	return /* @__PURE__ */ d(e, {
 		open: p,
@@ -77,5 +77,4 @@ function p({ open: p, currentVersion: m, latestVersion: h, labels: g, onRemindLa
 		})
 	});
 }
-//#endregion
 export { p as FrontendUpdatePrompt };

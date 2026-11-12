@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t } from "react/jsx-runtime";
 import { cva as n } from "class-variance-authority";
-//#region src/atoms/svg-icon.tsx
+// src/atoms/svg-icon.tsx
 var r = n("select-none inline-flex flex-shrink-0 align-middle w-full h-full", {
 	variants: {
 		color: {
@@ -34,5 +34,4 @@ function i({ className: n, color: i, size: a, children: o, ...s }) {
 		children: o
 	});
 }
-//#endregion
 export { i as SvgIcon };

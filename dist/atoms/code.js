@@ -2,7 +2,7 @@ import { cn as e } from "../lib/utils/cn.js";
 import "react";
 import { jsx as t } from "react/jsx-runtime";
 import { Highlight as n } from "prism-react-renderer";
-//#region src/atoms/code.tsx
+// src/atoms/code.tsx
 function r({ theme: r = i, language: a = "json", code: o = "", ...s }) {
 	return /* @__PURE__ */ t(n, {
 		code: o,
@@ -94,5 +94,4 @@ var i = {
 		}
 	]
 };
-//#endregion
 export { r as CodeBlock };
