@@ -28,8 +28,8 @@ function CheckBox({ className, label, tooltip, id, 'aria-label': ariaLabel, titl
   );
 
   return (
-    <div className='flex items-center'>
-      <div className='flex'>
+    <div className='flex min-w-0 items-center'>
+      <div className='flex min-w-0'>
         <CheckboxPrimitive.Root
           id={checkboxId}
           data-slot='checkbox'
@@ -60,14 +60,14 @@ function CheckBox({ className, label, tooltip, id, 'aria-label': ariaLabel, titl
         {label && (
           <label
             htmlFor={checkboxId}
-            className='ml-2 text-sm leading-4 cursor-pointer select-none'
+            className='ml-2 min-w-0 text-sm leading-4 cursor-pointer select-none [overflow-wrap:anywhere]'
           >
             {label}
           </label>
         )}
       </div>
 
-      {tooltip && <div className='ml-2'>{tooltip}</div>}
+      {tooltip && <div className='ml-2 shrink-0'>{tooltip}</div>}
     </div>
   );
 }

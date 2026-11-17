@@ -67,7 +67,7 @@ const tabListVariants = cva('inline-flex items-center', {
 });
 
 const tabTriggerVariants = cva(
-  'inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-1.5 whitespace-nowrap outline-none transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: tabsTriggerVariantClasses,
@@ -130,8 +130,12 @@ function TabsTrigger({
   children,
   'data-ai-kind': dataAiKind,
   'data-ai-label': dataAiLabel,
+  onPointerDown,
+  onKeyDown,
+  onBlur,
   ...props
 }: TabsTriggerProps) {
+  const [pointerFocus, setPointerFocus] = React.useState(false);
   const listElement = React.useContext(TabsListContext);
   const effectiveVariant =
     variant || listElement?.variant || tabsTriggerDefaults.variant;
@@ -152,9 +156,24 @@ function TabsTrigger({
       data-ai-label={aiLabel}
       className={cn(
         tabTriggerVariants({ variant: effectiveVariant, size: effectiveSize }),
+        !pointerFocus &&
+          'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className,
       )}
       {...props}
+      onPointerDown={(event) => {
+        // Radix focuses on mousedown, which can retain the browser's keyboard-focus outline.
+        if (event.button === 0) setPointerFocus(true);
+        onPointerDown?.(event);
+      }}
+      onKeyDown={(event) => {
+        setPointerFocus(false);
+        onKeyDown?.(event);
+      }}
+      onBlur={(event) => {
+        setPointerFocus(false);
+        onBlur?.(event);
+      }}
     >
       {children}
       {count !== undefined && count > 0 && (

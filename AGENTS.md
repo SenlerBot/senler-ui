@@ -6,6 +6,5 @@
 
 Перед изменением исходников, тестов, package scripts, CI или публикации полностью прочитай [`.cursor/rules/commands.mdc`](.cursor/rules/commands.mdc).
 
-После изменения используй `check:fast`, затем один `npm run build`, который сам
-выполняет `check:full → build:artifact → test:dist`. Не запускай отдельный full
-до `build`, если после него код не менялся.
+После изменения используй check:fast и необходимые test:source. Полный build,
+check:full и build:artifact выполняются только в CI, для релиза или по явному запросу.

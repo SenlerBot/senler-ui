@@ -30,6 +30,8 @@ export const isApiContractInput = (file) => {
   const normalizedFile = file.replaceAll("\\", "/");
   return (
     normalizedFile.startsWith("src/shared/api/") ||
+    normalizedFile.startsWith("src/generated/") ||
+    normalizedFile.startsWith("openapi/") ||
     normalizedFile === "openapi.consumer.json" ||
     normalizedFile.startsWith("orval.") ||
     normalizedFile.startsWith("orval-") ||
@@ -43,6 +45,7 @@ export const selectFastCheckScripts = (
   changedFiles,
 ) => {
   const scriptsToRun = [...requestedScripts];
+  if (typeof packageScripts["check:structure"] === "string" && !scriptsToRun.includes("check:structure")) scriptsToRun.unshift("check:structure");
   const shouldAddApiContracts =
     typeof packageScripts["check:api-contracts"] === "string" &&
     !scriptsToRun.includes("check:api-contracts") &&
