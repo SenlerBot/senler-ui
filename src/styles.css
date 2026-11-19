@@ -1,8 +1,10 @@
 @layer theme, components, utilities;
 
 @import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
 @import "./tokens.css";
 @plugin "tailwindcss-animate";
+
+@source ".";
 
 @custom-variant dark (&:is(.dark *));

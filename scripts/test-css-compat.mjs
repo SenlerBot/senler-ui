@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import tailwindcss from '@tailwindcss/postcss'
 import { JSDOM } from 'jsdom'
+import postcss from 'postcss'
 import { createServer } from 'vite'
 
 const rootDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -48,6 +51,26 @@ if (selectedModes.length !== 1) {
 }
 
 const mode = selectedModes[0]
+if (mode === 'source') {
+  const entry = resolve(rootDirectory, 'src/styles.css')
+  const source = readFileSync(entry, 'utf8')
+  const fixture = mkdtempSync(resolve(tmpdir(), 'senler-ui-style-sources-'))
+  try {
+    const clean = resolve(fixture, 'clean')
+    const unrelated = resolve(fixture, 'unrelated')
+    mkdirSync(clean)
+    mkdirSync(unrelated)
+    writeFileSync(resolve(unrelated, 'consumer.html'), '<div class="w-[918273px]"></div>')
+    const compile = async (base) => (await postcss([tailwindcss({ base, optimize: false })])
+      .process(source, { from: entry })).css
+    const expected = await compile(clean)
+    assert.ok(await compile(unrelated) === expected, 'Standalone CSS must not scan unrelated files')
+    assert.ok(/\.bg-background\s*\{/.test(expected), 'Standalone CSS must include library utilities')
+  } finally {
+    rmSync(fixture, { recursive: true, force: true })
+  }
+}
+
 const loadedModules = await loadCompatibilityModules(mode)
 const {
   applyCssCompatibilityToBundle,
