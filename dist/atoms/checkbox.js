@@ -8,9 +8,9 @@ import * as s from "@radix-ui/react-checkbox";
 function c({ className: c, label: l, tooltip: u, id: d, "aria-label": f, title: p, name: m, "data-ai-kind": h, "data-ai-label": g, ..._ }) {
 	let v = r.useId(), y = d || v, b = t(g, typeof f == "string" ? f : void 0, typeof p == "string" ? p : void 0, void 0, m, l);
 	return /* @__PURE__ */ o("div", {
-		className: "flex items-center",
+		className: "flex min-w-0 items-center",
 		children: [/* @__PURE__ */ o("div", {
-			className: "flex",
+			className: "flex min-w-0",
 			children: [/* @__PURE__ */ a(s.Root, {
 				id: y,
 				"data-slot": "checkbox",
@@ -28,11 +28,11 @@ function c({ className: c, label: l, tooltip: u, id: d, "aria-label": f, title: 
 				})
 			}), l && /* @__PURE__ */ a("label", {
 				htmlFor: y,
-				className: "ml-2 text-sm leading-4 cursor-pointer select-none",
+				className: "ml-2 min-w-0 text-sm leading-4 cursor-pointer select-none [overflow-wrap:anywhere]",
 				children: l
 			})]
 		}), u && /* @__PURE__ */ a("div", {
-			className: "ml-2",
+			className: "ml-2 shrink-0",
 			children: u
 		})]
 	});

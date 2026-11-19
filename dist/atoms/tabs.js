@@ -32,7 +32,7 @@ var l = {
 		variant: p.variant,
 		size: p.size
 	}
-}), v = s("inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0", {
+}), v = s("inline-flex items-center justify-center gap-1.5 whitespace-nowrap outline-none transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0", {
 	variants: {
 		variant: h,
 		size: g
@@ -66,17 +66,26 @@ function y({ className: t, ...n }) {
 		...n
 	});
 }
-function b({ variant: t, count: s, className: l, children: u, "data-ai-kind": d, "data-ai-label": f, ...h }) {
-	let g = i.useContext(x), _ = t || g?.variant || m.variant, y = g?.size || p.size, b = r(f, void 0, void 0, void 0, void 0, u);
+function b({ variant: t, count: s, className: l, children: u, "data-ai-kind": d, "data-ai-label": f, onPointerDown: h, onKeyDown: g, onBlur: _, ...y }) {
+	let [b, S] = i.useState(!1), C = i.useContext(x), w = t || C?.variant || m.variant, T = C?.size || p.size, E = r(f, void 0, void 0, void 0, void 0, u);
 	return /* @__PURE__ */ o(c.Trigger, {
 		"data-slot": "tabs-trigger",
 		"data-ai-kind": d ?? n.tab,
-		"data-ai-label": b,
+		"data-ai-label": E,
 		className: e(v({
-			variant: _,
-			size: y
-		}), l),
-		...h,
+			variant: w,
+			size: T
+		}), !b && "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background", l),
+		...y,
+		onPointerDown: (e) => {
+			e.button === 0 && S(!0), h?.(e);
+		},
+		onKeyDown: (e) => {
+			S(!1), g?.(e);
+		},
+		onBlur: (e) => {
+			S(!1), _?.(e);
+		},
 		children: [u, s !== void 0 && s > 0 && /* @__PURE__ */ a("span", {
 			className: "text-muted-foreground font-normal",
 			children: s

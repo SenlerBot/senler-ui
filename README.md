@@ -62,7 +62,7 @@ behavior local; move it into the library only when it is useful across consumers
 ## Install
 
 ```bash
-npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.7.2.tar.gz
+npm install https://github.com/SenlerBot/senler-ui/archive/refs/tags/v0.7.3.tar.gz
 ```
 
 Requires React 19 and `lucide-react`:

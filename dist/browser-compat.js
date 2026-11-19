@@ -68,7 +68,11 @@ var s = (e, t) => {
 		this.encoding = n.encoding, this.fatal = n.fatal, this.ignoreBOM = n.ignoreBOM, this.readable = r.readable, this.writable = r.writable;
 	}
 }, f = () => {
-	s("ReadableStream", i), s("WritableStream", o), s("ByteLengthQueuingStrategy", n), s("CountQueuingStrategy", r), s("TransformStream", Reflect.has(globalThis, "ReadableStream") && Reflect.has(globalThis, "WritableStream") ? l : a), Reflect.has(globalThis, "TextEncoder") && s("TextEncoderStream", u), Reflect.has(globalThis, "TextDecoder") && s("TextDecoderStream", d);
+	typeof Reflect.get(Object, "hasOwn") != "function" && Object.defineProperty(Object, "hasOwn", {
+		value: (e, t) => Object.prototype.hasOwnProperty.call(e, t),
+		configurable: !0,
+		writable: !0
+	}), s("ReadableStream", i), s("WritableStream", o), s("ByteLengthQueuingStrategy", n), s("CountQueuingStrategy", r), s("TransformStream", Reflect.has(globalThis, "ReadableStream") && Reflect.has(globalThis, "WritableStream") ? l : a), Reflect.has(globalThis, "TextEncoder") && s("TextEncoderStream", u), Reflect.has(globalThis, "TextDecoder") && s("TextDecoderStream", d);
 }, p = (e, t) => {
 	if (!e.includes("AppleWebKit/")) return;
 	let n = e.match(/(?:iPhone|CPU) OS (\d+)[._](\d+)/), r = /(?:Chrome|Chromium|Edg|OPR|Android)/.test(e) ? null : e.match(/Version\/(\d+)\.(\d+).*Safari\//), i = n ?? r;

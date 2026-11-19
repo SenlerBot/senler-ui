@@ -44,7 +44,7 @@ type TabsTriggerProps = React.ComponentProps<typeof TabsPrimitive.Trigger> & AiD
     variant?: TabsListVariant;
     count?: number;
 };
-declare function TabsTrigger({ variant, count, className, children, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, ...props }: TabsTriggerProps): React.JSX.Element;
+declare function TabsTrigger({ variant, count, className, children, 'data-ai-kind': dataAiKind, 'data-ai-label': dataAiLabel, onPointerDown, onKeyDown, onBlur, ...props }: TabsTriggerProps): React.JSX.Element;
 declare const TabsList: React.ForwardRefExoticComponent<Omit<TabsListProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
 declare function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>): React.JSX.Element;
 export { TabsRoot, TabsList, TabsTrigger, TabsContent };
