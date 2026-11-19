@@ -143,6 +143,17 @@ class CompatibleTextDecoderStream {
 }
 
 export const installBrowserCompatibilityPolyfills = () => {
+  // Dependencies such as react-markdown also use this API. A syntax target
+  // cannot supply missing built-ins in older embedded browsers.
+  if (typeof Reflect.get(Object, 'hasOwn') !== 'function') {
+    Object.defineProperty(Object, 'hasOwn', {
+      value: (object: object, key: PropertyKey): boolean =>
+        Object.prototype.hasOwnProperty.call(object, key),
+      configurable: true,
+      writable: true,
+    })
+  }
+
   defineMissingGlobal('ReadableStream', PonyfillReadableStream)
   defineMissingGlobal('WritableStream', PonyfillWritableStream)
   defineMissingGlobal('ByteLengthQueuingStrategy', PonyfillByteLengthQueuingStrategy)

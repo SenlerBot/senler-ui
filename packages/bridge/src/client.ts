@@ -1,4 +1,10 @@
 import {
+  createVariablePickerRequest, createVariablePickerCancel, parseVariablePickerRequest,
+  parseVariablePickerResult, variableSelectionMatches, SenlerBridgeVariablePickerError,
+  SENLER_BRIDGE_VARIABLE_PICKER_TIMEOUT_MS,
+  type SenlerBridgeVariablePickerRequest, type SenlerBridgeVariableSelection,
+} from './variable-picker.js';
+import {
   createFrameMaxWidthRequest,
   isSenlerBridgeFrameMaxWidth,
   parseFrameMaxWidthResult,
@@ -44,6 +50,7 @@ export interface SenlerBridgeClientOptions {
   clientWindow?: Window;
   syncDocument?: boolean;
   connectTimeoutMs?: number;
+  variablePickerTimeoutMs?: number;
 }
 
 interface SenlerBridgeClientWindow extends Window {
@@ -52,6 +59,8 @@ interface SenlerBridgeClientWindow extends Window {
 }
 
 export interface SenlerBridgeClient {
+  /** Opens the host picker. Cancellation resolves to null; values are never returned. */
+  pickVariable(request: SenlerBridgeVariablePickerRequest): Promise<SenlerBridgeVariableSelection | null>;
   /** Resolves when the host accepts the limit; browser layout may update later. */
   setFrameMaxWidth(maxWidth: number | null): Promise<void>;
   onFunnelConfiguratorSubmit(handler: () => SenlerBridgeFunnelConfiguratorResult | Promise<SenlerBridgeFunnelConfiguratorResult>): () => void;
@@ -169,6 +178,10 @@ export function createSenlerBridgeClient(
   if (!Number.isFinite(connectTimeoutMs) || connectTimeoutMs <= 0) {
     throw new Error('Senler Bridge connectTimeoutMs must be positive');
   }
+  const variablePickerTimeoutMs = options.variablePickerTimeoutMs ?? SENLER_BRIDGE_VARIABLE_PICKER_TIMEOUT_MS;
+  if (!Number.isFinite(variablePickerTimeoutMs) || variablePickerTimeoutMs <= 0 || variablePickerTimeoutMs > SENLER_BRIDGE_VARIABLE_PICKER_TIMEOUT_MS) {
+    throw new Error('Senler Bridge variablePickerTimeoutMs must be positive and at most five minutes');
+  }
   let context: SenlerBridgeContext | null = null;
   let destroyed = false;
   let submitHandler:
@@ -209,6 +222,14 @@ export function createSenlerBridgeClient(
   let lastFrameHeight: number | null = null;
   let frameSizeSyncActive = false;
   let widthRequestSequence = 0;
+  let pickerSequence = 0;
+  let pendingPicker: {
+    id: string;
+    request: SenlerBridgeVariablePickerRequest;
+    resolve: (selection: SenlerBridgeVariableSelection | null) => void;
+    reject: (error: Error) => void;
+    timeoutId: number;
+  } | null = null;
   const pendingWidths = new Map<string, {
     resolve: () => void;
     reject: (error: Error) => void;
@@ -310,6 +331,19 @@ export function createSenlerBridgeClient(
       event.origin !== parentOrigin ||
       event.source !== clientWindow.parent
     ) {
+      return;
+    }
+    const pickerResult = parseVariablePickerResult(event.data);
+    if (pickerResult) {
+      const pending = pendingPicker;
+      if (!pending || pending.id !== pickerResult.request_id) return;
+      pendingPicker = null;
+      clientWindow.clearTimeout(pending.timeoutId);
+      if (pickerResult.error || (pickerResult.selection && !variableSelectionMatches(pending.request, pickerResult.selection))) {
+        pending.reject(new SenlerBridgeVariablePickerError(
+          pickerResult.error === 'unsupported' ? 'unsupported' : pickerResult.error === 'busy' ? 'busy' : 'remote_error',
+        ));
+      } else pending.resolve(pickerResult.selection);
       return;
     }
     const initMessage = parseSenlerBridgeInitMessage(event.data);
@@ -433,6 +467,26 @@ export function createSenlerBridgeClient(
   clientWindow.addEventListener('message', handleMessage);
 
   return {
+    pickVariable(request) {
+      if (destroyed) return Promise.reject(new SenlerBridgeVariablePickerError('destroyed'));
+      if (!context) return Promise.reject(new SenlerBridgeVariablePickerError('not_connected'));
+      if (context.variable_picker !== true) return Promise.reject(new SenlerBridgeVariablePickerError('unsupported'));
+      const parsed = parseVariablePickerRequest(request);
+      if (!parsed) return Promise.reject(new SenlerBridgeVariablePickerError('invalid_request'));
+      if (pendingPicker) return Promise.reject(new SenlerBridgeVariablePickerError('busy'));
+      const id = `variable-${Date.now()}-${++pickerSequence}`;
+      return new Promise<SenlerBridgeVariableSelection | null>((resolve, reject) => {
+        pendingPicker = {
+          id, request: parsed, resolve, reject,
+          timeoutId: clientWindow.setTimeout(() => {
+            pendingPicker = null;
+            postToParent(createVariablePickerCancel(id));
+            reject(new SenlerBridgeVariablePickerError('request_timeout'));
+          }, variablePickerTimeoutMs),
+        };
+        postToParent(createVariablePickerRequest(id, parsed));
+      });
+    },
     setFrameMaxWidth(maxWidth) {
       if (destroyed) return Promise.reject(new SenlerBridgeFrameWidthError('destroyed'));
       if (!isSenlerBridgeFrameMaxWidth(maxWidth)) return Promise.reject(new SenlerBridgeFrameWidthError('invalid_width'));
@@ -508,6 +562,13 @@ export function createSenlerBridgeClient(
     },
     destroy() {
       if (destroyed) return;
+      if (pendingPicker) {
+        const pending = pendingPicker;
+        pendingPicker = null;
+        clientWindow.clearTimeout(pending.timeoutId);
+        postToParent(createVariablePickerCancel(pending.id));
+        pending.reject(new SenlerBridgeVariablePickerError('destroyed'));
+      }
       destroyed = true;
       stopFrameSizeSync();
       for (const pending of pendingWidths.values()) {

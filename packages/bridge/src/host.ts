@@ -1,5 +1,10 @@
 import { createFrameMaxWidthResult, parseFrameMaxWidthRequest } from './frame-width.js';
 import {
+  createVariablePickerResult, parseVariablePickerCancel, parseVariablePickerRequestMessage,
+  parseVariableSelection, variableSelectionMatches, SENLER_BRIDGE_VARIABLE_PICKER_TIMEOUT_MS,
+  type SenlerBridgeVariablePickerRequest, type SenlerBridgeVariableSelection,
+} from './variable-picker.js';
+import {
   createClearElementHighlightMessage,
   createElementActionMessage,
   createInitMessage,
@@ -33,6 +38,7 @@ export interface SenlerBridgeHostOptions {
   requestTimeoutMs?: number;
   onFrameSizeChange?: (height: number) => void;
   onFrameMaxWidthChange?: (maxWidth: number | null) => void;
+  onVariablePick?: (request: SenlerBridgeVariablePickerRequest, signal: AbortSignal) => Promise<SenlerBridgeVariableSelection | null>;
 }
 
 export interface SenlerBridgeHost {
@@ -111,6 +117,7 @@ export function createSenlerBridgeHost(
   let destroyed = false;
   const pendingRequests = new Map<string, PendingRequest>();
   const pendingElementActions = new Map<string, PendingElementAction>();
+  let activePicker: { id: string; controller: AbortController; timeoutId: number } | null = null;
 
   const postToFrame = (message: unknown): boolean => {
     if (destroyed) return false;
@@ -121,6 +128,14 @@ export function createSenlerBridgeHost(
   };
 
   const sendInit = () => postToFrame(createInitMessage(context));
+  const cancelPicker = () => {
+    if (!activePicker) return;
+    const pending = activePicker;
+    activePicker = null;
+    hostWindow.clearTimeout(pending.timeoutId);
+    pending.controller.abort();
+    postToFrame(createVariablePickerResult(pending.id, null));
+  };
 
   const handleMessage = (event: MessageEvent<unknown>) => {
     if (
@@ -133,6 +148,41 @@ export function createSenlerBridgeHost(
     if (isSenlerBridgeReadyMessage(event.data)) {
       connected = true;
       sendInit();
+      return;
+    }
+    const pickerCancel = parseVariablePickerCancel(event.data);
+    if (pickerCancel) {
+      if (activePicker?.id === pickerCancel) cancelPicker();
+      return;
+    }
+    const picker = parseVariablePickerRequestMessage(event.data);
+    if (picker) {
+      if (!connected || context.variable_picker !== true || !options.onVariablePick || context.launch.type !== 'automation_step_configurator') {
+        postToFrame(createVariablePickerResult(picker.request_id, null, 'unsupported'));
+        return;
+      }
+      if (activePicker) {
+        if (activePicker.id !== picker.request_id) postToFrame(createVariablePickerResult(picker.request_id, null, 'busy'));
+        return;
+      }
+      const controller = new AbortController();
+      activePicker = { id: picker.request_id, controller, timeoutId: hostWindow.setTimeout(cancelPicker, SENLER_BRIDGE_VARIABLE_PICKER_TIMEOUT_MS) };
+      void Promise.resolve().then(() => {
+        if (controller.signal.aborted) return null;
+        return options.onVariablePick?.(picker.request, controller.signal);
+      }).then(raw => {
+        if (activePicker?.controller !== controller) return;
+        const selection = raw === null ? null : parseVariableSelection(raw);
+        const invalid = raw !== null && (!selection || !variableSelectionMatches(picker.request, selection));
+        hostWindow.clearTimeout(activePicker.timeoutId);
+        activePicker = null;
+        postToFrame(createVariablePickerResult(picker.request_id, invalid ? null : selection, invalid ? 'remote_error' : null));
+      }).catch(() => {
+        if (activePicker?.controller !== controller) return;
+        hostWindow.clearTimeout(activePicker.timeoutId);
+        activePicker = null;
+        postToFrame(createVariablePickerResult(picker.request_id, null, 'remote_error'));
+      });
       return;
     }
     const frameSize = parseSenlerBridgeFrameSizeMessage(event.data);
@@ -218,6 +268,7 @@ export function createSenlerBridgeHost(
 
   return {
     notifyFrameLoaded() {
+      cancelPicker();
       connected = true;
       sendInit();
     },
@@ -229,6 +280,10 @@ export function createSenlerBridgeHost(
           'Senler Bridge context is invalid',
         );
       }
+      if (context.launch.type !== parsedContext.launch.type || context.launch.project_id !== parsedContext.launch.project_id ||
+        (context.launch.type === 'automation_step_configurator' && parsedContext.launch.type === 'automation_step_configurator' &&
+          (context.launch.node_id !== parsedContext.launch.node_id || context.launch.automation_id !== parsedContext.launch.automation_id)) ||
+        parsedContext.variable_picker !== true) cancelPicker();
       context = parsedContext;
       if (connected) sendInit();
     },
@@ -336,6 +391,7 @@ export function createSenlerBridgeHost(
     },
     destroy() {
       if (destroyed) return;
+      cancelPicker();
       destroyed = true;
       hostWindow.removeEventListener('message', handleMessage);
       for (const pending of pendingRequests.values()) {

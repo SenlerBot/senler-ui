@@ -1,6 +1,6 @@
 {
   "name": "@senlerio/bridge",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Framework-independent Senler embedded application bridge",
   "type": "module",
   "license": "MIT",

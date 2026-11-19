@@ -3,15 +3,46 @@
 Framework-independent bridge between a Senler host and an embedded application.
 No React, CSS or other runtime dependencies.
 
-This source package implements Bridge 2.1.2. Install its tested package archive
+This source package implements Bridge 2.2.0. Install its tested package archive
 in the host and the embedded application:
 
 ```sh
-npm install ./senlerio-bridge-2.1.2.tgz
+npm install ./senlerio-bridge-2.2.0.tgz
 ```
 
 To produce the archive from this directory, run `npm ci`, `npm run build`, and
 `npm pack`. Public release tags are usable only after that release is published.
+
+## Variable picker
+
+Automation configurators can open Senler's native picker when
+`client.getContext()?.variable_picker === true`:
+
+```ts
+const variable = await client.pickVariable({ mode: 'read', types: ['string'] });
+if (variable) insertAtCursor(variable.template);
+
+const destination = await client.pickVariable({ mode: 'write', types: ['number'] });
+if (destination) configuration._senler_result_bindings.amount = {
+  variable_scope: destination.scope,
+  variable_name: destination.name,
+};
+```
+
+`scopes` optionally limits `run`, `lead`, `dialog`, `project`. The host further
+limits this list using the current automation and project permissions. Read
+mode can include `lead_data`; write mode cannot. Only names, paths, types and
+template tokens are returned, never variable values. Cancellation returns
+`null`; unsupported hosts and transport failures reject with
+`SenlerBridgeVariablePickerError`. Keep manual entry available on older hosts.
+One picker can be open per frame; it expires after five minutes. Destroying or
+reloading the frame, changing its launch context, or timing out cancels the UI.
+
+Hosts advertise `variable_picker` only with an `onVariablePick(request, signal)`
+handler. Use the verified launch context for the project and automation, apply
+scope/type restrictions, and close the picker when the signal is aborted.
+`name` is a variable path (bracket notation for names containing punctuation),
+and `template` is its complete `{{scope.path}}` token.
 
 Applications opened inside Senler use the typed bridge instead of calling
 `window.postMessage` directly. The bridge validates the parent origin, applies

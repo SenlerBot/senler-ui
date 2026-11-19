@@ -56,7 +56,35 @@ const {
   transformCssForBrowserCompatibility,
 } = loadedModules.cssCompatibility
 const { createDependencySyntaxCompatibilityPlugin } = loadedModules.browserCompatibility
-const { installBrowserFontCompatibility } = loadedModules.runtimeCompatibility
+const { installBrowserFontCompatibility, installBrowserCompatibilityPolyfills } = loadedModules.runtimeCompatibility
+
+const nativeHasOwn = Object.getOwnPropertyDescriptor(Object, 'hasOwn')
+try {
+  installBrowserCompatibilityPolyfills()
+  assert.equal(Object.hasOwn, nativeHasOwn?.value, 'Preserve the native Object.hasOwn implementation')
+  Reflect.deleteProperty(Object, 'hasOwn')
+  installBrowserCompatibilityPolyfills()
+  const installedHasOwn = Object.hasOwn
+  const symbol = Symbol('own')
+  const record = Object.assign(Object.create({ inherited: true }), {
+    own: undefined,
+    hasOwnProperty: null,
+    [symbol]: true,
+  })
+  assert.equal(Object.hasOwn(record, 'own'), true, 'Undefined values are still own properties')
+  assert.equal(Object.hasOwn(record, 'inherited'), false, 'Inherited values are excluded')
+  assert.equal(Object.hasOwn(record, symbol), true, 'Symbol keys are supported')
+  assert.equal(Object.hasOwn(Object.assign(Object.create(null), { own: 1 }), 'own'), true)
+  assert.equal(Object.hasOwn('text', 0), true, 'Primitive values retain the native coercion')
+  assert.throws(() => Object.hasOwn(null, 'own'), TypeError)
+  assert.throws(() => Object.hasOwn(undefined, 'own'), TypeError)
+  assert.equal(Object.getOwnPropertyDescriptor(Object, 'hasOwn')?.enumerable, false)
+  installBrowserCompatibilityPolyfills()
+  assert.equal(Object.hasOwn, installedHasOwn, 'Repeated installation must not replace the method')
+} finally {
+  if (nativeHasOwn) Object.defineProperty(Object, 'hasOwn', nativeHasOwn)
+  else Reflect.deleteProperty(Object, 'hasOwn')
+}
 
 const fontCompatibilityCases = [
   ['reported iPhone 14 / iOS 16.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', true],
